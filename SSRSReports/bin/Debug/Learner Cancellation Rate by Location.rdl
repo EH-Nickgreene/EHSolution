@@ -1,0 +1,659 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report MustUnderstand="df" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily">
+  <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="CentralReach">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString>Data Source=SQLVM;Initial Catalog=CentralReach</ConnectString>
+        <IntegratedSecurity>true</IntegratedSecurity>
+      </ConnectionProperties>
+      <rd:SecurityType>Integrated</rd:SecurityType>
+      <rd:DataSourceID>412a2061-fc4b-4e16-8171-3d2c2e9e7f18</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="CancellationData">
+      <Query>
+        <DataSourceName>CentralReach</DataSourceName>
+        <CommandText>
+DECLARE @startDate date,@EndDate Date,@CurrentWeekYear varchar(6),@PriorWeekYear varchar(6)
+
+SET @startDate =
+		(
+			SELECT MIN(date)
+			FROM (
+				SELECT TOP 5 * FROM reference.dbo.dimdate
+				WHERE day='Sunday'
+				and date&lt;=GETDATE()
+				ORDER BY date desc
+			) a
+		)
+SET @EndDate =
+		(	
+			SELECT TOP 1 Dateadd(dd,1,date)
+			FROM reference.dbo.dimdate
+			WHERE day='Sunday'
+			and date&lt;=GETDATE()
+			ORDER BY date desc
+		)
+
+IF OBJECT_ID('tempdb..#CancellationsBase') IS NOT NULL DROP TABLE #CancellationsBase
+SELECT 
+	--dt.WeekOfYearDisplay,
+	bdp.BranchName as [Location],
+	sch.ClientId,
+	c.ClientFullName,
+	sch.cancelledReason,
+	crtc.CancelledCategory,
+	sch.schedulingDate,
+	sch.SegmentStartDateTime
+	
+	
+INTO #CancellationsBase
+FROM v_scheduling sch
+INNER JOIN reference.dbo.dimdate dt on sch.SchedulingDate&gt;=dt.date and sch.SchedulingDate&lt;dateadd(dd,1,date)
+LEFT JOIN Reference.dbo.BranchData bd on bd.BranchCode=COALESCE(sch.BranchCodeAssignedToLearner,sch.EmployeeBranchCode)
+LEFT JOIN Reference.dbo.BranchData bdp on bd.ParentBranchCode=bdp.BranchCode
+LEFT JOIN insights.Client c on c.clientID=sch.ClientId
+LEFT JOIN CancellationReasonToCategory crtc on crtc.cancelledReason=sch.CancelledReason
+WHERE 
+sch.schedulingDate&gt;=@startDate
+and sch.schedulingDate&lt;@EndDate
+AND crtc.CancelledCategory&lt;&gt;'Ignore'
+and sch.CancelledReason&lt;&gt;'Learner: Sleeping'
+and ServiceCode IN('97153','97154','97155')
+/*
+SELECT * FROM #CancellationsBase
+ORDER BY 2,7
+
+SELECT* FROm CancellationReasonToCategory
+
+*/
+
+IF OBJECT_ID('tempdb..#Cancellations') IS NOT NULL DROP TABLE #Cancellations
+SELECT 
+	cb.Location,
+	cb.ClientId,
+	cb.ClientFullName,
+	cb.CancelledReason,
+	cb.CancelledCategory,
+	cb.SchedulingDate
+INTO #Cancellations
+FROM #CancellationsBase cb
+INNER JOIN (
+	SELECT 
+			Location,
+			ClientId,
+			ClientFullName,
+			SchedulingDate,
+			MIN(SegmentStartDateTime) SegmentStartDateTime
+	FROM #CancellationsBase
+	GROUP BY Location,
+			ClientId,
+			ClientFullName,
+			SchedulingDate
+		
+	) cbMax ON cb.Location=cbmax.Location and
+				cb.clientid=cbmax.clientid and
+				cb.ClientFullName=cbmax.ClientFullName and 
+				cb.SegmentStartDateTime=cbmax.SegmentStartDateTime
+				ORDER By 1,2,4
+
+
+
+
+
+IF OBJECT_ID('tempdb..#actual') IS NOT NULL DROP TABLE #actual
+SELECT 
+	--dt.WeekOfYearDisplay,
+	bdp.BranchName as [Location],
+	sch.ClientID,
+	c.ClientFullName,
+	COUNT(DISTINCT SchedulingDate) TotalCompletedSessions
+INTO #actual
+FROM v_scheduling sch
+INNER JOIN reference.dbo.dimdate dt on sch.SchedulingDate&gt;=dt.date and sch.SchedulingDate&lt;dateadd(dd,1,date)
+LEFT JOIN Reference.dbo.BranchData bd on bd.BranchCode=COALESCE(sch.BranchCodeAssignedToLearner,sch.EmployeeBranchCode)
+LEFT JOIN Reference.dbo.BranchData bdp on bd.ParentBranchCode=bdp.BranchCode
+LEFT JOIN insights.Client c on c.clientID=sch.ClientId
+WHERE 
+sch.schedulingDate&gt;=@startDate
+and sch.schedulingDate&lt;@EndDate
+AND CancelledReason = ''
+and ServiceCode IN('97153','97154','97155')
+GROUP BY 
+	--dt.WeekOfYearDisplay,
+	bdp.BranchName,
+	c.ClientFullName,
+	sch.ClientID
+ORDER BY 2 desc
+
+
+
+
+SELECT 
+	--COALESCE(a.WeekOfYearDisplay,c.WeekOfYearDisplay) WeekOfYear
+	COALESCE(a.Location,c.Location)Location
+	,COALESCE(a.ClientID,c.ClientID) ClientID
+	,COALESCE(a.ClientFullName,c.ClientFullName) ClientFullName
+	,COALESCE(TotalCompletedSessions,0) TotalCompletedSessions
+	--,COALESCE(c.TotalCancellations,0) TotalCancellations
+	,COALESCE(c.LearnerCancellations,0) LearnerCancellations
+	--,COALESCE(c.StaffCancellations,0) StaffCancellations
+	--,COALESCE(c.OtherCancellations,0) OtherCancellations
+	,CASE
+		WHEN COALESCE(TotalCompletedSessions,0)=0 and COALESCE(c.LearnerCancellations,0)&gt;0 THEN 1
+		WHEN COALESCE(TotalCompletedSessions,0)=0 and COALESCE(c.LearnerCancellations,0)=0 THEN 0
+		ELSE CONVERT(FLOAT,COALESCE(c.LearnerCancellations,0))/CONVERT(FLOAT,COALESCE(TotalCompletedSessions,0))
+	END LearnerCancellationRate
+FROM #actual a 
+FULL JOIN (
+		SELECT 
+			Location,
+			Clientid,
+			ClientFullName,
+			SUM(CASE WHEN CancelledCategory='Learner' THEN 1 ELSE 0 END) LearnerCancellations
+			--SUM(CASE WHEN CancelledCategory='Staff' THEN 1 ELSE 0 END) StaffCancellations,
+			--SUM(CASE WHEN CancelledCategory NOT IN ('Staff','Learner') THEN 1 ELSE 0 END) OtherCancellations,
+			--COUNT(*)  TotalCancellations
+		FROM #Cancellations
+			GROUP BY 
+				Location,
+				Clientid,
+				ClientFullName
+
+		) c on 
+							a.Location=c.Location and 
+							--a.WeekOfYearDisplay=c.WeekOfYearDisplay and
+							a.ClientId=C.ClientId 
+--WHERE COALESCE(a.Location,c.Location)='New Bern Learning Center - NC'
+ORDER BY 5 desc</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Location">
+          <DataField>Location</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ClientID">
+          <DataField>ClientID</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="ClientFullName">
+          <DataField>ClientFullName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TotalCompletedSessions">
+          <DataField>TotalCompletedSessions</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="LearnerCancellations">
+          <DataField>LearnerCancellations</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="LearnerCancellationRate">
+          <DataField>LearnerCancellationRate</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="Tablix1">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>2.52083in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.11458in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.375in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Location</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Teal</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Learner Cancellations</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox3</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Teal</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox5">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Total Completed Sessions</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox5</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Teal</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox9">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Cancellation Rate</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox9</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Teal</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Location">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Location.Value</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Location</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="LearnerCancellations">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!LearnerCancellations.Value)</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>LearnerCancellations</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="TotalCompletedSessions">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!TotalCompletedSessions.Value)</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>TotalCompletedSessions</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox10">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=SUM(Fields!LearnerCancellations.Value)/SUM(Fields!TotalCompletedSessions.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>0.00%</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox10</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="Details">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!Location.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=SUM(Fields!LearnerCancellations.Value)/SUM(Fields!TotalCompletedSessions.Value)</Value>
+                      <Direction>Descending</Direction>
+                    </SortExpression>
+                  </SortExpressions>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>CancellationData</DataSetName>
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
+            <Top>0.68625in</Top>
+            <Height>0.625in</Height>
+            <Width>5.63542in</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Tablix Name="Tablix2">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>5.63542in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>1.29167in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="Subreport1">
+                          <ReportName>Learner Cancellation Rate by Location SubReport</ReportName>
+                          <Parameters>
+                            <Parameter Name="LocationName">
+                              <Value>=Fields!Location.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Subreport>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="Details2">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!Location.Value</GroupExpression>
+                    </GroupExpressions>
+                    <PageBreak>
+                      <BreakLocation>Between</BreakLocation>
+                    </PageBreak>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Sum(Fields!LearnerCancellations.Value) / Sum(Fields!TotalCompletedSessions.Value)</Value>
+                      <Direction>Descending</Direction>
+                    </SortExpression>
+                  </SortExpressions>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>CancellationData</DataSetName>
+            <Top>1.77083in</Top>
+            <Height>1.29167in</Height>
+            <Width>5.63542in</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>3.16667in</Height>
+        <Style />
+      </Body>
+      <Width>6.5in</Width>
+      <Page>
+        <LeftMargin>1in</LeftMargin>
+        <RightMargin>1in</RightMargin>
+        <TopMargin>1in</TopMargin>
+        <BottomMargin>1in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>4</NumberOfColumns>
+      <NumberOfRows>2</NumberOfRows>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>c89de0bf-b4d4-4178-987d-ffedef8e77ea</rd:ReportID>
+</Report>

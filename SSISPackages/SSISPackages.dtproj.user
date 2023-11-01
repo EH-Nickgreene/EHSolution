@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DataTransformationsUserConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Configurations>
+    <Configuration>
+      <Name>Development</Name>
+      <Options>
+        <AssessmentRuleSuppressionSetting />
+        <UseWinAuth>false</UseWinAuth>
+        <WinAuthUserName />
+        <WinAuthDomain />
+        <Run64BitRuntime>false</Run64BitRuntime>
+        <UserIDs>
+          <ConfigurationSetting>
+            <Id>SQLVM.Report Server</Id>
+            <Name>SQLVM.Report Server</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA0PElia4aKUqeE6SBPtDkRgAAAAAoAAAAUwBRAEwAVgBNAC4AUgBlAHAAbwByAHQAIABTAGUAcgB2AGUAcgAAABBmAAAAAQAAIAAAAPgosnFslASyLTu+7skl+6JhK78fG46OigSjdhyqh+A5AAAAAA6AAAAAAgAAIAAAAGeXD0qJtMeyk/AJJu0xEX50T10x0+7BogrGO6IAxg0/EAAAAJwDpvl4J0gPluE+yOkvt7dAAAAAvpXVvf3HqMUM/E3VrqpiciaHEwcNPv4nmA9jPTrcD3agxN2yatgnsoI18/ZpB6cGgyuxbz/oOD74FNnDUC7kkg==</Value>
+          </ConfigurationSetting>
+        </UserIDs>
+        <UserPasswords>
+          <ConfigurationSetting>
+            <Id>SQLVM.Report Server</Id>
+            <Name>SQLVM.Report Server</Name>
+            <Value xsi:type="xsd:string">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA0PElia4aKUqeE6SBPtDkRgAAAAAoAAAAUwBRAEwAVgBNAC4AUgBlAHAAbwByAHQAIABTAGUAcgB2AGUAcgAAABBmAAAAAQAAIAAAAJ/jyr7RFKjlFVdbXXy6IpGxcBvB/PgNMxIwdjsOMapqAAAAAA6AAAAAAgAAIAAAAHK6ky51qUOhtMUBSyEd981Y+/9A//LLyVVOclM/06S7IAAAAAvGK/BmZJiQKpwj6J0EO2S1XG8xUR8Glf/nEQhtHKEXQAAAAD8U2QqSk+WopT6lX2ZXT2aoCla4c3DHyjlLAY+p/ey9c+NUm/wCwYGGLyQIAEH4H0z1EBORhMUoOanlI1moeDA=</Value>
+          </ConfigurationSetting>
+        </UserPasswords>
+        <OfflineMode>false</OfflineMode>
+        <ProgressReporting>true</ProgressReporting>
+        <ParameterConfigurationSensitiveValues />
+      </Options>
+    </Configuration>
+  </Configurations>
+</DataTransformationsUserConfiguration>
