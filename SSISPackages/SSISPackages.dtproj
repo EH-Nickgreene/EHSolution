@@ -28,11 +28,6 @@
           <FullPath>PayrollImportTest.dtsx</FullPath>
           <References />
         </DtsPackage>
-        <DtsPackage FormatVersion="0">
-          <Name>ReportSenderWeekdayAnalysisByLearnerCountByCenter.dtsx</Name>
-          <FullPath>ReportSenderWeekdayAnalysisByLearnerCountByCenter.dtsx</FullPath>
-          <References />
-        </DtsPackage>
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderABABillingHoursByLocation.dtsx</Name>
           <FullPath>ReportSenderABABillingHoursByLocation.dtsx</FullPath>
@@ -56,6 +51,11 @@
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderNewHIresLast30Days.dtsx</Name>
           <FullPath>ReportSenderNewHIresLast30Days.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="8">
+          <Name>ReportSenderWeekdayAnalysisByLearnerCountByCenter.dtsx</Name>
+          <FullPath>ReportSenderWeekdayAnalysisByLearnerCountByCenter.dtsx</FullPath>
           <References />
         </DtsPackage>
       </DTSPackages>

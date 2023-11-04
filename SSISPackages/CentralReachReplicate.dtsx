@@ -13,8 +13,8 @@
   DTS:ObjectName="Package1"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="64"
-  DTS:VersionGUID="{65114F07-CDE0-4C54-986E-E96A76DCDDF9}">
+  DTS:VersionBuild="67"
+  DTS:VersionGUID="{81481242-CF9E-49D7-8AC9-A39ED21799EC}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -3545,6 +3545,589 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
                   endId="Package\Sequence Container\ClinicalGoal\OLE DB Destination.Inputs[OLE DB Destination Input]"
                   name="OLE DB Source Output"
                   startId="Package\Sequence Container\ClinicalGoal\OLE DB Source.Outputs[OLE DB Source Output]" />
+              </paths>
+            </pipeline>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\ContactCustomField"
+          DTS:CreationName="Microsoft.Pipeline"
+          DTS:Description="Data Flow Task"
+          DTS:DTSID="{5460B4D7-125C-4E1D-8FD0-5448187DA163}"
+          DTS:ExecutableType="Microsoft.Pipeline"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="ContactCustomField"
+          DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <pipeline
+              version="1">
+              <components>
+                <component
+                  refId="Package\Sequence Container\ContactCustomField\OLE DB Destination"
+                  componentClassID="Microsoft.OLEDBDestination"
+                  contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+                  description="OLE DB Destination"
+                  name="OLE DB Destination"
+                  usesDispositions="true"
+                  version="4">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset">[insights].[ContactCustomField]</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the column code page to use when code page information is unavailable from the data source."
+                      name="DefaultCodePage">1252</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Forces the use of the DefaultCodePage property value when describing character data."
+                      name="AlwaysUseDefaultCodePage">false</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">3</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepIdentity">false</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepNulls">false</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                      name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS,ROWS_PER_BATCH = 2000</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                      name="FastLoadMaxInsertCommitSize">10000</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Connections[OleDbConnection]"
+                      connectionManagerID="Package.ConnectionManagers[SQLVM.CentralReachStaging]"
+                      connectionManagerRefId="Package.ConnectionManagers[SQLVM.CentralReachStaging]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <inputs>
+                    <input
+                      refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                      errorOrTruncationOperation="Insert"
+                      errorRowDisposition="FailComponent"
+                      hasSideEffects="true"
+                      name="OLE DB Destination Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[MetaDataFieldId]"
+                          cachedDataType="i4"
+                          cachedName="MetaDataFieldId"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MetaDataFieldId]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[MetaDataFieldId]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[FieldName]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="250"
+                          cachedName="FieldName"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FieldName]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[FieldName]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[FieldValue]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="8000"
+                          cachedName="FieldValue"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FieldValue]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[FieldValue]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[FieldValueLastUpdatedBy]"
+                          cachedDataType="i4"
+                          cachedName="FieldValueLastUpdatedBy"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FieldValueLastUpdatedBy]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[FieldValueLastUpdatedBy]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ContactId]"
+                          cachedDataType="i4"
+                          cachedName="ContactId"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ContactId]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[ContactId]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[MetaDataContactType]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="19"
+                          cachedName="MetaDataContactType"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MetaDataContactType]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[MetaDataContactType]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[MetaDataDeletedByContactId]"
+                          cachedDataType="i4"
+                          cachedName="MetaDataDeletedByContactId"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MetaDataDeletedByContactId]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[MetaDataDeletedByContactId]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[MetaDataDeletedDate]"
+                          cachedDataType="dbTimeStamp"
+                          cachedName="MetaDataDeletedDate"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MetaDataDeletedDate]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[MetaDataDeletedDate]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[MetaDataGroupName]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="250"
+                          cachedName="MetaDataGroupName"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MetaDataGroupName]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[MetaDataGroupName]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[OrganizationId]"
+                          cachedDataType="i4"
+                          cachedName="OrganizationId"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[OrganizationId]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[OrganizationId]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[RowModifiedAt]"
+                          cachedDataType="dbTimeStamp2"
+                          cachedName="RowModifiedAt"
+                          cachedScale="6"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RowModifiedAt]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[RowModifiedAt]" />
+                      </inputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MetaDataFieldId]"
+                          dataType="i4"
+                          name="MetaDataFieldId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FieldName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="250"
+                          name="FieldName" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FieldValue]"
+                          codePage="1252"
+                          dataType="str"
+                          length="8000"
+                          name="FieldValue" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FieldValueLastUpdatedBy]"
+                          dataType="i4"
+                          name="FieldValueLastUpdatedBy" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ContactId]"
+                          dataType="i4"
+                          name="ContactId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MetaDataContactType]"
+                          codePage="1252"
+                          dataType="str"
+                          length="19"
+                          name="MetaDataContactType" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MetaDataDeletedByContactId]"
+                          dataType="i4"
+                          name="MetaDataDeletedByContactId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MetaDataDeletedDate]"
+                          dataType="dbTimeStamp"
+                          name="MetaDataDeletedDate" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MetaDataGroupName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="250"
+                          name="MetaDataGroupName" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[OrganizationId]"
+                          dataType="i4"
+                          name="OrganizationId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RowModifiedAt]"
+                          dataType="dbTimeStamp2"
+                          name="RowModifiedAt"
+                          scale="6" />
+                      </externalMetadataColumns>
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Outputs[OLE DB Destination Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="OLE DB Destination Error Output"
+                      synchronousInputId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Sequence Container\ContactCustomField\OLE DB Source"
+                  componentClassID="Microsoft.OLEDBSource"
+                  contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+                  description="OLE DB Source"
+                  name="OLE DB Source"
+                  usesDispositions="true"
+                  version="7">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset">[insights].[ContactCustomField]</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">SELECT 
+	[MetaDataFieldId], 
+	[FieldName], 
+	[FieldValue], 
+	[FieldValueLastUpdatedBy], 
+	[ContactId], 
+	[MetaDataContactType], 
+	[MetaDataDeletedByContactId], 
+	[MetaDataDeletedDate], 
+	[MetaDataGroupName], 
+	[OrganizationId], 
+	[RowModifiedAt]
+FROM 
+[insights].[ContactCustomField]
+WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
+                    <property
+                      dataType="System.String"
+                      description="The variable that contains the SQL command to be executed."
+                      name="SqlCommandVariable"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the column code page to use when code page information is unavailable from the data source."
+                      name="DefaultCodePage">1252</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Forces the use of the DefaultCodePage property value when describing character data."
+                      name="AlwaysUseDefaultCodePage">false</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">2</property>
+                    <property
+                      dataType="System.String"
+                      description="The mappings between the parameters in the SQL command and variables."
+                      name="ParameterMapping">"Parameter0:Input",{FEF3E0F9-6C60-438A-A0E4-9CBF6561F75C};</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Connections[OleDbConnection]"
+                      connectionManagerID="Package.ConnectionManagers[insights1customers.centralreach.com.insights.org_1548170]"
+                      connectionManagerRefId="Package.ConnectionManagers[insights1customers.centralreach.com.insights.org_1548170]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <outputs>
+                    <output
+                      refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output]"
+                      name="OLE DB Source Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[MetaDataFieldId]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[MetaDataFieldId]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[MetaDataFieldId]"
+                          name="MetaDataFieldId"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[FieldName]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[FieldName]"
+                          length="250"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[FieldName]"
+                          name="FieldName"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[FieldValue]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[FieldValue]"
+                          length="8000"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[FieldValue]"
+                          name="FieldValue"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[FieldValueLastUpdatedBy]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[FieldValueLastUpdatedBy]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[FieldValueLastUpdatedBy]"
+                          name="FieldValueLastUpdatedBy"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[ContactId]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ContactId]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[ContactId]"
+                          name="ContactId"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[MetaDataContactType]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[MetaDataContactType]"
+                          length="19"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[MetaDataContactType]"
+                          name="MetaDataContactType"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[MetaDataDeletedByContactId]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[MetaDataDeletedByContactId]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[MetaDataDeletedByContactId]"
+                          name="MetaDataDeletedByContactId"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[MetaDataDeletedDate]"
+                          dataType="dbTimeStamp"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[MetaDataDeletedDate]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[MetaDataDeletedDate]"
+                          name="MetaDataDeletedDate"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[MetaDataGroupName]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[MetaDataGroupName]"
+                          length="250"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[MetaDataGroupName]"
+                          name="MetaDataGroupName"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[OrganizationId]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[OrganizationId]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[OrganizationId]"
+                          name="OrganizationId"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[RowModifiedAt]"
+                          dataType="dbTimeStamp2"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[RowModifiedAt]"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].Columns[RowModifiedAt]"
+                          name="RowModifiedAt"
+                          scale="6"
+                          truncationRowDisposition="FailComponent" />
+                      </outputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[MetaDataFieldId]"
+                          dataType="i4"
+                          name="MetaDataFieldId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[FieldName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="250"
+                          name="FieldName" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[FieldValue]"
+                          codePage="1252"
+                          dataType="str"
+                          length="8000"
+                          name="FieldValue" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[FieldValueLastUpdatedBy]"
+                          dataType="i4"
+                          name="FieldValueLastUpdatedBy" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ContactId]"
+                          dataType="i4"
+                          name="ContactId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[MetaDataContactType]"
+                          codePage="1252"
+                          dataType="str"
+                          length="19"
+                          name="MetaDataContactType" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[MetaDataDeletedByContactId]"
+                          dataType="i4"
+                          name="MetaDataDeletedByContactId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[MetaDataDeletedDate]"
+                          dataType="dbTimeStamp"
+                          name="MetaDataDeletedDate" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[MetaDataGroupName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="250"
+                          name="MetaDataGroupName" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[OrganizationId]"
+                          dataType="i4"
+                          name="OrganizationId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[RowModifiedAt]"
+                          dataType="dbTimeStamp2"
+                          name="RowModifiedAt"
+                          scale="6" />
+                      </externalMetadataColumns>
+                    </output>
+                    <output
+                      refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output]"
+                      isErrorOut="true"
+                      name="OLE DB Source Error Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[MetaDataFieldId]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[MetaDataFieldId]"
+                          name="MetaDataFieldId" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[FieldName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="250"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[FieldName]"
+                          name="FieldName" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[FieldValue]"
+                          codePage="1252"
+                          dataType="str"
+                          length="8000"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[FieldValue]"
+                          name="FieldValue" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[FieldValueLastUpdatedBy]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[FieldValueLastUpdatedBy]"
+                          name="FieldValueLastUpdatedBy" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ContactId]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ContactId]"
+                          name="ContactId" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[MetaDataContactType]"
+                          codePage="1252"
+                          dataType="str"
+                          length="19"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[MetaDataContactType]"
+                          name="MetaDataContactType" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[MetaDataDeletedByContactId]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[MetaDataDeletedByContactId]"
+                          name="MetaDataDeletedByContactId" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[MetaDataDeletedDate]"
+                          dataType="dbTimeStamp"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[MetaDataDeletedDate]"
+                          name="MetaDataDeletedDate" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[MetaDataGroupName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="250"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[MetaDataGroupName]"
+                          name="MetaDataGroupName" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[OrganizationId]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[OrganizationId]"
+                          name="OrganizationId" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[RowModifiedAt]"
+                          dataType="dbTimeStamp2"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[RowModifiedAt]"
+                          name="RowModifiedAt"
+                          scale="6" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+              </components>
+              <paths>
+                <path
+                  refId="Package\Sequence Container\ContactCustomField.Paths[OLE DB Source Output]"
+                  endId="Package\Sequence Container\ContactCustomField\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                  name="OLE DB Source Output"
+                  startId="Package\Sequence Container\ContactCustomField\OLE DB Source.Outputs[OLE DB Source Output]" />
               </paths>
             </pipeline>
           </DTS:ObjectData>
@@ -16491,7 +17074,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Clients Data"
-          DTS:ThreadHint="0">
+          DTS:ThreadHint="3">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -16507,12 +17090,28 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ClinicalGoal Data"
-          DTS:ThreadHint="10">
+          DTS:ThreadHint="4">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
               SQLTask:Connection="{7D13508A-2F85-48EE-9F9F-95F7C59A8E33}"
               SQLTask:SqlStatementSource="EXEC usp_CR_Refresh_ClinicalGoal" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\Update ContactCustomField Data"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{ef49bb6f-1b3c-46e5-9bb0-95adeb91bc8e}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update ContactCustomField Data"
+          DTS:ThreadHint="11">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{7D13508A-2F85-48EE-9F9F-95F7C59A8E33}"
+              SQLTask:SqlStatementSource="exec [usp_CR_Refresh_ContactCustomField]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
           </DTS:ObjectData>
         </DTS:Executable>
         <DTS:Executable
@@ -16523,7 +17122,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ContactEntityLabel Data"
-          DTS:ThreadHint="6">
+          DTS:ThreadHint="0">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -16539,7 +17138,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ContactLabel Data"
-          DTS:ThreadHint="7">
+          DTS:ThreadHint="1">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -16555,7 +17154,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Employee Data"
-          DTS:ThreadHint="5">
+          DTS:ThreadHint="2">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -16571,7 +17170,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update PayorAuthorization Data"
-          DTS:ThreadHint="1">
+          DTS:ThreadHint="5">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -16587,7 +17186,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update PayorPlan Data"
-          DTS:ThreadHint="2">
+          DTS:ThreadHint="6">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -16603,7 +17202,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Provider Data"
-          DTS:ThreadHint="3">
+          DTS:ThreadHint="7">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -16619,7 +17218,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Scheduling Data"
-          DTS:ThreadHint="4">
+          DTS:ThreadHint="8">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -16635,7 +17234,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ServiceCode Data"
-          DTS:ThreadHint="8">
+          DTS:ThreadHint="10">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -16685,6 +17284,14 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 10"
           DTS:To="Package\Sequence Container\Update ClinicalGoal Data" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Sequence Container.PrecedenceConstraints[Constraint 11]"
+          DTS:CreationName=""
+          DTS:DTSID="{F641B54A-1420-4AE2-9A88-636A3563323C}"
+          DTS:From="Package\Sequence Container\ContactCustomField"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 11"
+          DTS:To="Package\Sequence Container\Update ContactCustomField Data" />
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Sequence Container.PrecedenceConstraints[Constraint 2]"
           DTS:CreationName=""
@@ -16764,7 +17371,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{7D13508A-2F85-48EE-9F9F-95F7C59A8E33}"
-          SQLTask:SqlStatementSource="TRUNCATE TABLE [CentralReachStaging].[insights].[Client]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Provider]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ServiceCode]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[TimeBilling]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ContactEntityLabel]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ContactLabel]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[PayorAuthorization]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Employee] &#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Scheduling]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[PayorPlan]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ClinicalGoal]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:SqlStatementSource="TRUNCATE TABLE [CentralReachStaging].[insights].[Client]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Provider]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ServiceCode]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[TimeBilling]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ContactEntityLabel]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ContactLabel]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[PayorAuthorization]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Employee] &#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Scheduling]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[PayorPlan]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ClinicalGoal]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ContactCustomField]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
   </DTS:Executables>
@@ -16794,6 +17401,10 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           Size="113,42"
           Id="Package\Sequence Container\Clients"
           TopLeft="82,18" />
+        <NodeLayout
+          Size="138,42"
+          Id="Package\Sequence Container\ClinicalGoal"
+          TopLeft="60,333" />
         <NodeLayout
           Size="171,42"
           Id="Package\Sequence Container\ContactEntityLabel"
@@ -16834,6 +17445,10 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           Size="177,42"
           Id="Package\Sequence Container\Update Clients Data"
           TopLeft="45,86" />
+        <NodeLayout
+          Size="203,42"
+          Id="Package\Sequence Container\Update ClinicalGoal Data"
+          TopLeft="29,407" />
         <NodeLayout
           Size="236,42"
           Id="Package\Sequence Container\Update ContactEntityLabel Data"
@@ -16906,6 +17521,28 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
                   Capacity="5">
                   <mssgle:LineSegment
                     End="0,20.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Sequence Container.PrecedenceConstraints[Constraint 10]"
+          TopLeft="129.75,375">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,32"
+              Start="0,0"
+              End="0,24.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,24.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -17115,16 +17752,16 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <NodeLayout
-          Size="138,42"
-          Id="Package\Sequence Container\ClinicalGoal"
-          TopLeft="60,333" />
+          Size="179,42"
+          Id="Package\Sequence Container\ContactCustomField"
+          TopLeft="287,329" />
         <NodeLayout
-          Size="203,42"
-          Id="Package\Sequence Container\Update ClinicalGoal Data"
-          TopLeft="29,407" />
+          Size="243,42"
+          Id="Package\Sequence Container\Update ContactCustomField Data"
+          TopLeft="255,403" />
         <EdgeLayout
-          Id="Package\Sequence Container.PrecedenceConstraints[Constraint 10]"
-          TopLeft="129.75,375">
+          Id="Package\Sequence Container.PrecedenceConstraints[Constraint 11]"
+          TopLeft="376.5,371">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
@@ -17254,6 +17891,77 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
     </Properties>
   </PipelineComponentMetadata>
   <TaskHost
+    design-time-name="Package\Sequence Container\ClinicalGoal">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="177,42"
+          Id="Package\Sequence Container\ClinicalGoal\OLE DB Destination"
+          TopLeft="168,381" />
+        <NodeLayout
+          Size="157,42"
+          Id="Package\Sequence Container\ClinicalGoal\OLE DB Source"
+          TopLeft="191,219" />
+        <EdgeLayout
+          Id="Package\Sequence Container\ClinicalGoal.Paths[OLE DB Source Output]"
+          TopLeft="269.5,261">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-13,120"
+              Start="0,0"
+              End="-13,112.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,56" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,56"
+                    Point2="0,60"
+                    Point3="-4,60" />
+                  <mssgle:LineSegment
+                    End="-9,60" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-9,60"
+                    Point2="-13,60"
+                    Point3="-13,64" />
+                  <mssgle:LineSegment
+                    End="-13,112.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\ClinicalGoal\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\ClinicalGoal\OLE DB Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
     design-time-name="Package\Sequence Container\ContactEntityLabel">
     <LayoutInfo>
       <GraphLayout
@@ -17318,7 +18026,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
     design-time-name="Package\Sequence Container\ContactLabel">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="177,42"
           Id="Package\Sequence Container\ContactLabel\OLE DB Destination"
@@ -17346,7 +18054,9 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -17837,44 +18547,32 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
     </Properties>
   </PipelineComponentMetadata>
   <TaskHost
-    design-time-name="Package\Sequence Container\ClinicalGoal">
+    design-time-name="Package\Sequence Container\ContactCustomField">
     <LayoutInfo>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="157,42"
-          Id="Package\Sequence Container\ClinicalGoal\OLE DB Source"
-          TopLeft="191,219" />
+          Id="Package\Sequence Container\ContactCustomField\OLE DB Source"
+          TopLeft="215,194" />
         <NodeLayout
           Size="177,42"
-          Id="Package\Sequence Container\ClinicalGoal\OLE DB Destination"
-          TopLeft="168,381" />
+          Id="Package\Sequence Container\ContactCustomField\OLE DB Destination"
+          TopLeft="204,301" />
         <EdgeLayout
-          Id="Package\Sequence Container\ClinicalGoal.Paths[OLE DB Source Output]"
-          TopLeft="269.5,261">
+          Id="Package\Sequence Container\ContactCustomField.Paths[OLE DB Source Output]"
+          TopLeft="293,236">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-13,120"
+              EndConnector="0,65"
               Start="0,0"
-              End="-13,112.5">
+              End="0,57.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,56" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,56"
-                    Point2="0,60"
-                    Point3="-4,60" />
-                  <mssgle:LineSegment
-                    End="-9,60" />
-                  <mssgle:CubicBezierSegment
-                    Point1="-9,60"
-                    Point2="-13,60"
-                    Point3="-13,64" />
-                  <mssgle:LineSegment
-                    End="-13,112.5" />
+                    End="0,57.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -17887,15 +18585,20 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
     </LayoutInfo>
   </TaskHost>
   <PipelineComponentMetadata
-    design-time-name="Package\Sequence Container\ClinicalGoal\OLE DB Source">
+    design-time-name="Package\Sequence Container\ContactCustomField\OLE DB Source">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
       </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">View</Value>
+      </Property>
     </Properties>
   </PipelineComponentMetadata>
   <PipelineComponentMetadata
-    design-time-name="Package\Sequence Container\ClinicalGoal\OLE DB Destination">
+    design-time-name="Package\Sequence Container\ContactCustomField\OLE DB Destination">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>

@@ -102,7 +102,6 @@ GROUP BY tb.ServiceCode</CommandText>
           </QueryParameter>
         </QueryParameters>
         <CommandText>
-
 DECLARE @DaysInMonth INT
 
 		SET @DaysInMonth=Datediff(dd,@StartDate,@EndDate)+1
@@ -128,7 +127,8 @@ DECLARE @DaysInMonth INT
 		INSERT INTO #serviceCodes
 		SELECT Distinct ServiceCode
 		FROM Insights.serviceCode
-		WHERE ServiceCode IN ('97151','97152','97153','97154','97155','97156','97157','97158')
+		--WHERE ServiceCode IN ('97151','97152','97153','97154','97155','97156','97157','97158')
+		WHERE ServiceCode IN ('97153','97154')
 		and ServiceCodeActiveStatus='Active'
 
 		
@@ -668,7 +668,8 @@ order by 3</CommandText>
             <Value>=Parameters!EndDate.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>DECLARE @BranchNameGroup varchar(150),@LocationBillingHours DECIMAL(10,2)
+        <CommandText>
+DECLARE @BranchNameGroup varchar(150),@LocationBillingHours DECIMAL(10,2)
 
 SELECT 
 	@BranchNameGroup=bd.BranchNameGroup
@@ -686,22 +687,23 @@ and e.PayrollCompanyCode='K86'
 AND  employeePayrollReference=@EmployeeNumber
 
 
-DECLARE @pthours decimal(10,2),@businessDays INT
+DECLARE @businessDays INT
+--DECLARE @pthours decimal(10,2),@businessDays INT
 
-	SELECT @pthours =		SUM(DurationHours) 
+--	SELECT @pthours =		SUM(DurationHours) 
 
-	FROM V_TimeBilling tb
-		LEFT JOIN insights.employee ei on ei.employeeid=tb.providerID
-		LEFT JOIN HumanResources.dbo.employee ee on ee.EmployeeNumber=ei.EmployeePayrollReference
-		LEFT JOIN HumanResources.dbo.JobCodes jc on jc.jobCode=ee.JobTitleCode
-		LEFT JOIN reference.dbo.BranchData bd on bd.BranchCode=tb.BranchCode
-	WHERE
-		ee.PayrollCompanyCode='K86'
-		AND tb.ServiceCode IN ('97151','97152','97153','97154','97155','97156','97157','97158','97158')
-		AND ServiceDate&gt;=@StartDate
-		and ServiceDate&lt;dateadd(dd,1,@EndDate)
-		and bd.BranchNameGroup=@BranchNameGroup
-		and ee.WorkerCategoryDescription='PartTime'
+--	FROM V_TimeBilling tb
+--		LEFT JOIN insights.employee ei on ei.employeeid=tb.providerID
+--		LEFT JOIN HumanResources.dbo.employee ee on ee.EmployeeNumber=ei.EmployeePayrollReference
+--		LEFT JOIN HumanResources.dbo.JobCodes jc on jc.jobCode=ee.JobTitleCode
+--		LEFT JOIN reference.dbo.BranchData bd on bd.BranchCode=tb.BranchCode
+--	WHERE
+--		ee.PayrollCompanyCode='K86'
+--		AND tb.ServiceCode IN ('97151','97152','97153','97154','97155','97156','97157','97158','97158')
+--		AND ServiceDate&gt;=@StartDate
+--		and ServiceDate&lt;dateadd(dd,1,@EndDate)
+--		and bd.BranchNameGroup=@BranchNameGroup
+--		and ee.WorkerCategoryDescription='PartTime'
 
 
 	SELECT
@@ -713,18 +715,20 @@ DECLARE @pthours decimal(10,2),@businessDays INT
 SELECT 
 	bd.BranchNameGroup,
 	e.WorkerCategoryDescription,
+	@businessDays BusinessDaysInPeriod,
 	COUNT(*) EmployeeCount,
 	SUM(
 		CASE 
 			WHEN ISNULL(e.ScheduledHours,0)&gt;0 THEN e.ScheduledHours
+			WHEN e.WorkerCategoryDescription='PartTime' THEN 15
 			WHEN ISNULL(e.ScheduledHours,0)=0 THEN wcth.ScheduledHours
 			ELSE 0
 		END 
-	)scheduledHoursCalc,
-	CASE 
-		WHEN e.WorkerCategoryDescription='PartTime' THEN 	(@pthours/@businessDays)*5
-		ELSE 0
-	END as PartTimeHourPerWeek
+	)scheduledHoursCalc--,
+	--CASE 
+	--	WHEN e.WorkerCategoryDescription='PartTime' THEN 	(@pthours/@businessDays)*5
+	--	ELSE 0
+	--END as PartTimeHourPerWeek
 	--SELECT e.* 
 FROM HumanResources.dbo.employee e
 	LEFT JOIN HumanResources.dbo.jobcodes jc on jc.jobcode=e.jobTitleCode
@@ -749,6 +753,10 @@ GROUP By
           <DataField>WorkerCategoryDescription</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="BusinessDaysInPeriod">
+          <DataField>BusinessDaysInPeriod</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
         <Field Name="EmployeeCount">
           <DataField>EmployeeCount</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
@@ -757,8 +765,102 @@ GROUP By
           <DataField>scheduledHoursCalc</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
-        <Field Name="PartTimeHourPerWeek">
-          <DataField>PartTimeHourPerWeek</DataField>
+      </Fields>
+    </DataSet>
+    <DataSet Name="LearnerHoursByWeek">
+      <Query>
+        <DataSourceName>CentralReach</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@StartDate">
+            <Value>=Parameters!StartDate.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@EndDate">
+            <Value>=Parameters!EndDate.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@BCBAName">
+            <Value>=Parameters!BCBAName.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>DECLARE @DaysInMonth INT
+
+		SET @DaysInMonth=Datediff(dd,@StartDate,@EndDate)+1
+
+
+		IF OBJECT_ID('tempdb..#Dates') IS NOT NULL DROP TABLE #Dates
+				SELECT 
+					MIN(Date) PeriodStartDate,
+					MAX(Date) PeriodEndDate,
+					MIN(CONVERT(varchar(4),Year)+' Q'+CONVERT(varchar(4),QuarterOfYear)) QuarterOfYear,
+					SUM(CASE WHEN IsEmpyreanHoliday=0 and IsWeekDay=1 THEN 1 ELSE 0 END) BusinessDays,
+					ROW_NUMBER() OVER(ORDER BY MIN(Date) desc) as WeeksBack
+				INTO #Dates
+				FROM Reference.dbo.dimdate
+				WHERE date&gt;=@StartDate
+				and Date&lt;dateadd(dd,1,@EndDate)
+
+
+		IF OBJECT_ID('tempdb..#weeks') IS NOT NULL DROP TABLE #weeks
+		SELECT Year,WeekOfyear,Min(Date) WeekStartdate,Max(Date) WeekEndDate
+		INTO #weeks
+		FROM Reference.dbo.dimdate
+		WHERE date&gt;=@StartDate
+		and date&lt;dateadd(dd,1,@EndDate)
+		GROUP BY Year,WeekOfyear		
+
+
+
+		IF OBJECT_ID('tempdb..#serviceCodes') IS NOT NULL DROP TABLE #serviceCodes
+		Create table #serviceCodes(serviceCode varchar(100))
+		INSERT INTO #serviceCodes
+		SELECT Distinct ServiceCode
+		FROM Insights.serviceCode
+		WHERE ServiceCode IN ('97153','97154')
+		and ServiceCodeActiveStatus='Active'
+
+		
+
+	
+
+		IF OBJECT_ID('tempdb..#billingAgg') IS NOT NULL DROP TABLE #billingAgg
+		SELECT 
+			ClientId,
+			ClientFullname,
+			wk.WeekStartDate,
+			SUM(DurationHours) BillingHours
+		INTO #billingAgg
+		FROM v_TimeBilling tb
+		INNER JOIN #weeks wk on tb.ServiceDate&gt;=wk.WeekStartdate and tb.ServiceDate&lt;=wk.WeekEndDate
+		INNER JOIN #serviceCodes svc on tb.serviceCode=svc.serviceCode
+		LEFT JOIN reference.dbo.BranchData bd on bd.BranchCode=tb.BranchCode
+		LEFT JOIN reference.dbo.BranchData bdp on bdp.BranchCode=bd.ParentBranchCode
+		WHERE serviceDate&gt;=@StartDate
+		and serviceDate&lt;dateadd(dd,1,@EndDate)
+		And [VoidDeleted]=''
+		and BCBA=@BCBAName
+		GROUP BY 
+			wk.WeekStartDate,
+			ClientFullname,
+			ClientId
+			
+
+			SELECT * FROM #billingAgg
+</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="ClientId">
+          <DataField>ClientId</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="ClientFullname">
+          <DataField>ClientFullname</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="WeekStartDate">
+          <DataField>WeekStartDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="BillingHours">
+          <DataField>BillingHours</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
       </Fields>
@@ -1140,13 +1242,13 @@ GROUP By
                   <Width>0.85417in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.57292in</Width>
+                  <Width>0.86458in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.71875in</Width>
+                  <Width>1.07292in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.09375in</Width>
+                  <Width>1.54167in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1162,7 +1264,7 @@ GROUP By
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!BCBAName.Value &amp; " caseload For month"</Value>
+                                  <Value>=Parameters!BCBAName.Value &amp; " Caseload for Month"</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -1190,6 +1292,7 @@ GROUP By
                           </Style>
                         </Textbox>
                         <ColSpan>4</ColSpan>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell />
@@ -1644,7 +1747,7 @@ GROUP By
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>="Expected Caseload for Month: " &amp; Sum(Fields!ExpectedMonthlyCaseloadHours.Value, "BCBAName")</Value>
+                                  <Value>="Expected Caseload for Period: " &amp; Sum(Fields!ExpectedMonthlyCaseloadHours.Value, "BCBAName")</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -1716,7 +1819,7 @@ GROUP By
             <DataSetName>BCBACaseload</DataSetName>
             <Top>2.99875in</Top>
             <Height>1.39583in</Height>
-            <Width>3.23958in</Width>
+            <Width>4.33334in</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -1735,9 +1838,6 @@ GROUP By
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.88542in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>0.82292in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.82292in</Width>
@@ -1762,7 +1862,7 @@ GROUP By
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Billed vs Accepted Hours by Learner</Value>
+                                  <Value>Impact vs Accepted Hours by Learner</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -1789,10 +1889,9 @@ GROUP By
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <ColSpan>7</ColSpan>
+                        <ColSpan>6</ColSpan>
                       </CellContents>
                     </TablixCell>
-                    <TablixCell />
                     <TablixCell />
                     <TablixCell />
                     <TablixCell />
@@ -1886,7 +1985,7 @@ GROUP By
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>97153 Billing Hours</Value>
+                                  <Value>97153 Impact Hours</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -1901,44 +2000,6 @@ GROUP By
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox21</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <BackgroundColor>Teal</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox23">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>Total Impact Hours</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                    <Color>White</Color>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox23</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -2172,40 +2233,6 @@ GROUP By
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="BilingHours">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!BilingHours.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
-                                    <Format>#,0.0;(#,0.0)</Format>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>BilingHours</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
                         <Textbox Name="AvgDailyHours">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -2307,11 +2334,215 @@ GROUP By
                     </TablixCell>
                   </TablixCells>
                 </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox60">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Total</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox60</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="AuthHours_531">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!AuthHours_53.Value)</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>n</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>AuthHours_531</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="BillingHours_531">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!BillingHours_53.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>n</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>BillingHours_531</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="AvgDailyHours1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!AvgDailyHours.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>n</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>AvgDailyHours1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox66">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>n</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox66</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox68">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=SUM(Fields!AuthHours_53.Value)-SUM(Fields!BillingHours_53.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>n</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox68</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
               </TablixRows>
             </TablixBody>
             <TablixColumnHierarchy>
               <TablixMembers>
-                <TablixMember />
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
@@ -2336,12 +2567,15 @@ GROUP By
                     </SortExpression>
                   </SortExpressions>
                 </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>LearnerHours</DataSetName>
             <Top>4.64458in</Top>
-            <Height>0.92708in</Height>
-            <Width>7.1875in</Width>
+            <Height>1.17708in</Height>
+            <Width>6.36459in</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -2349,35 +2583,25 @@ GROUP By
               </Border>
             </Style>
           </Tablix>
-          <Textbox Name="Textbox42">
+          <Textbox Name="Textbox92">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>need to incorporate admin hours
-need to come up with universal avg hrs for PT employees</Value>
-                    <Style />
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value />
-                    <Style />
+                    <Value>="BCBA Analysis Report - " &amp; Parameters!BCBAName.Value &amp; "(" &amp; First(Fields!ABACategory.Value, "BCBAName") &amp; ")"</Value>
+                    <Style>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
                   </TextRun>
                 </TextRuns>
                 <Style />
               </Paragraph>
             </Paragraphs>
-            <rd:DefaultName>Textbox42</rd:DefaultName>
-            <Top>2.99875in</Top>
-            <Left>3.80083in</Left>
-            <Height>0.66667in</Height>
-            <Width>3.87625in</Width>
+            <rd:DefaultName>Textbox92</rd:DefaultName>
+            <Height>0.25in</Height>
+            <Width>8.03125in</Width>
             <ZIndex>3</ZIndex>
             <Style>
               <Border>
@@ -2389,7 +2613,69 @@ need to come up with universal avg hrs for PT employees</Value>
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
-          <Tablix Name="Tablix4">
+          <Textbox Name="Textbox93">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Date Range: " &amp; FORMAT(Parameters!StartDate.Value,"MM/dd/yyyy") &amp; " - " &amp; FORMAT(Parameters!EndDate.Value,"MM/dd/yyyy")</Value>
+                    <Style>
+                      <FontSize>9pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox92</rd:DefaultName>
+            <Top>0.27778in</Top>
+            <Height>0.25in</Height>
+            <Width>8.03125in</Width>
+            <ZIndex>4</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox94">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Learning Center: " &amp; First(Fields!BranchNameGroup.Value, "BCBAName")</Value>
+                    <Style>
+                      <FontSize>9pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox92</rd:DefaultName>
+            <Top>0.55556in</Top>
+            <Height>0.25in</Height>
+            <Width>8.03125in</Width>
+            <ZIndex>5</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Tablix Name="Tablix5">
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
@@ -2414,7 +2700,7 @@ need to come up with universal avg hrs for PT employees</Value>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox52">
+                        <Textbox Name="Textbox53">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -2451,7 +2737,7 @@ need to come up with universal avg hrs for PT employees</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox54">
+                        <Textbox Name="Textbox55">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -2488,7 +2774,7 @@ need to come up with universal avg hrs for PT employees</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox58">
+                        <Textbox Name="Textbox59">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -2526,7 +2812,7 @@ need to come up with universal avg hrs for PT employees</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox60">
+                        <Textbox Name="Textbox61">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -2580,7 +2866,7 @@ need to come up with universal avg hrs for PT employees</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox66">
+                        <Textbox Name="Textbox67">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -2623,7 +2909,7 @@ need to come up with universal avg hrs for PT employees</Value>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="BranchNameGroup">
+                        <Textbox Name="BranchNameGroup2">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -2655,7 +2941,7 @@ need to come up with universal avg hrs for PT employees</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="WorkerCategoryDescription">
+                        <Textbox Name="WorkerCategoryDescription2">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -2687,7 +2973,7 @@ need to come up with universal avg hrs for PT employees</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="EmployeeCount">
+                        <Textbox Name="EmployeeCount2">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -2720,14 +3006,14 @@ need to come up with universal avg hrs for PT employees</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="scheduledHoursCalc">
+                        <Textbox Name="scheduledHoursCalc3">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!WorkerCategoryDescription.Value="PartTime",Fields!PartTimeHourPerWeek.Value,Fields!scheduledHoursCalc.Value)</Value>
+                                  <Value>=Fields!scheduledHoursCalc.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2754,14 +3040,14 @@ need to come up with universal avg hrs for PT employees</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="scheduledHoursCalc2">
+                        <Textbox Name="scheduledHoursCalc4">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=((IIF(Fields!WorkerCategoryDescription.Value = "PartTime", Fields!PartTimeHourPerWeek.Value, Fields!scheduledHoursCalc.Value))/5)*Sum(Fields!BusinessDaysInMonth.Value, "BCBAName")</Value>
+                                  <Value>=(Fields!scheduledHoursCalc.Value / 5) * Sum(Fields!BusinessDaysInMonth.Value, "BCBAName")</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2793,7 +3079,7 @@ need to come up with universal avg hrs for PT employees</Value>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox62">
+                        <Textbox Name="Textbox64">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -2827,7 +3113,7 @@ need to come up with universal avg hrs for PT employees</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox63">
+                        <Textbox Name="Textbox69">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -2861,7 +3147,7 @@ need to come up with universal avg hrs for PT employees</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="EmployeeCount1">
+                        <Textbox Name="EmployeeCount3">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -2895,14 +3181,14 @@ need to come up with universal avg hrs for PT employees</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox65">
+                        <Textbox Name="Textbox75">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=SUM(Fields!scheduledHoursCalc.Value)+SUM(Fields!PartTimeHourPerWeek.Value)</Value>
+                                  <Value>=Sum(Fields!scheduledHoursCalc.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2930,14 +3216,14 @@ need to come up with universal avg hrs for PT employees</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox68">
+                        <Textbox Name="Textbox77">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=((SUM(Fields!scheduledHoursCalc.Value)+SUM(Fields!PartTimeHourPerWeek.Value))/5)*20</Value>
+                                  <Value>=(Sum(Fields!scheduledHoursCalc.Value) / 5) * 20</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2970,7 +3256,7 @@ need to come up with universal avg hrs for PT employees</Value>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox70">
+                        <Textbox Name="Textbox78">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -3003,7 +3289,7 @@ need to come up with universal avg hrs for PT employees</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox71">
+                        <Textbox Name="Textbox79">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -3036,7 +3322,7 @@ need to come up with universal avg hrs for PT employees</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox72">
+                        <Textbox Name="Textbox82">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -3069,7 +3355,7 @@ need to come up with universal avg hrs for PT employees</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox73">
+                        <Textbox Name="Textbox83">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -3102,7 +3388,7 @@ need to come up with universal avg hrs for PT employees</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox74">
+                        <Textbox Name="Textbox84">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -3140,7 +3426,7 @@ need to come up with universal avg hrs for PT employees</Value>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox85">
+                        <Textbox Name="Textbox86">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -3180,7 +3466,7 @@ need to come up with universal avg hrs for PT employees</Value>
                     <TablixCell />
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox76">
+                        <Textbox Name="Textbox87">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -3220,7 +3506,7 @@ need to come up with universal avg hrs for PT employees</Value>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox80">
+                        <Textbox Name="Textbox88">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -3260,14 +3546,14 @@ need to come up with universal avg hrs for PT employees</Value>
                     <TablixCell />
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox81">
+                        <Textbox Name="Textbox89">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=((SUM(Fields!scheduledHoursCalc.Value)+SUM(Fields!PartTimeHourPerWeek.Value))/5)*20</Value>
+                                  <Value>=(Sum(Fields!scheduledHoursCalc.Value) / 5) * 20</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -3312,7 +3598,7 @@ need to come up with universal avg hrs for PT employees</Value>
                   <KeepWithGroup>After</KeepWithGroup>
                 </TablixMember>
                 <TablixMember>
-                  <Group Name="Details3" />
+                  <Group Name="Details4" />
                 </TablixMember>
                 <TablixMember>
                   <KeepWithGroup>Before</KeepWithGroup>
@@ -3329,24 +3615,455 @@ need to come up with universal avg hrs for PT employees</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>StaffCapacity</DataSetName>
-            <Top>5.68625in</Top>
+            <Top>7.03in</Top>
             <Height>1.6875in</Height>
             <Width>6.72917in</Width>
-            <ZIndex>4</ZIndex>
+            <ZIndex>6</ZIndex>
+            <Visibility>
+              <Hidden>true</Hidden>
+            </Visibility>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Tablix>
-          <Textbox Name="Textbox92">
+          <Tablix Name="Tablix6">
+            <TablixCorner>
+              <TablixCornerRows>
+                <TablixCornerRow>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="Textbox50">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Client Fullname</Value>
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox50</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Teal</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                </TablixCornerRow>
+              </TablixCornerRows>
+            </TablixCorner>
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>0.83333in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="BillingHours2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!BillingHours.Value)</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>n</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>BillingHours2</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="BillingHours4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!BillingHours.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>n</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>BillingHours4</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="BillingHours3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!BillingHours.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>n</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>BillingHours3</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox57">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!BillingHours.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>n</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox57</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="WeekStartDate">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!WeekStartDate.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!WeekStartDate.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <TablixHeader>
+                    <Size>0.25in</Size>
+                    <CellContents>
+                      <Textbox Name="WeekStartDate">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>=Fields!WeekStartDate.Value</Value>
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Format>M/d/yyyy</Format>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>WeekStartDate</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Teal</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>0.25in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox54">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Total</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox54</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Teal</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="ClientFullname">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!ClientFullname.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Sum(Fields!BillingHours.Value)</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <TablixHeader>
+                    <Size>1.60417in</Size>
+                    <CellContents>
+                      <Textbox Name="ClientFullname">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>=Fields!ClientFullname.Value</Value>
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>ClientFullname</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>1.60417in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox51">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Total</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox51</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>LearnerHoursByWeek</DataSetName>
+            <Top>6.23833in</Top>
+            <Height>0.75in</Height>
+            <Width>3.4375in</Width>
+            <ZIndex>7</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Textbox Name="Textbox95">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>="BCBA Analysis Report - " &amp; Parameters!BCBAName.Value &amp; "(" &amp; First(Fields!ABACategory.Value, "BCBAName") &amp; ")"</Value>
+                    <Value>="Business Days in Period: " &amp; Sum(Fields!BusinessDaysInMonth.Value, "BCBAName")</Value>
+                    <Style>
+                      <FontSize>9pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox92</rd:DefaultName>
+            <Top>0.83334in</Top>
+            <Height>0.25in</Height>
+            <Width>8.03125in</Width>
+            <ZIndex>8</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox73">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Impact Hours by Week By Learner - includes 97153 &amp; 97154</Value>
                     <Style>
                       <FontWeight>Bold</FontWeight>
                     </Style>
@@ -3355,72 +4072,11 @@ need to come up with universal avg hrs for PT employees</Value>
                 <Style />
               </Paragraph>
             </Paragraphs>
-            <rd:DefaultName>Textbox92</rd:DefaultName>
+            <rd:DefaultName>Textbox73</rd:DefaultName>
+            <Top>5.99875in</Top>
             <Height>0.25in</Height>
-            <Width>8.03125in</Width>
-            <ZIndex>5</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox93">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>="Date Range: " &amp; FORMAT(Parameters!StartDate.Value,"MM/dd/yyyy") &amp; " - " &amp; FORMAT(Parameters!EndDate.Value,"MM/dd/yyyy")</Value>
-                    <Style>
-                      <FontSize>9pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox92</rd:DefaultName>
-            <Top>0.27778in</Top>
-            <Height>0.25in</Height>
-            <Width>8.03125in</Width>
-            <ZIndex>6</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox94">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>="Learning Center: " &amp; First(Fields!BranchNameGroup.Value, "BCBAName")</Value>
-                    <Style>
-                      <FontSize>9pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox92</rd:DefaultName>
-            <Top>0.55556in</Top>
-            <Height>0.25in</Height>
-            <Width>8.03125in</Width>
-            <ZIndex>7</ZIndex>
+            <Width>6.0625in</Width>
+            <ZIndex>9</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -3432,7 +4088,7 @@ need to come up with universal avg hrs for PT employees</Value>
             </Style>
           </Textbox>
         </ReportItems>
-        <Height>7.87375in</Height>
+        <Height>8.7175in</Height>
         <Style />
       </Body>
       <Width>8.58333in</Width>
