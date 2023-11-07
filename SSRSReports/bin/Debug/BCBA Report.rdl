@@ -368,7 +368,8 @@ SELECT
 	END/5)* dd.BusinessDays) ExpectedMonthlyScheduledHours,
 	bd.BranchNameGroup,
 	@LocationBillingHours LocationMonthlyBillingHours,
-	jc.ABACategory
+	jc.ABACategory,
+	CONVERT(Date,ddlast.LastWeekStartDate) LastWeekStartDate
 FROM HumanResources.dbo.employee e
 INNER JOIN HumanResources.dbo.JobCodes jc on jc.JobCode=e.JobTitleCode
 LEFT JOIN CentralReach.insights.employee ei on ei.EmployeePayrollReference=e.EmployeeNumber
@@ -385,6 +386,14 @@ CROSS JOIN (
 		WHERE date&gt;=@StartDate
 		and Date&lt;dateadd(dd,1,@EndDate)
 	) dd
+CROSS JOIN (
+		SELECT 
+			MAX(Date) LastWeekStartDate
+		FROM Reference.dbo.dimdate
+		WHERE date&gt;=@StartDate
+		and Date&lt;dateadd(dd,1,@EndDate)
+		and day='Sunday'
+	) ddLast
 WHERE ISNULL(TerminationDate,'9999-12-31')='9999-12-31'
 and jc.JobCategory IN ('BCBA','LBA','DOO') 
 and e.PayrollCompanyCode='K86'
@@ -441,6 +450,10 @@ ORDER BY 1</CommandText>
         <Field Name="ABACategory">
           <DataField>ABACategory</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="LastWeekStartDate">
+          <DataField>LastWeekStartDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -819,13 +832,83 @@ GROUP By
 
 		
 
+		
+		IF OBJECT_ID('tempdb..#auth') IS NOT NULL DROP TABLE #auth
+		SELECT 
+		auth.*,
+		CASE
+			WHEN AuthStartDate&lt;=@StartDate and AuthEndDate&gt;=@EndDate THEN d.businessdays
+			WHEN AuthStartDate&gt;@StartDate and AuthEndDate&gt;@EndDate THEN (SELECT SUM(CASE WHEN IsEmpyreanHoliday=0 and IsWeekDay=1 THEN 1 ELSE 0 END) FROM Reference.dbo.dimdate WHERE date&gt;=AuthStartDate and date&lt;=PeriodEndDate)--Datediff(dd,AuthStartDate,PeriodEndDate)+1
+			WHEN AuthStartDate&lt;=@StartDate and AuthEndDate&lt;@EndDate THEN (SELECT SUM(CASE WHEN IsEmpyreanHoliday=0 and IsWeekDay=1 THEN 1 ELSE 0 END) FROM Reference.dbo.dimdate WHERE date&gt;=PeriodStartDate and date&lt;=AuthEndDate)--Datediff(dd,PeriodStartDate,AuthEndDate)+1
+			WHEN AuthStartDate&gt;=@StartDate and AuthEndDate&lt;=@EndDate THEN (SELECT SUM(CASE WHEN IsEmpyreanHoliday=0 and IsWeekDay=1 THEN 1 ELSE 0 END) FROM Reference.dbo.dimdate WHERE date&gt;=AuthStartDate and date&lt;=AuthEndDate)--Datediff(dd,AuthStartDate,AuthEndDate)+1
+			ELSE NULL
+		END as AuthDaysInMonth
+		INTO #auth
+		FROM v_Authorizations auth
+		INNER JOIN #serviceCodes svc on auth.serviceCode=svc.serviceCode
+		CROSS JOIN #Dates d
+		WHERE AuthStartDate&lt;=@EndDate
+		and AuthEndDate&gt;=@StartDate
+		and AuthFrequency&lt;&gt;'once'
+		ORDER BY AuthStartDate desc
+
+		
+		
+		IF OBJECT_ID('tempdb..#AuthAgg') IS NOT NULL DROP TABLE #AuthAgg
+		SELECT 
+			bdp.BranchCode,
+			auth.clientId,
+			Auth.ServiceCode,
+			Auth.AuthFrequency,
+			Auth.AuthStartDate,
+			Auth.AuthEndDate,
+			Auth.clientFullName,
+			Auth.PayorName,
+			SUM(CASE
+					WHEN AuthFrequency='Monthly' and ServiceCode&lt;&gt;'97153' THEN AuthHours
+					WHEN AuthFrequency='Monthly' and ServiceCode='97153' THEN ClientAcceptedHours
+					WHEN AuthFrequency='Weekly'  and ServiceCode&lt;&gt;'97153' THEN CONVERT(DECIMAL(9,2),AuthHours * (CONVERT(FLOAT,AuthDaysInMonth)/5.00))
+					WHEN AuthFrequency='Weekly'  and ServiceCode='97153' THEN CONVERT(DECIMAL(9,2),ClientAcceptedHours * (CONVERT(FLOAT,AuthDaysInMonth)/5.00))
+					ELSE 0
+				END ) AuthHoursCalc,
+			ROW_NUMBER() OVER(PARTITION BY ClientID,ServiceCode ORDER BY 
+																	SUM(CASE
+																			WHEN AuthFrequency='Monthly' and ServiceCode&lt;&gt;'97153' THEN AuthHours
+																			WHEN AuthFrequency='Monthly' and ServiceCode='97153' THEN ClientAcceptedHours
+																			WHEN AuthFrequency='Weekly'  and ServiceCode&lt;&gt;'97153' THEN CONVERT(DECIMAL(9,2),AuthHours * (CONVERT(FLOAT,AuthDaysInMonth)/5.00))
+																			WHEN AuthFrequency='Weekly'  and ServiceCode='97153' THEN CONVERT(DECIMAL(9,2),ClientAcceptedHours * (CONVERT(FLOAT,AuthDaysInMonth)/5.00))
+																			ELSE 0
+																		END ) DESC) as RowID
+
+		INTO #AuthAgg
+		FROM #auth auth
+		LEFT JOIN Reference.dbo.BranchData bd on bd.BranchCode=auth.BranchCode
+		LEFT JOIN reference.dbo.BranchData bdp on bdp.BranchCode=bd.ParentBranchCode
+		GROUP BY 
+			bdp.BranchCode,
+			auth.clientId,
+			Auth.ServiceCode,
+			Auth.AuthFrequency,
+			Auth.AuthStartDate,
+			Auth.AuthEndDate,
+			Auth.PayorName,
+			Auth.clientFullName
+
+
+			DELETE FROM #AuthAgg
+			WHERE rowid&gt;1
+
+
+		
+
 	
 
 		IF OBJECT_ID('tempdb..#billingAgg') IS NOT NULL DROP TABLE #billingAgg
 		SELECT 
-			ClientId,
-			ClientFullname,
+			tb.ClientId,
+			tb.ClientFullname,
 			wk.WeekStartDate,
+			aa.authHoursCalc Auth97153,
 			SUM(DurationHours) BillingHours
 		INTO #billingAgg
 		FROM v_TimeBilling tb
@@ -833,17 +916,20 @@ GROUP By
 		INNER JOIN #serviceCodes svc on tb.serviceCode=svc.serviceCode
 		LEFT JOIN reference.dbo.BranchData bd on bd.BranchCode=tb.BranchCode
 		LEFT JOIN reference.dbo.BranchData bdp on bdp.BranchCode=bd.ParentBranchCode
+		LEFT JOIN #AuthAgg aa on aa.clientId=tb.clientID and aa.ServiceCode=tb.ServiceCode and aa.serviceCode='97153'
 		WHERE serviceDate&gt;=@StartDate
 		and serviceDate&lt;dateadd(dd,1,@EndDate)
 		And [VoidDeleted]=''
 		and BCBA=@BCBAName
 		GROUP BY 
 			wk.WeekStartDate,
-			ClientFullname,
-			ClientId
+			aa.authHoursCalc,
+			tb.ClientFullname,
+			tb.ClientId
 			
 
 			SELECT * FROM #billingAgg
+			ORDER By 1,3
 </CommandText>
       </Query>
       <Fields>
@@ -858,6 +944,10 @@ GROUP By
         <Field Name="WeekStartDate">
           <DataField>WeekStartDate</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="Auth97153">
+          <DataField>Auth97153</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="BillingHours">
           <DataField>BillingHours</DataField>
@@ -1264,7 +1354,7 @@ GROUP By
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!BCBAName.Value &amp; " Caseload for Month"</Value>
+                                  <Value>=Parameters!BCBAName.Value &amp; " Caseload for Period"</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -1292,7 +1382,6 @@ GROUP By
                           </Style>
                         </Textbox>
                         <ColSpan>4</ColSpan>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell />
@@ -3615,7 +3704,7 @@ GROUP By
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>StaffCapacity</DataSetName>
-            <Top>7.03in</Top>
+            <Top>7.905in</Top>
             <Height>1.6875in</Height>
             <Width>6.72917in</Width>
             <ZIndex>6</ZIndex>
@@ -3669,6 +3758,43 @@ GROUP By
                       </Textbox>
                     </CellContents>
                   </TablixCornerCell>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="Textbox18">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>97153 Client Accepted Hours</Value>
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox17</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Teal</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
                 </TablixCornerRow>
               </TablixCornerRows>
             </TablixCorner>
@@ -3678,7 +3804,10 @@ GROUP By
                   <Width>0.83333in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>0.89584in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.8125in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -3727,7 +3856,7 @@ GROUP By
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!BillingHours.Value)</Value>
+                                  <Value>=sum(Fields!BillingHours.Value)/ (Sum(Fields!BusinessDaysInMonth.Value, "BCBAName")/5)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -3739,6 +3868,40 @@ GROUP By
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>BillingHours4</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox13">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=(sum(Fields!BillingHours.Value)/ (Sum(Fields!BusinessDaysInMonth.Value, "BCBAName")/5)) / LAST(Fields!Auth97153.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>0.0%</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox13</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -3801,7 +3964,7 @@ GROUP By
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!BillingHours.Value)</Value>
+                                  <Value>=sum(Fields!BillingHours.Value)/(Sum(Fields!BusinessDaysInMonth.Value, "BCBAName")/5)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -3814,6 +3977,256 @@ GROUP By
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox57</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox16">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Avg(Fields!BillingHours.Value) / Last(Fields!Auth97153.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>0.0%</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox13</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox23">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!ABAExpectedBillableHoursPerWeek.Value, "BCBAName")</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox23</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox24">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!ABAExpectedBillableHoursPerWeek.Value, "BCBAName")</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox24</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox26">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox26</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="BillingHours5">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!BillingHours.Value)-Sum(Fields!ABAExpectedBillableHoursPerWeek.Value, "BCBAName")</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>n</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>BillingHours3</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox33">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=(sum(Fields!BillingHours.Value)/(Sum(Fields!BusinessDaysInMonth.Value, "BCBAName")/5)) -Sum(Fields!ABAExpectedBillableHoursPerWeek.Value, "BCBAName")</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox33</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox34">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox34</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -3845,7 +4258,7 @@ GROUP By
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
-                    <Size>0.25in</Size>
+                    <Size>0.375in</Size>
                     <CellContents>
                       <Textbox Name="WeekStartDate">
                         <CanGrow>true</CanGrow>
@@ -3886,7 +4299,7 @@ GROUP By
                 </TablixMember>
                 <TablixMember>
                   <TablixHeader>
-                    <Size>0.25in</Size>
+                    <Size>0.375in</Size>
                     <CellContents>
                       <Textbox Name="Textbox54">
                         <CanGrow>true</CanGrow>
@@ -3895,7 +4308,7 @@ GROUP By
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>Total</Value>
+                                <Value>Weekly Average</Value>
                                 <Style>
                                   <FontFamily>Arial</FontFamily>
                                   <FontSize>8pt</FontSize>
@@ -3910,6 +4323,47 @@ GROUP By
                           </Paragraph>
                         </Paragraphs>
                         <rd:DefaultName>Textbox54</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Teal</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>0.375in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox12">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>% to Client Accepted</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox12</rd:DefaultName>
                         <Style>
                           <Border>
                             <Color>LightGrey</Color>
@@ -3973,6 +4427,43 @@ GROUP By
                       </Textbox>
                     </CellContents>
                   </TablixHeader>
+                  <TablixMembers>
+                    <TablixMember>
+                      <TablixHeader>
+                        <Size>1in</Size>
+                        <CellContents>
+                          <Textbox Name="Auth97153">
+                            <CanGrow>true</CanGrow>
+                            <KeepTogether>true</KeepTogether>
+                            <Paragraphs>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value>=LAST(Fields!Auth97153.Value)</Value>
+                                    <Style>
+                                      <FontSize>8pt</FontSize>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style />
+                              </Paragraph>
+                            </Paragraphs>
+                            <rd:DefaultName>Auth97153</rd:DefaultName>
+                            <Style>
+                              <Border>
+                                <Color>LightGrey</Color>
+                                <Style>Solid</Style>
+                              </Border>
+                              <PaddingLeft>2pt</PaddingLeft>
+                              <PaddingRight>2pt</PaddingRight>
+                              <PaddingTop>2pt</PaddingTop>
+                              <PaddingBottom>2pt</PaddingBottom>
+                            </Style>
+                          </Textbox>
+                        </CellContents>
+                      </TablixHeader>
+                    </TablixMember>
+                  </TablixMembers>
                 </TablixMember>
                 <TablixMember>
                   <TablixHeader>
@@ -4010,14 +4501,207 @@ GROUP By
                       </Textbox>
                     </CellContents>
                   </TablixHeader>
+                  <TablixMembers>
+                    <TablixMember>
+                      <TablixHeader>
+                        <Size>1in</Size>
+                        <CellContents>
+                          <Textbox Name="Textbox38">
+                            <CanGrow>true</CanGrow>
+                            <KeepTogether>true</KeepTogether>
+                            <Paragraphs>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value />
+                                    <Style>
+                                      <FontFamily>Arial</FontFamily>
+                                      <FontSize>8pt</FontSize>
+                                      <FontWeight>Bold</FontWeight>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style />
+                              </Paragraph>
+                            </Paragraphs>
+                            <rd:DefaultName>Textbox38</rd:DefaultName>
+                            <Style>
+                              <Border>
+                                <Color>LightGrey</Color>
+                                <Style>Solid</Style>
+                              </Border>
+                              <PaddingLeft>2pt</PaddingLeft>
+                              <PaddingRight>2pt</PaddingRight>
+                              <PaddingTop>2pt</PaddingTop>
+                              <PaddingBottom>2pt</PaddingBottom>
+                            </Style>
+                          </Textbox>
+                        </CellContents>
+                      </TablixHeader>
+                    </TablixMember>
+                  </TablixMembers>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>1.60417in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox20">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Weekly Caseload</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox20</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <TablixMembers>
+                    <TablixMember>
+                      <TablixHeader>
+                        <Size>1in</Size>
+                        <CellContents>
+                          <Textbox Name="Textbox22">
+                            <CanGrow>true</CanGrow>
+                            <KeepTogether>true</KeepTogether>
+                            <Paragraphs>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value />
+                                    <Style>
+                                      <FontFamily>Arial</FontFamily>
+                                      <FontSize>8pt</FontSize>
+                                      <FontWeight>Bold</FontWeight>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style />
+                              </Paragraph>
+                            </Paragraphs>
+                            <rd:DefaultName>Textbox22</rd:DefaultName>
+                            <Style>
+                              <Border>
+                                <Color>LightGrey</Color>
+                                <Style>Solid</Style>
+                              </Border>
+                              <PaddingLeft>2pt</PaddingLeft>
+                              <PaddingRight>2pt</PaddingRight>
+                              <PaddingTop>2pt</PaddingTop>
+                              <PaddingBottom>2pt</PaddingBottom>
+                            </Style>
+                          </Textbox>
+                        </CellContents>
+                      </TablixHeader>
+                    </TablixMember>
+                  </TablixMembers>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>1.60417in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox30">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Caseload diff</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox30</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <TablixMembers>
+                    <TablixMember>
+                      <TablixHeader>
+                        <Size>1in</Size>
+                        <CellContents>
+                          <Textbox Name="Textbox31">
+                            <CanGrow>true</CanGrow>
+                            <KeepTogether>true</KeepTogether>
+                            <Paragraphs>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value />
+                                    <Style>
+                                      <FontFamily>Arial</FontFamily>
+                                      <FontSize>8pt</FontSize>
+                                      <FontWeight>Bold</FontWeight>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style />
+                              </Paragraph>
+                            </Paragraphs>
+                            <rd:DefaultName>Textbox31</rd:DefaultName>
+                            <Style>
+                              <Border>
+                                <Color>LightGrey</Color>
+                                <Style>Solid</Style>
+                              </Border>
+                              <PaddingLeft>2pt</PaddingLeft>
+                              <PaddingRight>2pt</PaddingRight>
+                              <PaddingTop>2pt</PaddingTop>
+                              <PaddingBottom>2pt</PaddingBottom>
+                            </Style>
+                          </Textbox>
+                        </CellContents>
+                      </TablixHeader>
+                    </TablixMember>
+                  </TablixMembers>
                   <KeepWithGroup>Before</KeepWithGroup>
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>LearnerHoursByWeek</DataSetName>
             <Top>6.23833in</Top>
-            <Height>0.75in</Height>
-            <Width>3.4375in</Width>
+            <Height>1.375in</Height>
+            <Width>5.14584in</Width>
             <ZIndex>7</ZIndex>
             <Style>
               <Border>
@@ -4088,7 +4772,7 @@ GROUP By
             </Style>
           </Textbox>
         </ReportItems>
-        <Height>8.7175in</Height>
+        <Height>9.5925in</Height>
         <Style />
       </Body>
       <Width>8.58333in</Width>

@@ -52,10 +52,12 @@
     <DataSource Include="CentralReach.rds" />
   </ItemGroup>
   <ItemGroup>
+    <Report Include="BCBA Caseload Summary Report.rdl" />
     <Report Include="DOO Incentive Plan.rdl" />
     <Report Include="Holiday Analysis By Learner Count By Center.rdl" />
     <Report Include="Holiday Analysis By Learner Hour By Center.rdl" />
     <Report Include="Holiday Analysis By Learner Hour.rdl" />
+    <Report Include="Learner Cancellation Rate.rdl" />
     <Report Include="Learners By Hour By Center Analysis By Learner count.rdl" />
     <Report Include="Learners By Hour By Center Analysis By Learner Hour.rdl" />
     <Report Include="Learners By Hour By Center holiday Analysis.rdl" />

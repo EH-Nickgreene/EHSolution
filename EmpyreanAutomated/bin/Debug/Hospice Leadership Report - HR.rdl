@@ -91,8 +91,14 @@ GROUP BY
     <DataSet Name="HeadCount">
       <Query>
         <DataSourceName>HumanResources</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@EndDate">
+            <Value>=Parameters!EndDate.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
         <CommandText>
---ACTIVE HEAD COUNT
+
+--END OF MONTH HEAD COUNT
 SELECT	
 	bd.BranchName,	
 	jc.TurnoverjobCategory ,
@@ -108,8 +114,9 @@ LEFT JOIN [dbo].[PayrollCompany] pc on pc.PayrollCompanyCode=e.PayrollCompanyCod
 LEFT JOIN TurnoverJobCategory tjc on tjc.TurnoverJobCategoryName=jc.TurnoverJobCategory
 LEFT JOIN Reference.dbo.BranchData bd on bd.ADPHomeDepartmentCode=e.HomeDepartmentCode
 WHERE 
-e.PositionStatus='Active' AND 
-pc.LOB&lt;&gt;'Highlights'
+e.Hiredate&lt;=@EndDate
+and ISNULL(e.TerminationDate,'12/31/9999')&gt;=@EndDate
+AND pc.LOB&lt;&gt;'Highlights'
 and IsDeleted=0
 GROUP BY 
 	bd.BranchName,	
