@@ -18,6 +18,11 @@
           <FullPath>CentralReachReplicate.dtsx</FullPath>
           <References />
         </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>EmployeeJobImport.dtsx</Name>
+          <FullPath>EmployeeJobImport.dtsx</FullPath>
+          <References />
+        </DtsPackage>
         <DtsPackage FormatVersion="8">
           <Name>EmployeeRosterImport.dtsx</Name>
           <FullPath>EmployeeRosterImport.dtsx</FullPath>
