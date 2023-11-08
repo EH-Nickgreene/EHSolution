@@ -13,6 +13,11 @@
   <DeploymentModelSpecificContent>
     <Manifest>
       <DTSPackages>
+        <DtsPackage FormatVersion="0">
+          <Name>CentralReachReplicateAsync.dtsx</Name>
+          <FullPath>CentralReachReplicateAsync.dtsx</FullPath>
+          <References />
+        </DtsPackage>
         <DtsPackage FormatVersion="8">
           <Name>CentralReachReplicate.dtsx</Name>
           <FullPath>CentralReachReplicate.dtsx</FullPath>
