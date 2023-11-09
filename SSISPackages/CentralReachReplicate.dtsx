@@ -13,8 +13,8 @@
   DTS:ObjectName="Package1"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="67"
-  DTS:VersionGUID="{81481242-CF9E-49D7-8AC9-A39ED21799EC}">
+  DTS:VersionBuild="73"
+  DTS:VersionGUID="{46A51646-22E0-4087-9B56-F8675B960DA7}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -122,6 +122,781 @@
       DTS:ObjectName="Sequence Container">
       <DTS:Variables />
       <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\Activity"
+          DTS:CreationName="Microsoft.Pipeline"
+          DTS:Description="Data Flow Task"
+          DTS:DTSID="{6B57E0FA-7E0B-43EB-9B95-2A90BF7FCC2F}"
+          DTS:ExecutableType="Microsoft.Pipeline"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Activity"
+          DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <pipeline
+              version="1">
+              <components>
+                <component
+                  refId="Package\Sequence Container\Activity\OLE DB Destination"
+                  componentClassID="Microsoft.OLEDBDestination"
+                  contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+                  description="OLE DB Destination"
+                  name="OLE DB Destination"
+                  usesDispositions="true"
+                  version="4">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset">[insights].[Activity]</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the column code page to use when code page information is unavailable from the data source."
+                      name="DefaultCodePage">1252</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Forces the use of the DefaultCodePage property value when describing character data."
+                      name="AlwaysUseDefaultCodePage">false</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">3</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepIdentity">false</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepNulls">false</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                      name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS,ROWS_PER_BATCH = 2000</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                      name="FastLoadMaxInsertCommitSize">10000</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Sequence Container\Activity\OLE DB Destination.Connections[OleDbConnection]"
+                      connectionManagerID="Package.ConnectionManagers[SQLVM.CentralReachStaging]"
+                      connectionManagerRefId="Package.ConnectionManagers[SQLVM.CentralReachStaging]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <inputs>
+                    <input
+                      refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                      errorOrTruncationOperation="Insert"
+                      errorRowDisposition="FailComponent"
+                      hasSideEffects="true"
+                      name="OLE DB Destination Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ActivityId]"
+                          cachedDataType="i4"
+                          cachedName="ActivityId"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityId]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityId]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ActivityContactId]"
+                          cachedDataType="i4"
+                          cachedName="ActivityContactId"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityContactId]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityContactId]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ActivityCreatedByContactId]"
+                          cachedDataType="i4"
+                          cachedName="ActivityCreatedByContactId"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityCreatedByContactId]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityCreatedByContactId]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ActivityCreatedByName]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="101"
+                          cachedName="ActivityCreatedByName"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityCreatedByName]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityCreatedByName]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ActivityCreationDate]"
+                          cachedDataType="dbTimeStamp"
+                          cachedName="ActivityCreationDate"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityCreationDate]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityCreationDate]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ActivityDate]"
+                          cachedDataType="dbDate"
+                          cachedName="ActivityDate"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityDate]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityDate]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ActivityLength]"
+                          cachedDataType="i4"
+                          cachedName="ActivityLength"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityLength]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityLength]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ActivityName]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="250"
+                          cachedName="ActivityName"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityName]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityName]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ActivityDescription]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="8000"
+                          cachedName="ActivityDescription"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityDescription]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityDescription]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ActivityType]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="ActivityType"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityType]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityType]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ActivityVisibility]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="58"
+                          cachedName="ActivityVisibility"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityVisibility]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityVisibility]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ActivityVisibleToContact]"
+                          cachedDataType="bool"
+                          cachedName="ActivityVisibleToContact"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityVisibleToContact]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityVisibleToContact]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ActivityVisibleToContactLabelIds]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="500"
+                          cachedName="ActivityVisibleToContactLabelIds"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityVisibleToContactLabelIds]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityVisibleToContactLabelIds]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ActivityDeletedBy]"
+                          cachedDataType="i4"
+                          cachedName="ActivityDeletedBy"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityDeletedBy]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityDeletedBy]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ActivityDeletedDate]"
+                          cachedDataType="dbTimeStamp"
+                          cachedName="ActivityDeletedDate"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityDeletedDate]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityDeletedDate]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ActivityOrganizationId]"
+                          cachedDataType="i4"
+                          cachedName="ActivityOrganizationId"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityOrganizationId]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityOrganizationId]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[RowModifiedAt]"
+                          cachedDataType="dbTimeStamp2"
+                          cachedName="RowModifiedAt"
+                          cachedScale="6"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RowModifiedAt]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[RowModifiedAt]" />
+                      </inputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityId]"
+                          dataType="i4"
+                          name="ActivityId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityContactId]"
+                          dataType="i4"
+                          name="ActivityContactId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityCreatedByContactId]"
+                          dataType="i4"
+                          name="ActivityCreatedByContactId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityCreatedByName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="101"
+                          name="ActivityCreatedByName" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityCreationDate]"
+                          dataType="dbTimeStamp"
+                          name="ActivityCreationDate" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityDate]"
+                          dataType="dbDate"
+                          name="ActivityDate" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityLength]"
+                          dataType="i4"
+                          name="ActivityLength" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="250"
+                          name="ActivityName" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityDescription]"
+                          codePage="1252"
+                          dataType="str"
+                          length="8000"
+                          name="ActivityDescription" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityType]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="ActivityType" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityVisibility]"
+                          codePage="1252"
+                          dataType="str"
+                          length="58"
+                          name="ActivityVisibility" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityVisibleToContact]"
+                          dataType="bool"
+                          name="ActivityVisibleToContact" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityVisibleToContactLabelIds]"
+                          codePage="1252"
+                          dataType="str"
+                          length="500"
+                          name="ActivityVisibleToContactLabelIds" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityDeletedBy]"
+                          dataType="i4"
+                          name="ActivityDeletedBy" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityDeletedDate]"
+                          dataType="dbTimeStamp"
+                          name="ActivityDeletedDate" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityOrganizationId]"
+                          dataType="i4"
+                          name="ActivityOrganizationId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RowModifiedAt]"
+                          dataType="dbTimeStamp2"
+                          name="RowModifiedAt"
+                          scale="6" />
+                      </externalMetadataColumns>
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Sequence Container\Activity\OLE DB Destination.Outputs[OLE DB Destination Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="OLE DB Destination Error Output"
+                      synchronousInputId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Sequence Container\Activity\OLE DB Source"
+                  componentClassID="Microsoft.OLEDBSource"
+                  contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+                  description="OLE DB Source"
+                  name="OLE DB Source"
+                  usesDispositions="true"
+                  version="7">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset"></property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">SELECT [ActivityId]
+      ,[ActivityContactId]
+      ,[ActivityCreatedByContactId]
+      ,[ActivityCreatedByName]
+      ,[ActivityCreationDate]
+      ,[ActivityDate]
+      ,[ActivityLength]
+      ,[ActivityName]
+      ,[ActivityDescription]
+      ,[ActivityType]
+      ,[ActivityVisibility]
+      ,[ActivityVisibleToContact]
+      ,[ActivityVisibleToContactLabelIds]
+      ,[ActivityDeletedBy]
+      ,[ActivityDeletedDate]
+      ,[ActivityOrganizationId]
+      ,[RowModifiedAt]
+  FROM [insights].[Activity]
+WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
+                    <property
+                      dataType="System.String"
+                      description="The variable that contains the SQL command to be executed."
+                      name="SqlCommandVariable"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the column code page to use when code page information is unavailable from the data source."
+                      name="DefaultCodePage">1252</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Forces the use of the DefaultCodePage property value when describing character data."
+                      name="AlwaysUseDefaultCodePage">false</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">2</property>
+                    <property
+                      dataType="System.String"
+                      description="The mappings between the parameters in the SQL command and variables."
+                      name="ParameterMapping">"Parameter0:Input",{FEF3E0F9-6C60-438A-A0E4-9CBF6561F75C};</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Sequence Container\Activity\OLE DB Source.Connections[OleDbConnection]"
+                      connectionManagerID="Package.ConnectionManagers[insights1customers.centralreach.com.insights.org_1548170]"
+                      connectionManagerRefId="Package.ConnectionManagers[insights1customers.centralreach.com.insights.org_1548170]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <outputs>
+                    <output
+                      refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output]"
+                      name="OLE DB Source Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityId]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityId]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityId]"
+                          name="ActivityId"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityContactId]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityContactId]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityContactId]"
+                          name="ActivityContactId"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityCreatedByContactId]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityCreatedByContactId]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityCreatedByContactId]"
+                          name="ActivityCreatedByContactId"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityCreatedByName]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityCreatedByName]"
+                          length="101"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityCreatedByName]"
+                          name="ActivityCreatedByName"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityCreationDate]"
+                          dataType="dbTimeStamp"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityCreationDate]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityCreationDate]"
+                          name="ActivityCreationDate"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityDate]"
+                          dataType="dbDate"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityDate]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityDate]"
+                          name="ActivityDate"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityLength]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityLength]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityLength]"
+                          name="ActivityLength"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityName]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityName]"
+                          length="250"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityName]"
+                          name="ActivityName"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityDescription]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityDescription]"
+                          length="8000"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityDescription]"
+                          name="ActivityDescription"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityType]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityType]"
+                          length="50"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityType]"
+                          name="ActivityType"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityVisibility]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityVisibility]"
+                          length="58"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityVisibility]"
+                          name="ActivityVisibility"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityVisibleToContact]"
+                          dataType="bool"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityVisibleToContact]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityVisibleToContact]"
+                          name="ActivityVisibleToContact"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityVisibleToContactLabelIds]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityVisibleToContactLabelIds]"
+                          length="500"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityVisibleToContactLabelIds]"
+                          name="ActivityVisibleToContactLabelIds"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityDeletedBy]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityDeletedBy]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityDeletedBy]"
+                          name="ActivityDeletedBy"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityDeletedDate]"
+                          dataType="dbTimeStamp"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityDeletedDate]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityDeletedDate]"
+                          name="ActivityDeletedDate"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityOrganizationId]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityOrganizationId]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[ActivityOrganizationId]"
+                          name="ActivityOrganizationId"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[RowModifiedAt]"
+                          dataType="dbTimeStamp2"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[RowModifiedAt]"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].Columns[RowModifiedAt]"
+                          name="RowModifiedAt"
+                          scale="6"
+                          truncationRowDisposition="FailComponent" />
+                      </outputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityId]"
+                          dataType="i4"
+                          name="ActivityId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityContactId]"
+                          dataType="i4"
+                          name="ActivityContactId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityCreatedByContactId]"
+                          dataType="i4"
+                          name="ActivityCreatedByContactId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityCreatedByName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="101"
+                          name="ActivityCreatedByName" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityCreationDate]"
+                          dataType="dbTimeStamp"
+                          name="ActivityCreationDate" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityDate]"
+                          dataType="dbDate"
+                          name="ActivityDate" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityLength]"
+                          dataType="i4"
+                          name="ActivityLength" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="250"
+                          name="ActivityName" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityDescription]"
+                          codePage="1252"
+                          dataType="str"
+                          length="8000"
+                          name="ActivityDescription" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityType]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="ActivityType" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityVisibility]"
+                          codePage="1252"
+                          dataType="str"
+                          length="58"
+                          name="ActivityVisibility" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityVisibleToContact]"
+                          dataType="bool"
+                          name="ActivityVisibleToContact" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityVisibleToContactLabelIds]"
+                          codePage="1252"
+                          dataType="str"
+                          length="500"
+                          name="ActivityVisibleToContactLabelIds" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityDeletedBy]"
+                          dataType="i4"
+                          name="ActivityDeletedBy" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityDeletedDate]"
+                          dataType="dbTimeStamp"
+                          name="ActivityDeletedDate" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ActivityOrganizationId]"
+                          dataType="i4"
+                          name="ActivityOrganizationId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[RowModifiedAt]"
+                          dataType="dbTimeStamp2"
+                          name="RowModifiedAt"
+                          scale="6" />
+                      </externalMetadataColumns>
+                    </output>
+                    <output
+                      refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output]"
+                      isErrorOut="true"
+                      name="OLE DB Source Error Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityId]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityId]"
+                          name="ActivityId" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityContactId]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityContactId]"
+                          name="ActivityContactId" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityCreatedByContactId]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityCreatedByContactId]"
+                          name="ActivityCreatedByContactId" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityCreatedByName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="101"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityCreatedByName]"
+                          name="ActivityCreatedByName" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityCreationDate]"
+                          dataType="dbTimeStamp"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityCreationDate]"
+                          name="ActivityCreationDate" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityDate]"
+                          dataType="dbDate"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityDate]"
+                          name="ActivityDate" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityLength]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityLength]"
+                          name="ActivityLength" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="250"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityName]"
+                          name="ActivityName" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityDescription]"
+                          codePage="1252"
+                          dataType="str"
+                          length="8000"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityDescription]"
+                          name="ActivityDescription" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityType]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityType]"
+                          name="ActivityType" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityVisibility]"
+                          codePage="1252"
+                          dataType="str"
+                          length="58"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityVisibility]"
+                          name="ActivityVisibility" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityVisibleToContact]"
+                          dataType="bool"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityVisibleToContact]"
+                          name="ActivityVisibleToContact" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityVisibleToContactLabelIds]"
+                          codePage="1252"
+                          dataType="str"
+                          length="500"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityVisibleToContactLabelIds]"
+                          name="ActivityVisibleToContactLabelIds" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityDeletedBy]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityDeletedBy]"
+                          name="ActivityDeletedBy" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityDeletedDate]"
+                          dataType="dbTimeStamp"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityDeletedDate]"
+                          name="ActivityDeletedDate" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityOrganizationId]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ActivityOrganizationId]"
+                          name="ActivityOrganizationId" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[RowModifiedAt]"
+                          dataType="dbTimeStamp2"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[RowModifiedAt]"
+                          name="RowModifiedAt"
+                          scale="6" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+              </components>
+              <paths>
+                <path
+                  refId="Package\Sequence Container\Activity.Paths[OLE DB Source Output]"
+                  endId="Package\Sequence Container\Activity\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                  name="OLE DB Source Output"
+                  startId="Package\Sequence Container\Activity\OLE DB Source.Outputs[OLE DB Source Output]" />
+              </paths>
+            </pipeline>
+          </DTS:ObjectData>
+        </DTS:Executable>
         <DTS:Executable
           DTS:refId="Package\Sequence Container\Clients"
           DTS:CreationName="Microsoft.Pipeline"
@@ -17067,6 +17842,22 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           </DTS:ObjectData>
         </DTS:Executable>
         <DTS:Executable
+          DTS:refId="Package\Sequence Container\Update Activity"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{c7ac12b0-8cc2-4f41-923d-9ce77258aeb3}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update Activity"
+          DTS:ThreadHint="7">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{7D13508A-2F85-48EE-9F9F-95F7C59A8E33}"
+              SQLTask:SqlStatementSource="EXEC [usp_CR_Refresh_Activity]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
           DTS:refId="Package\Sequence Container\Update Clients Data"
           DTS:CreationName="Microsoft.ExecuteSQLTask"
           DTS:Description="Execute SQL Task"
@@ -17074,7 +17865,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Clients Data"
-          DTS:ThreadHint="3">
+          DTS:ThreadHint="6">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17090,7 +17881,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ClinicalGoal Data"
-          DTS:ThreadHint="4">
+          DTS:ThreadHint="3">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17106,7 +17897,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ContactCustomField Data"
-          DTS:ThreadHint="11">
+          DTS:ThreadHint="4">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17122,7 +17913,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ContactEntityLabel Data"
-          DTS:ThreadHint="0">
+          DTS:ThreadHint="5">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17138,7 +17929,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ContactLabel Data"
-          DTS:ThreadHint="1">
+          DTS:ThreadHint="0">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17170,7 +17961,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update PayorAuthorization Data"
-          DTS:ThreadHint="5">
+          DTS:ThreadHint="1">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17186,7 +17977,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update PayorPlan Data"
-          DTS:ThreadHint="6">
+          DTS:ThreadHint="8">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17202,7 +17993,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Provider Data"
-          DTS:ThreadHint="7">
+          DTS:ThreadHint="9">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17218,7 +18009,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Scheduling Data"
-          DTS:ThreadHint="8">
+          DTS:ThreadHint="10">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17234,7 +18025,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ServiceCode Data"
-          DTS:ThreadHint="10">
+          DTS:ThreadHint="11">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17250,7 +18041,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update TimeBilling Data"
-          DTS:ThreadHint="9">
+          DTS:ThreadHint="12">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17292,6 +18083,14 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 11"
           DTS:To="Package\Sequence Container\Update ContactCustomField Data" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Sequence Container.PrecedenceConstraints[Constraint 12]"
+          DTS:CreationName=""
+          DTS:DTSID="{3E7C9374-AC9D-405C-9CFF-9CCF3EC6FE6C}"
+          DTS:From="Package\Sequence Container\Activity"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 12"
+          DTS:To="Package\Sequence Container\Update Activity" />
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Sequence Container.PrecedenceConstraints[Constraint 2]"
           DTS:CreationName=""
@@ -17371,7 +18170,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{7D13508A-2F85-48EE-9F9F-95F7C59A8E33}"
-          SQLTask:SqlStatementSource="TRUNCATE TABLE [CentralReachStaging].[insights].[Client]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Provider]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ServiceCode]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[TimeBilling]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ContactEntityLabel]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ContactLabel]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[PayorAuthorization]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Employee] &#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Scheduling]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[PayorPlan]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ClinicalGoal]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ContactCustomField]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:SqlStatementSource="TRUNCATE TABLE [CentralReachStaging].[insights].[Client]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Provider]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ServiceCode]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[TimeBilling]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ContactEntityLabel]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ContactLabel]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[PayorAuthorization]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Employee] &#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Scheduling]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[PayorPlan]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ClinicalGoal]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ContactCustomField]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Activity]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
   </DTS:Executables>
@@ -17405,6 +18204,10 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           Size="138,42"
           Id="Package\Sequence Container\ClinicalGoal"
           TopLeft="60,333" />
+        <NodeLayout
+          Size="179,42"
+          Id="Package\Sequence Container\ContactCustomField"
+          TopLeft="287,329" />
         <NodeLayout
           Size="171,42"
           Id="Package\Sequence Container\ContactEntityLabel"
@@ -17449,6 +18252,10 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           Size="203,42"
           Id="Package\Sequence Container\Update ClinicalGoal Data"
           TopLeft="29,407" />
+        <NodeLayout
+          Size="243,42"
+          Id="Package\Sequence Container\Update ContactCustomField Data"
+          TopLeft="255,403" />
         <NodeLayout
           Size="236,42"
           Id="Package\Sequence Container\Update ContactEntityLabel Data"
@@ -17532,6 +18339,28 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
         <EdgeLayout
           Id="Package\Sequence Container.PrecedenceConstraints[Constraint 10]"
           TopLeft="129.75,375">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,32"
+              Start="0,0"
+              End="0,24.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,24.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Sequence Container.PrecedenceConstraints[Constraint 11]"
+          TopLeft="376.5,371">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
@@ -17752,27 +18581,27 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <NodeLayout
-          Size="179,42"
-          Id="Package\Sequence Container\ContactCustomField"
-          TopLeft="287,329" />
+          Size="114,42"
+          Id="Package\Sequence Container\Activity"
+          TopLeft="545,335" />
         <NodeLayout
-          Size="243,42"
-          Id="Package\Sequence Container\Update ContactCustomField Data"
-          TopLeft="255,403" />
+          Size="152,42"
+          Id="Package\Sequence Container\Update Activity"
+          TopLeft="528,405" />
         <EdgeLayout
-          Id="Package\Sequence Container.PrecedenceConstraints[Constraint 11]"
-          TopLeft="376.5,371">
+          Id="Package\Sequence Container.PrecedenceConstraints[Constraint 12]"
+          TopLeft="603,377">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,32"
+              EndConnector="0,28"
               Start="0,0"
-              End="0,24.5">
+              End="0,20.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,24.5" />
+                    End="0,20.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -17894,7 +18723,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
     design-time-name="Package\Sequence Container\ClinicalGoal">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="177,42"
           Id="Package\Sequence Container\ClinicalGoal\OLE DB Destination"
@@ -17934,7 +18763,9 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -17958,6 +18789,70 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\Sequence Container\ContactCustomField">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="157,42"
+          Id="Package\Sequence Container\ContactCustomField\OLE DB Source"
+          TopLeft="215,194" />
+        <NodeLayout
+          Size="177,42"
+          Id="Package\Sequence Container\ContactCustomField\OLE DB Destination"
+          TopLeft="204,301" />
+        <EdgeLayout
+          Id="Package\Sequence Container\ContactCustomField.Paths[OLE DB Source Output]"
+          TopLeft="293,236">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,65"
+              Start="0,0"
+              End="0,57.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,57.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\ContactCustomField\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\ContactCustomField\OLE DB Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">View</Value>
       </Property>
     </Properties>
   </PipelineComponentMetadata>
@@ -18547,32 +19442,44 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
     </Properties>
   </PipelineComponentMetadata>
   <TaskHost
-    design-time-name="Package\Sequence Container\ContactCustomField">
+    design-time-name="Package\Sequence Container\Activity">
     <LayoutInfo>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="157,42"
-          Id="Package\Sequence Container\ContactCustomField\OLE DB Source"
-          TopLeft="215,194" />
+          Id="Package\Sequence Container\Activity\OLE DB Source"
+          TopLeft="246,225" />
         <NodeLayout
           Size="177,42"
-          Id="Package\Sequence Container\ContactCustomField\OLE DB Destination"
-          TopLeft="204,301" />
+          Id="Package\Sequence Container\Activity\OLE DB Destination"
+          TopLeft="205,391" />
         <EdgeLayout
-          Id="Package\Sequence Container\ContactCustomField.Paths[OLE DB Source Output]"
-          TopLeft="293,236">
+          Id="Package\Sequence Container\Activity.Paths[OLE DB Source Output]"
+          TopLeft="324.5,267">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,65"
+              EndConnector="-31,124"
               Start="0,0"
-              End="0,57.5">
+              End="-31,116.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,57.5" />
+                    End="0,58" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,58"
+                    Point2="0,62"
+                    Point3="-4,62" />
+                  <mssgle:LineSegment
+                    End="-27,62" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-27,62"
+                    Point2="-31,62"
+                    Point3="-31,66" />
+                  <mssgle:LineSegment
+                    End="-31,116.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -18585,20 +19492,15 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
     </LayoutInfo>
   </TaskHost>
   <PipelineComponentMetadata
-    design-time-name="Package\Sequence Container\ContactCustomField\OLE DB Source">
+    design-time-name="Package\Sequence Container\Activity\OLE DB Source">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
       </Property>
-      <Property>
-        <Name>TableInfoObjectType</Name>
-        <Value
-          type="q2:string">View</Value>
-      </Property>
     </Properties>
   </PipelineComponentMetadata>
   <PipelineComponentMetadata
-    design-time-name="Package\Sequence Container\ContactCustomField\OLE DB Destination">
+    design-time-name="Package\Sequence Container\Activity\OLE DB Destination">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
