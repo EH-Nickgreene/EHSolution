@@ -273,7 +273,7 @@ m.Monthint
 ,COUNT(*) DaysInMonth
 INTO #months 
 FROM reference.dbo.dimdate m
-LEFT JOIN Budget b on m.Monthint=b.monthint and b.MetricName='ADC' and b.MetricValue&gt;0
+LEFT JOIN Budget b on m.Monthint=b.monthint and b.MetricName='ADC' --and b.MetricValue&gt;0
 WHERE date&gt;=@startdate 
 and date&lt;=@enddate
 and b.BranchCode IS NOT NULL
@@ -282,6 +282,8 @@ GROUP BY
 	,m.Month
 	,b.BranchCode
 
+	
+	--SELECT * FROM #months
 
 
 IF OBJECT_ID('tempdb..#adc') IS NOT NULL DROP TABLE #adc
@@ -296,6 +298,8 @@ FROM wh_patientdays wh
 INNER JOIN #months dd on wh.ServiceDate&gt;=MonthStartDate and ServiceDate&lt;=MonthEndDate and wh.Branch_Code=dd.BranchCode
 GROUP BY dd.MonthInt,Branch_code
 
+
+--SELECT* FROM #adc
 
 IF OBJECT_ID('tempdb..#admissions') IS NOT NULL DROP TABLE #admissions
 SELECT 
@@ -345,18 +349,16 @@ ISNULL(dc.Revocation,0) Revocation,
 ISNULL(dc.Death,0) Death,
 ISNULL(dc.LiveDCProBono,0) LiveDCProBono,
 ISNULL(dc.discharges,0) Total_discharges
-
-
-
 FROM 
 #months m
 LEFT JOIN Budget b on m.MonthInt=b.MonthInt and MetricValue&gt;0 and m.BranchCode=b.BranchCode
 LEFT JOIN #adc adc on adc.MonthInt=m.MonthInt and m.BranchCode=adc.Branch_Code
 LEFT JOin #admissions admit on adc.Branch_Code=admit.Branch_Code AND m.MonthInt=admit.MonthInt 
 LEFT JOIN #dc dc on adc.Branch_Code=dc.Branch_Code and m.MonthInt=dc.MonthInt 
-LEFT JOIN reference.dbo.BranchData bd on bd.branchCode=COALESCE(adc.Branch_Code,admit.Branch_Code,dc.Branch_Code)
+LEFT JOIN reference.dbo.BranchData bd on bd.branchCode=m.BranchCode--COALESCE(adc.Branch_Code,admit.Branch_Code,dc.Branch_Code)
+WHERE adc.adc&gt;0
+OR Admit.admits&gt;0
 ORDER By 2,1
-
 
 </CommandText>
       </Query>
@@ -1375,7 +1377,7 @@ ORDER By 2,1
                                                   <Paragraph>
                                                     <TextRuns>
                                                       <TextRun>
-                                                        <Value>Total Nurse Head Count</Value>
+                                                        <Value>Total Head Count</Value>
                                                         <Style>
                                                           <FontFamily>Arial</FontFamily>
                                                           <FontSize>8pt</FontSize>
@@ -2394,7 +2396,7 @@ ORDER By 2,1
             </PageBreak>
             <Top>0.86333in</Top>
             <Height>1.47917in</Height>
-            <Width>12.36458in</Width>
+            <Width>12.36459in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -4134,7 +4136,7 @@ ORDER By 2,1
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Dischages By Hospice Center By Month</Value>
+                    <Value>Discharges By Hospice Center By Month</Value>
                     <Style>
                       <FontWeight>Bold</FontWeight>
                     </Style>

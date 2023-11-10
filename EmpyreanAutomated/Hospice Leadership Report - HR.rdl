@@ -46,6 +46,7 @@ WHERE
 HireDate&gt;=@StartDate AND 
 HireDate&lt;dateadd(dd,1,@EndDate) and 
 pc.LOB&lt;&gt;'Highlights'
+and IsDeleted=0
 GROUP BY 
 	bd.branchCode,	
 	jc.TurnoverjobCategory,

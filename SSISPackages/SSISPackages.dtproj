@@ -13,17 +13,17 @@
   <DeploymentModelSpecificContent>
     <Manifest>
       <DTSPackages>
-        <DtsPackage FormatVersion="0">
-          <Name>CentralReachReplicateAsync.dtsx</Name>
-          <FullPath>CentralReachReplicateAsync.dtsx</FullPath>
-          <References />
-        </DtsPackage>
         <DtsPackage FormatVersion="8">
           <Name>CentralReachReplicate.dtsx</Name>
           <FullPath>CentralReachReplicate.dtsx</FullPath>
           <References />
         </DtsPackage>
-        <DtsPackage FormatVersion="0">
+        <DtsPackage FormatVersion="8">
+          <Name>CentralReachReplicateAsync.dtsx</Name>
+          <FullPath>CentralReachReplicateAsync.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="8">
           <Name>EmployeeJobImport.dtsx</Name>
           <FullPath>EmployeeJobImport.dtsx</FullPath>
           <References />
@@ -41,6 +41,11 @@
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderABABillingHoursByLocation.dtsx</Name>
           <FullPath>ReportSenderABABillingHoursByLocation.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="8">
+          <Name>ReportSenderABARBTandBCBATimeWorked.dtsx</Name>
+          <FullPath>ReportSenderABARBTandBCBATimeWorked.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">
@@ -66,6 +71,11 @@
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderWeekdayAnalysisByLearnerCountByCenter.dtsx</Name>
           <FullPath>ReportSenderWeekdayAnalysisByLearnerCountByCenter.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="8">
+          <Name>SSRSWakeUp.dtsx</Name>
+          <FullPath>SSRSWakeUp.dtsx</FullPath>
           <References />
         </DtsPackage>
       </DTSPackages>

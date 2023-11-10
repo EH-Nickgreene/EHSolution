@@ -13,8 +13,8 @@
   DTS:ObjectName="CentralReachReplicateAsync"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="77"
-  DTS:VersionGUID="{94880598-14B3-42B7-91B9-4411FB591C73}">
+  DTS:VersionBuild="78"
+  DTS:VersionGUID="{E5B4FB37-086C-4F38-9A19-528F1F823302}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -93,7 +93,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="MinsToPull">
       <DTS:VariableValue
-        DTS:DataType="8">240</DTS:VariableValue>
+        DTS:DataType="8">20</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -3284,7 +3284,7 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Activity"
-          DTS:ThreadHint="2">
+          DTS:ThreadHint="1">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -3300,7 +3300,7 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Clients Data"
-          DTS:ThreadHint="0">
+          DTS:ThreadHint="2">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -3316,7 +3316,7 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ContactCustomField Data"
-          DTS:ThreadHint="1">
+          DTS:ThreadHint="0">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -3400,6 +3400,14 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
       <GraphLayout
         Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
+          Size="284,42"
+          Id="Package\Execute ClientMetaData Change Tracking"
+          TopLeft="623.464285714286,457.428571428571" />
+        <NodeLayout
+          Size="114,42"
+          Id="Package\Sequence Container\Activity"
+          TopLeft="572.909090909091,14.1818181818181" />
+        <NodeLayout
           Size="113,42"
           Id="Package\Sequence Container\Clients"
           TopLeft="82,18" />
@@ -3407,6 +3415,10 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
           Size="179,42"
           Id="Package\Sequence Container\ContactCustomField"
           TopLeft="304,9.36363636363637" />
+        <NodeLayout
+          Size="152,42"
+          Id="Package\Sequence Container\Update Activity"
+          TopLeft="555.909090909091,84.1818181818179" />
         <NodeLayout
           Size="177,42"
           Id="Package\Sequence Container\Update Clients Data"
@@ -3459,10 +3471,6 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <NodeLayout
-          Size="114,42"
-          Id="Package\Sequence Container\Activity"
-          TopLeft="572.909090909091,14.1818181818181" />
         <EdgeLayout
           Id="Package\Sequence Container.PrecedenceConstraints[Constraint 12]"
           TopLeft="630.909090909091,56.181818181818">
@@ -3485,10 +3493,6 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <NodeLayout
-          Size="152,42"
-          Id="Package\Sequence Container\Update Activity"
-          TopLeft="555.909090909091,84.1818181818179" />
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
@@ -3534,36 +3538,32 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <NodeLayout
-          Size="284,42"
-          Id="Package\Execute ClientMetaData Change Tracking"
-          TopLeft="623.464285714286,457.428571428571" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 1]"
           TopLeft="797.75,362">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-32.2857142857142,95.4285714285714"
+              EndConnector="-32.285714285714,95.428571428571"
               Start="0,0"
-              End="-32.2857142857142,87.9285714285714">
+              End="-32.285714285714,87.928571428571">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,43.7142857142857" />
+                    End="0,43.7142857142855" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,43.7142857142857"
-                    Point2="0,47.7142857142857"
-                    Point3="-4,47.7142857142857" />
+                    Point1="0,43.7142857142855"
+                    Point2="0,47.7142857142855"
+                    Point3="-4,47.7142857142855" />
                   <mssgle:LineSegment
-                    End="-28.2857142857142,47.7142857142857" />
+                    End="-28.285714285714,47.7142857142855" />
                   <mssgle:CubicBezierSegment
-                    Point1="-28.2857142857142,47.7142857142857"
-                    Point2="-32.2857142857142,47.7142857142857"
-                    Point3="-32.2857142857142,51.7142857142857" />
+                    Point1="-28.285714285714,47.7142857142855"
+                    Point2="-32.285714285714,47.7142857142855"
+                    Point3="-32.285714285714,51.7142857142855" />
                   <mssgle:LineSegment
-                    End="-32.2857142857142,87.9285714285714" />
+                    End="-32.285714285714,87.928571428571" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -3576,145 +3576,10 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
     </LayoutInfo>
   </Package>
   <TaskHost
-    design-time-name="Package\Sequence Container\Clients">
-    <LayoutInfo>
-      <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
-        <NodeLayout
-          Size="157,42"
-          Id="Package\Sequence Container\Clients\OLE DB Source"
-          TopLeft="168,68" />
-        <NodeLayout
-          Size="177,42"
-          Id="Package\Sequence Container\Clients\OLE DB Destination"
-          TopLeft="183,214" />
-        <EdgeLayout
-          Id="Package\Sequence Container\Clients.Paths[OLE DB Source Output]"
-          TopLeft="246.5,110">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="25,104"
-              Start="0,0"
-              End="25,96.5">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,48" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,48"
-                    Point2="0,52"
-                    Point3="4,52" />
-                  <mssgle:LineSegment
-                    End="21,52" />
-                  <mssgle:CubicBezierSegment
-                    Point1="21,52"
-                    Point2="25,52"
-                    Point3="25,56" />
-                  <mssgle:LineSegment
-                    End="25,96.5" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-      </GraphLayout>
-    </LayoutInfo>
-  </TaskHost>
-  <PipelineComponentMetadata
-    design-time-name="Package\Sequence Container\Clients\OLE DB Destination">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-      <Property>
-        <Name>TableInfoObjectType</Name>
-        <Value
-          type="q2:string">Table</Value>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <PipelineComponentMetadata
-    design-time-name="Package\Sequence Container\Clients\OLE DB Source">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <TaskHost
-    design-time-name="Package\Sequence Container\ContactCustomField">
-    <LayoutInfo>
-      <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
-        <NodeLayout
-          Size="157,42"
-          Id="Package\Sequence Container\ContactCustomField\OLE DB Source"
-          TopLeft="215,194" />
-        <NodeLayout
-          Size="177,42"
-          Id="Package\Sequence Container\ContactCustomField\OLE DB Destination"
-          TopLeft="204,301" />
-        <EdgeLayout
-          Id="Package\Sequence Container\ContactCustomField.Paths[OLE DB Source Output]"
-          TopLeft="293,236">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,65"
-              Start="0,0"
-              End="0,57.5">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,57.5" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-      </GraphLayout>
-    </LayoutInfo>
-  </TaskHost>
-  <PipelineComponentMetadata
-    design-time-name="Package\Sequence Container\ContactCustomField\OLE DB Destination">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-      <Property>
-        <Name>TableInfoObjectType</Name>
-        <Value
-          type="q2:string">Table</Value>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <PipelineComponentMetadata
-    design-time-name="Package\Sequence Container\ContactCustomField\OLE DB Source">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-      <Property>
-        <Name>TableInfoObjectType</Name>
-        <Value
-          type="q2:string">View</Value>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <TaskHost
     design-time-name="Package\Sequence Container\Activity">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="157,42"
           Id="Package\Sequence Container\Activity\OLE DB Source"
@@ -3754,20 +3619,14 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
     </LayoutInfo>
   </TaskHost>
-  <PipelineComponentMetadata
-    design-time-name="Package\Sequence Container\Activity\OLE DB Source">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
   <PipelineComponentMetadata
     design-time-name="Package\Sequence Container\Activity\OLE DB Destination">
     <Properties>
@@ -3778,6 +3637,153 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
         <Name>TableInfoObjectType</Name>
         <Value
           type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\Activity\OLE DB Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\Sequence Container\Clients">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="157,42"
+          Id="Package\Sequence Container\Clients\OLE DB Source"
+          TopLeft="168,68" />
+        <NodeLayout
+          Size="177,42"
+          Id="Package\Sequence Container\Clients\OLE DB Destination"
+          TopLeft="183,214" />
+        <EdgeLayout
+          Id="Package\Sequence Container\Clients.Paths[OLE DB Source Output]"
+          TopLeft="246.5,110">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="25,104"
+              Start="0,0"
+              End="25,96.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,48" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,48"
+                    Point2="0,52"
+                    Point3="4,52" />
+                  <mssgle:LineSegment
+                    End="21,52" />
+                  <mssgle:CubicBezierSegment
+                    Point1="21,52"
+                    Point2="25,52"
+                    Point3="25,56" />
+                  <mssgle:LineSegment
+                    End="25,96.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\Clients\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\Clients\OLE DB Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\Sequence Container\ContactCustomField">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="157,42"
+          Id="Package\Sequence Container\ContactCustomField\OLE DB Source"
+          TopLeft="215,194" />
+        <NodeLayout
+          Size="177,42"
+          Id="Package\Sequence Container\ContactCustomField\OLE DB Destination"
+          TopLeft="204,301" />
+        <EdgeLayout
+          Id="Package\Sequence Container\ContactCustomField.Paths[OLE DB Source Output]"
+          TopLeft="293,236">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,65"
+              Start="0,0"
+              End="0,57.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,57.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\ContactCustomField\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\ContactCustomField\OLE DB Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">View</Value>
       </Property>
     </Properties>
   </PipelineComponentMetadata>

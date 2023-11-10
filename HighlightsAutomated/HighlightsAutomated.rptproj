@@ -62,6 +62,7 @@
     <Report Include="Learners By Hour By Center Analysis By Learner Hour.rdl" />
     <Report Include="Learners By Hour By Center holiday Analysis.rdl" />
     <Report Include="ParentHolidayAnalysis.rdl" />
+    <Report Include="RBT and BCBA Time worked.rdl" />
     <Report Include="Referral Master Sheet.rdl" />
     <Report Include="Weekday Analysis By Learner Count By Center Excel SubReport.rdl" />
     <Report Include="Weekday Analysis By Learner Count By Center SubReport.rdl" />
