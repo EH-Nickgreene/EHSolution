@@ -775,26 +775,10 @@ WHERE BranchName=@LocationName</CommandText>
                   <TablixHeader>
                     <Size>0.47917in</Size>
                     <CellContents>
-                      <Textbox Name="Textbox17">
+                      <Textbox Name="Textbox1">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value>Cancellation Rate last 6 weeks</Value>
-                                <Style>
-                                  <FontFamily>Arial</FontFamily>
-                                  <FontSize>8pt</FontSize>
-                                  <FontWeight>Bold</FontWeight>
-                                  <Color>White</Color>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style>
-                              <TextAlign>Center</TextAlign>
-                            </Style>
-                          </Paragraph>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
@@ -807,10 +791,12 @@ WHERE BranchName=@LocationName</CommandText>
                                 </Style>
                               </TextRun>
                             </TextRuns>
-                            <Style />
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
                           </Paragraph>
                         </Paragraphs>
-                        <rd:DefaultName>Textbox17</rd:DefaultName>
+                        <rd:DefaultName>Textbox1</rd:DefaultName>
                         <Style>
                           <Border>
                             <Color>LightGrey</Color>
@@ -824,6 +810,7 @@ WHERE BranchName=@LocationName</CommandText>
                           <PaddingBottom>2pt</PaddingBottom>
                         </Style>
                       </Textbox>
+                      <rd:Selected>true</rd:Selected>
                     </CellContents>
                   </TablixHeader>
                 </TablixMember>

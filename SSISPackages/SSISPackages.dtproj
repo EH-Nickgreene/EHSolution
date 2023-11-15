@@ -14,6 +14,11 @@
     <Manifest>
       <DTSPackages>
         <DtsPackage FormatVersion="8">
+          <Name>AzureADUserImport.dtsx</Name>
+          <FullPath>AzureADUserImport.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="8">
           <Name>CentralReachReplicate.dtsx</Name>
           <FullPath>CentralReachReplicate.dtsx</FullPath>
           <References />
@@ -31,6 +36,11 @@
         <DtsPackage FormatVersion="8">
           <Name>EmployeeRosterImport.dtsx</Name>
           <FullPath>EmployeeRosterImport.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="3">
+          <Name>GroupResources_AirTractor_Eligibility.dtsx</Name>
+          <FullPath>GroupResources_AirTractor_Eligibility.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">
