@@ -13,6 +13,16 @@
   <DeploymentModelSpecificContent>
     <Manifest>
       <DTSPackages>
+        <DtsPackage FormatVersion="0">
+          <Name>BreezyOffersImport.dtsx</Name>
+          <FullPath>BreezyOffersImport.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>ADPOnboardingImport.dtsx</Name>
+          <FullPath>ADPOnboardingImport.dtsx</FullPath>
+          <References />
+        </DtsPackage>
         <DtsPackage FormatVersion="8">
           <Name>AzureADUserImport.dtsx</Name>
           <FullPath>AzureADUserImport.dtsx</FullPath>

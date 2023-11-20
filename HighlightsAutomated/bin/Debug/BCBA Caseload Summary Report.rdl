@@ -213,20 +213,7 @@ DECLARE @DaysInMonth INT
 
 
 		IF OBJECT_ID('tempdb..#AuthFinal') IS NOT NULL DROP TABLE #AuthFinal
-		;With CteclientToBCBA as(
-		SELECT c.ClientId,cl.name BCBA
-		FROM insights.Client c
-		LEFT JOIN [insights].[ContactEntityLabel] cel on cel.contactid=c.clientID
-		LEFT JOIN Reference.dbo.BranchData bd on bd.CrLocationContactLabelID=cel.labelId
-		LEFT JOIN [insights].ContactLabel cl on cl.id=cel.labelId
-		WHERE cel.labelAddedOn&lt;=GETDATE()
-		and COALESCE(cel.labelRemovedOn,'12/31/9999')&gt;=GETDATE()
-		and bd.BranchCode IS NULL
-		and cl.name&lt;&gt;'outreach'
-		)
-	
-		
-		SELECT 
+			SELECT 
 		bd.BranchName,
 		Auth.ServiceCode,
 		Auth.ClientFullName,
@@ -243,7 +230,7 @@ DECLARE @DaysInMonth INT
 		 FROM #authAgg auth
 		LEFT JOIN #billingAgg bill on auth.clientId=bill.clientID and auth.serviceCode=Bill.ServiceCode 
 		LEFT JOIN Reference.dbo.BranchData bd on bd.Branchcode=auth.BranchCode
-		LEFT JOIN CteclientToBCBA ctb on ctb.ClientId=auth.clientId
+		LEFT JOIN v_ClientToBCBA ctb on ctb.ClientId=auth.clientId
 		WHERE Auth.AuthHoursCalc&gt;0 
 		ORDER BY 3
 
@@ -582,19 +569,6 @@ DECLARE @DaysInMonth INT
 
 
 		IF OBJECT_ID('tempdb..#AuthFinal') IS NOT NULL DROP TABLE #AuthFinal
-		;With CteclientToBCBA as(
-		SELECT c.ClientId,cl.name BCBA
-		FROM insights.Client c
-		LEFT JOIN [insights].[ContactEntityLabel] cel on cel.contactid=c.clientID
-		LEFT JOIN Reference.dbo.BranchData bd on bd.CrLocationContactLabelID=cel.labelId
-		LEFT JOIN [insights].ContactLabel cl on cl.id=cel.labelId
-		WHERE cel.labelAddedOn&lt;=GETDATE()
-		and COALESCE(cel.labelRemovedOn,'12/31/9999')&gt;=GETDATE()
-		and bd.BranchCode IS NULL
-		and cl.name&lt;&gt;'outreach'
-		)
-	
-		
 		SELECT 
 		bd.BranchName,
 		Auth.ServiceCode,
@@ -612,7 +586,7 @@ DECLARE @DaysInMonth INT
 		 FROM #authAgg auth
 		LEFT JOIN #billingAgg bill on auth.clientId=bill.clientID and auth.serviceCode=Bill.ServiceCode 
 		LEFT JOIN Reference.dbo.BranchData bd on bd.Branchcode=auth.BranchCode
-		LEFT JOIN CteclientToBCBA ctb on ctb.ClientId=auth.clientId
+		LEFT JOIN v_ClientToBCBA ctb on ctb.ClientId=auth.clientId
 		WHERE Auth.AuthHoursCalc&gt;0 
 		ORDER BY 3
 
@@ -4784,20 +4758,10 @@ GROUP By
   <ReportParameters>
     <ReportParameter Name="StartDate">
       <DataType>DateTime</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>9/1/2023 12:00:00 AM</Value>
-        </Values>
-      </DefaultValue>
       <Prompt>Start Date</Prompt>
     </ReportParameter>
     <ReportParameter Name="EndDate">
       <DataType>DateTime</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>9/30/2023 12:00:00 AM</Value>
-        </Values>
-      </DefaultValue>
       <Prompt>End Date</Prompt>
     </ReportParameter>
     <ReportParameter Name="EmployeeNumber">
