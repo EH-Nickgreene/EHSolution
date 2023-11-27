@@ -13,12 +13,7 @@
   <DeploymentModelSpecificContent>
     <Manifest>
       <DTSPackages>
-        <DtsPackage FormatVersion="0">
-          <Name>BreezyOffersImport.dtsx</Name>
-          <FullPath>BreezyOffersImport.dtsx</FullPath>
-          <References />
-        </DtsPackage>
-        <DtsPackage FormatVersion="0">
+        <DtsPackage FormatVersion="8">
           <Name>ADPOnboardingImport.dtsx</Name>
           <FullPath>ADPOnboardingImport.dtsx</FullPath>
           <References />
@@ -26,6 +21,11 @@
         <DtsPackage FormatVersion="8">
           <Name>AzureADUserImport.dtsx</Name>
           <FullPath>AzureADUserImport.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="8">
+          <Name>BreezyOffersImport.dtsx</Name>
+          <FullPath>BreezyOffersImport.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">
@@ -61,6 +61,11 @@
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderABABillingHoursByLocation.dtsx</Name>
           <FullPath>ReportSenderABABillingHoursByLocation.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>ReportSenderABAUpNext.dtsx</Name>
+          <FullPath>ReportSenderABAUpNext.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">

@@ -225,30 +225,130 @@ LEFT JOIN (
     <DataSet Name="AdmitsHistorical">
       <Query>
         <DataSourceName>EHClinical</DataSourceName>
-        <CommandText>SELECT 
+        <QueryParameters>
+          <QueryParameter Name="@StartDate">
+            <Value>=Parameters!StartDate.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@EndDate">
+            <Value>=Parameters!EndDate.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>DECLARE @date date=getdate()
+
+DECLARE @monthint int,@DaysInMonth int, @DaysCompletedInMonth INT,@BusinessDaysInMonth INT, @BusinessDaysLeftInMonth int--,@AvgBusinessDayDischarge DECIMAL(9,2)
+SELECT @monthint=monthint
+FROM Reference.dbo.dimdate
+WHERE date=@StartDate
+
+
+--POPULATE VARIABLES TO BE USED IN FORECAST CALC
+	SELECT @DaysInMonth=COUNT(*),
+	@BusinessDaysInMonth=SUM(CASE WHEN IsWeekDay=1 and IsEmpyreanHoliday=0 THEN 1 ELSE 0 END)
+	FROM Reference.dbo.dimdate
+	WHERE Monthint=@monthint
+
+	SELECT @BusinessDaysLeftInMonth=(@BusinessDaysInMonth-SUM(CASE WHEN IsWeekDay=1 and IsEmpyreanHoliday=0 THEN 1 ELSE 0 END))
+	FROM Reference.dbo.dimdate
+	WHERE Monthint=@monthint
+	and date&lt;@date
+
+
+
+	IF DATEDIFF(dd,@StartDate,@date)&gt;=@DaysInMonth
+	BEGIN 
+		SET @DaysCompletedInMonth=@DaysInMonth
+	END
+	ELSE 
+	BEGIN
+		SET @DaysCompletedInMonth=DATEDIFF(dd,@StartDate,@date)
+	END
+
+	--SELECT @DaysCompletedInMonth,@BusinessDaysInMonth,@BusinessDaysLeftInMonth
+
+
+	
+	;With CteBranchAndDays as (
+		SELECT wh.Branch_Code,dd.Date
+		FROM 
+		(
+			SELECT DISTINCT Branch_Code	
+			FROM wh_PatientDays
+			WHERE ServiceDate&gt;=CONVERT(Date,GETDATE()-45)		
+		) wh
+		CROSS JOIN Reference.dbo.DimDate dd 
+		WHERE dd.date&gt;=CONVERT(Date,GETDATE()-45)
+		and dd.date&lt;CONVERT(date,GETDATE())
+		and IsWeekDay=1 and IsEmpyreanHoliday=0
+		--ORDER BY 1,2
+	)	
+
+
+	
+	
+
+	
+	
+
+
+SELECT 
 	wh.Branch_Code,
 	bd.BranchName,
 	dd.MonthInt,
 	dd.Month,
-	SUM(CASE WHEN wh.PayorSource&lt;&gt;'MEDICARE PRO BONO' THEN 1 ELSE 0 END) as MEDICAREHOSPICE,
-	SUM(CASE WHEN wh.PayorSource='MEDICARE PRO BONO' THEN 1 ELSE 0 END) as MEDICAREPROBONO,
 	COUNT(*) admits
 
 FROM wh_admissions wh
 LEFT JOIN Reference.dbo.BranchData bd on bd.branchcode=wh.Branch_Code
 LEFT JOIN 
 	(
-		SELECT Monthint,Month,MIN(date)FirstDay,Max(date) LastDay
+		SELECT 
+			Monthint,
+			CASE
+				WHEN Monthint=@monthint THEN Month+' Forecast'
+				ELSE Month
+			END Month,
+			MIN(date)FirstDay,
+			Max(date) LastDay
 		FROM reference.dbo.dimdate
 		GROUP BY Monthint,Month
 	) dd on wh.epi_socdate&gt;=dd.FirstDay and wh.epi_socdate&lt;dateadd(dd,1,dd.LastDay)
-WHERE wh.epi_socdate&gt;=dateadd(mm,datediff(mm,0,getdate())-6,0)
-and wh.epi_socdate&lt;CONVERT(DATE,GETDATE())
+WHERE wh.epi_SOCDate&gt;=dateadd(mm,datediff(mm,0,getdate())-6,0)
+and wh.epi_SOCDate&lt;@EndDate
 GROUP BY 
 	wh.Branch_Code,
 	bd.BranchName,
 	dd.MonthInt,
-	dd.Month</CommandText>
+	dd.Month
+
+UNION ALL
+
+	SELECT 
+	a.Branch_Code,
+	bd.Branchname,
+	@monthint,
+	(SELECT TOP 1 Month+' Forecast' FROM Reference.dbo.DimDate WHERE monthInt=@monthint) Month,
+	--COUNT(*) BusinessDays,
+	--SUM(Admits) Admits,
+	--SUM(Admits)/CONVERT(float,COUNT(*)) as AvgDailyAdmits,--business days
+	--@BusinessDaysLeftInMonth BusinessDaysLeftInMonth,
+	ROUND(SUM(Admits)/CONVERT(float,COUNT(*)) * @BusinessDaysLeftInMonth,0) Admits--Avg Business day admits * Number of business days left in month
+FROM (
+	SELECT dd.Branch_Code,date,COUNT(epi_socdate)  Admits
+	FROM wh_admissions wh
+	RIGHT JOIN CteBranchAndDays dd on wh.epi_socdate=dd.date and wh.Branch_Code=dd.Branch_Code							
+	--WHERE dd.date&gt;=CONVERT(Date,GETDATE()-45)
+	--and dd.date&lt;CONVERT(date,GETDATE())
+	--and IsWeekDay=1 and IsEmpyreanHoliday=0
+	GROUP BY dd.Branch_Code,dd.date--,bd.BranchName
+	)a
+	LEFT JOIN reference.dbo.BranchData bd on bd.Branchcode=a.Branch_Code
+	GROUP BY 
+	a.Branch_Code,
+	bd.Branchname
+
+
+
+</CommandText>
       </Query>
       <Fields>
         <Field Name="Branch_Code">
@@ -267,17 +367,9 @@ GROUP BY
           <DataField>Month</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="MEDICAREHOSPICE">
-          <DataField>MEDICAREHOSPICE</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="MEDICAREPROBONO">
-          <DataField>MEDICAREPROBONO</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
         <Field Name="admits">
           <DataField>admits</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
+          <rd:TypeName>System.Double</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -310,6 +402,352 @@ GROUP BY MetricName</CommandText>
         <Field Name="MetricValue">
           <DataField>MetricValue</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="DischargeHistorical">
+      <Query>
+        <DataSourceName>EHClinical</DataSourceName>
+        <CommandText>USE EHClinical
+
+DECLARE @startdate date,@enddate date
+
+SET @StartDate = '2023-11-1'
+SET @EndDate='2023-11-25'
+
+DECLARE @date date=getdate()
+
+DECLARE @monthint int,@DaysInMonth int, @DaysCompletedInMonth INT,@DaysLeftInMonth INT
+SELECT @monthint=monthint
+FROM Reference.dbo.dimdate
+WHERE date=@StartDate
+
+
+--POPULATE VARIABLES TO BE USED IN FORECAST CALC
+	SELECT @DaysInMonth=COUNT(*)
+	FROM Reference.dbo.dimdate
+	WHERE Monthint=@monthint
+
+
+
+	IF DATEDIFF(dd,@StartDate,@date)&gt;=@DaysInMonth
+	BEGIN 
+		SET @DaysCompletedInMonth=@DaysInMonth
+	END
+	ELSE 
+	BEGIN
+		SET @DaysCompletedInMonth=DATEDIFF(dd,@StartDate,@date)
+	END
+
+
+	SET @DaysLeftInMonth=@DaysInMonth-@DaysCompletedInMonth
+	
+	
+
+--Actual Numbers
+SELECT 
+	wh.Branch_Code,
+	bd.BranchName,
+	dd.MonthInt,
+	dd.Month,
+	COUNT(*) Discharges
+
+FROM wh_discharges wh
+LEFT JOIN Reference.dbo.BranchData bd on bd.branchcode=wh.Branch_Code
+LEFT JOIN 
+	(
+		SELECT 
+			Monthint,
+			--Month,
+			CASE
+				WHEN Monthint=@monthint THEN Month+' Forecast'
+				ELSE Month
+			END Month,
+			MIN(date)FirstDay,
+			Max(date) LastDay
+		FROM reference.dbo.dimdate
+		GROUP BY Monthint,
+			CASE
+				WHEN Monthint=@monthint THEN Month+' Forecast'
+				ELSE Month
+			END
+	) dd on wh.epi_dischargeDate&gt;=dd.FirstDay and wh.epi_dischargeDate&lt;dateadd(dd,1,dd.LastDay)
+WHERE wh.epi_dischargeDate&gt;=dateadd(mm,datediff(mm,0,getdate())-6,0)
+and wh.epi_dischargeDate&lt;@EndDate
+GROUP BY 
+	wh.Branch_Code,
+	bd.BranchName,
+	dd.MonthInt,
+	dd.Month
+UNION ALL
+--ADD in CurrentMonth Forecast
+SELECT 
+		bd.BranchCode,
+		bd.BranchName,
+		@monthint,
+		(SELECT TOP 1 Month+' Forecast' FROM Reference.dbo.DimDate WHERE monthInt=@monthint) Month,
+		--COUNT(epi_DischargeDate) discharges,
+		--COUNT(epi_DischargeDate)/45.00 AvgDailyDischarges
+		Round((COUNT(epi_DischargeDate)/45.00) * @DaysLeftInMonth,0)--AvgDailyDischarges * DaysLeft in Month
+		
+
+	FROM 
+	(
+	SELECT DISTINCT BranchCode,BranchName
+	FROM Reference.dbo.BranchData
+	WHERE ActivePatientDays=1
+	) bd
+	LEFT JOIN wh_discharges wh on bd.BranchCode=wh.Branch_Code
+						AND epi_DischargeDate&gt;=CONVERT(Date,GETDATE()-45)
+						and epi_DischargeDate&lt;@EndDate
+	GROUP BY bd.BranchCode,bd.BranchName
+UNION ALL
+--PHANTOM ROWS FOR WHEN COMPANY IS STARTING 
+--NEED TO STUFF IN ROWS SO RESULTS ALIGN WITH ADMITS AND ADC ON SSRS REPORT
+SELECT 'EAI','Aiken','202308','August','0'
+WHERE CONVERT(Date,'2023-08-01')&gt; dateadd(mm,datediff(mm,0,getdate())-6,0)
+</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Branch_Code">
+          <DataField>Branch_Code</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BranchName">
+          <DataField>BranchName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MonthInt">
+          <DataField>MonthInt</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Month">
+          <DataField>Month</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Discharges">
+          <DataField>Discharges</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="ADCHistorical">
+      <Query>
+        <DataSourceName>EHClinical</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@StartDate">
+            <Value>=Parameters!StartDate.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@EndDate">
+            <Value>=Parameters!EndDate.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>DECLARE @date date=getdate()
+
+DECLARE @monthint int,@DaysInMonth int, @DaysCompletedInMonth INT,@DaysLeftInMonth INT
+SELECT @monthint=monthint
+FROM Reference.dbo.dimdate
+WHERE date=@StartDate
+
+
+--POPULATE VARIABLES TO BE USED IN FORECAST CALC
+	SELECT @DaysInMonth=COUNT(*)
+	FROM Reference.dbo.dimdate
+	WHERE Monthint=@monthint
+
+
+
+	IF DATEDIFF(dd,@StartDate,@date)&gt;=@DaysInMonth
+	BEGIN 
+		SET @DaysCompletedInMonth=@DaysInMonth
+	END
+	ELSE 
+	BEGIN
+		SET @DaysCompletedInMonth=DATEDIFF(dd,@StartDate,@date)
+	END
+
+
+	SET @DaysLeftInMonth=@DaysInMonth-@DaysCompletedInMonth
+	
+
+IF OBJECT_ID('tempdb..#PatientDays') IS NOT NULL DROP TABLE #PatientDays
+SELECT
+Branch_code,
+ServiceDate,
+COUNT(*) PatientDays
+INTO #PatientDays
+FROM wh_patientdays
+WHERE ServiceDate&gt;=CONVERT(Date,GETDATE()-46)--46 is intentionally put here, so the LAG function can see the day before when we look back 45 days
+and ServiceDate&lt;GETDATE()
+GROUP BY Branch_code,ServiceDate
+
+IF OBJECT_ID('tempdb..#pdDailyChange') IS NOT NULL DROP TABLE #pdDailyChange
+SELECT 
+	Branch_code,
+	ServiceDate,
+	PatientDays,
+	LAG(PatientDays,1,0) OVER(PARTITION BY Branch_code ORDER BY ServiceDate) PriorDayPatientDays,
+	PatientDays-LAG(PatientDays,1,0) OVER(PARTITION BY Branch_code ORDER BY ServiceDate) DailyChange
+INTO #pdDailyChange
+FROM #PatientDays
+ORDER BY 1,2
+
+
+
+
+IF OBJECT_ID('tempdb..#MonthDays') IS NOT NULL DROP TABLE #MonthDays
+SELECT 
+	CASE
+		WHEN Monthint=@monthint THEN Month+' Forecast'
+		ELSE Month
+	END Month,
+	Min(date) MonthStartDate,
+	Max(date) MonthEndDate, 
+	Monthint,
+	COUNT(*) DaysInMonth
+INTO #MonthDays
+FROM Reference.dbo.DimDate dd
+WHERE date&gt;=dateadd(mm,datediff(mm,0,getdate())-6,0)
+and date&lt;@EndDate
+GROUP BY Monthint,Month
+
+IF OBJECT_ID('tempdb..#adc') IS NOT NULL DROP TABLE #adc
+SELECT
+wh.Branch_Code,
+bd.BranchName,
+md.MonthInt,
+Month,
+CONVERT(float,COUNT(*)) PatientDays,
+md.DaysInMonth,
+CONVERT(float,COUNT(*))/CONVERT(float,md.DaysInMonth) ADC
+--INTO #adc
+FROM wh_patientdays wh
+LEFT JOIN #MonthDays md on wh.ServiceDate&gt;=md.MonthStartDate and wh.ServiceDate&lt;=md.MonthEndDate
+LEFT JOIN Reference.dbo.BranchData bd on bd.BranchCode=wh.Branch_Code
+WHERE ServiceDate&gt;=dateadd(mm,datediff(mm,0,getdate())-6,0)
+and ServiceDate&lt;@EndDate
+GROUP BY 
+	wh.Branch_Code,
+	bd.BranchName,
+	md.monthint,
+	md.DaysInMonth,
+	md.Month
+--ORDER By 1,2
+UNION ALL
+SELECT 
+	wh.Branch_Code,
+	bd.BranchName,
+	@monthint,
+	(SELECT TOP 1 Month+' Forecast' FROM Reference.dbo.DimDate WHERE monthInt=@monthint) Month,
+	SUM(DailyChange)/CONVERT(float,COUNT(*) )*@DaysLeftInMonth PatientDays,--(Avg Daily chang * Days left in month) , now we have additinal patient days expected
+	@DaysLeftInMonth DaysLeftInMonth,
+	(SUM(DailyChange)/CONVERT(float,COUNT(*) )*@DaysLeftInMonth) / @DaysLeftInMonth ForecastADC  --Patient days expected divided by days left in month
+FROm #pdDailyChange wh
+LEFT JOIN Reference.dbo.BranchData bd on bd.BranchCode=wh.Branch_Code
+WHERE ServiceDate&gt;=CONVERT(Date,GETDATE()-45)
+GROUP BY 
+	wh.Branch_Code,
+	bd.BranchName
+</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Branch_code">
+          <DataField>Branch_Code</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BranchName">
+          <DataField>BranchName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MonthInt">
+          <DataField>MonthInt</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Month">
+          <DataField>Month</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PatientDays">
+          <DataField>PatientDays</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="DaysInMonth">
+          <DataField>DaysInMonth</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="ADC">
+          <DataField>ADC</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="Budget">
+      <Query>
+        <DataSourceName>EHClinical</DataSourceName>
+        <CommandText>
+DECLARE @monthInt int
+
+SELECT @monthInt =ConfiguredValue
+FROM reference.[dbo].[SSIS Configurations]
+WHERE ConfigurationFilter IN ('ReportSenderEHHospiceDailyReport')
+and PackagePath='\Package.Variables[User::MonthInt].Properties[Value]'
+
+SELECT b.Monthint,dd.MonthDesc,SUM(MetricValue) ADC
+FROM Budget b
+LEFT JOIN (
+	SELECT DISTINCT
+		Monthint,
+		Month+' '+ Convert(varchar(10),year) MonthDesc
+	FROM Reference.dbo.DimDate 
+	) dd on b.MonthInt=dd.MonthInt
+WHERE MetricName='ADC'
+and b.MonthInt&gt;=@monthInt
+GROUP BY b.Monthint,dd.MonthDesc
+ORDER BY b.Monthint
+</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Monthint">
+          <DataField>Monthint</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="MonthDesc">
+          <DataField>MonthDesc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ADC">
+          <DataField>ADC</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="SingleValues">
+      <Query>
+        <DataSourceName>EHClinical</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@StartDate">
+            <Value>=Parameters!StartDate.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>
+SELECT Month ReportingMonth,CONVERT(int,b.ADCGoal) ADCGoal
+From reference.dbo.Dimdate d
+LEFT JOIN (
+	SELECT Monthint,SUM(MetricValue) ADCGoal
+	FROM Budget
+	WHERE MetricName='ADC'
+	GROUP By Monthint
+	) b on d.monthint=b.monthint
+WHERE date=@StartDate</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="ReportingMonth">
+          <DataField>ReportingMonth</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ADCGoal">
+          <DataField>ADCGoal</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -1710,6 +2148,9 @@ GROUP BY MetricName</CommandText>
                       </Textbox>
                     </CellContents>
                   </TablixHeader>
+                  <Visibility>
+                    <Hidden>true</Hidden>
+                  </Visibility>
                 </TablixMember>
                 <TablixMember>
                   <TablixHeader>
@@ -2182,7 +2623,8 @@ GROUP BY MetricName</CommandText>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>SummaryData</DataSetName>
-            <Top>0.91542in</Top>
+            <PageName>Summary</PageName>
+            <Top>2.54042in</Top>
             <Height>4in</Height>
             <Width>3.35417in</Width>
             <Style>
@@ -2289,8 +2731,49 @@ GROUP BY MetricName</CommandText>
                 <TablixCornerRow>
                   <TablixCornerCell>
                     <CellContents>
-                      <Textbox Name="Textbox6">
+                      <Textbox Name="Textbox36">
                         <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Admits HIstorical</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox36</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>None</Style>
+                          </Border>
+                          <TopBorder>
+                            <Style>Solid</Style>
+                          </TopBorder>
+                          <BackgroundColor>White</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                </TablixCornerRow>
+                <TablixCornerRow>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="Textbox6">
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
                           <Paragraph>
@@ -2313,8 +2796,7 @@ GROUP BY MetricName</CommandText>
                         <rd:DefaultName>Textbox6</rd:DefaultName>
                         <Style>
                           <Border>
-                            <Color>LightGrey</Color>
-                            <Style>Solid</Style>
+                            <Style>None</Style>
                           </Border>
                           <BackgroundColor>Teal</BackgroundColor>
                           <PaddingLeft>2pt</PaddingLeft>
@@ -2347,9 +2829,10 @@ GROUP BY MetricName</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!admits.Value)</Value>
+                                  <Value>=IIF(Sum(Fields!admits.Value) Is Nothing, 0,Sum(Fields!admits.Value))</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
+                                    <Format>n0</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2386,11 +2869,12 @@ GROUP BY MetricName</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!admits.Value)</Value>
+                                  <Value>=IIF(Sum(Fields!admits.Value) Is Nothing, 0,Sum(Fields!admits.Value))</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
+                                    <Format>n0</Format>
                                     <Color>White</Color>
                                   </Style>
                                 </TextRun>
@@ -2422,27 +2906,17 @@ GROUP BY MetricName</CommandText>
             <TablixColumnHierarchy>
               <TablixMembers>
                 <TablixMember>
-                  <Group Name="Month">
-                    <GroupExpressions>
-                      <GroupExpression>=Fields!Month.Value</GroupExpression>
-                    </GroupExpressions>
-                  </Group>
-                  <SortExpressions>
-                    <SortExpression>
-                      <Value>=Fields!MonthInt.Value</Value>
-                    </SortExpression>
-                  </SortExpressions>
                   <TablixHeader>
                     <Size>0.25in</Size>
                     <CellContents>
-                      <Textbox Name="Month">
+                      <Textbox Name="Textbox37">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>=Fields!Month.Value</Value>
+                                <Value />
                                 <Style>
                                   <FontSize>8pt</FontSize>
                                   <FontWeight>Bold</FontWeight>
@@ -2455,13 +2929,15 @@ GROUP BY MetricName</CommandText>
                             </Style>
                           </Paragraph>
                         </Paragraphs>
-                        <rd:DefaultName>Month</rd:DefaultName>
+                        <rd:DefaultName>Textbox37</rd:DefaultName>
                         <Style>
                           <Border>
-                            <Color>LightGrey</Color>
-                            <Style>Solid</Style>
+                            <Style>None</Style>
                           </Border>
-                          <BackgroundColor>Teal</BackgroundColor>
+                          <TopBorder>
+                            <Style>Solid</Style>
+                          </TopBorder>
+                          <BackgroundColor>White</BackgroundColor>
                           <PaddingLeft>2pt</PaddingLeft>
                           <PaddingRight>2pt</PaddingRight>
                           <PaddingTop>2pt</PaddingTop>
@@ -2470,6 +2946,57 @@ GROUP BY MetricName</CommandText>
                       </Textbox>
                     </CellContents>
                   </TablixHeader>
+                  <TablixMembers>
+                    <TablixMember>
+                      <Group Name="Month">
+                        <GroupExpressions>
+                          <GroupExpression>=Fields!Month.Value</GroupExpression>
+                        </GroupExpressions>
+                      </Group>
+                      <SortExpressions>
+                        <SortExpression>
+                          <Value>=Fields!MonthInt.Value</Value>
+                        </SortExpression>
+                      </SortExpressions>
+                      <TablixHeader>
+                        <Size>0.38542in</Size>
+                        <CellContents>
+                          <Textbox Name="Month">
+                            <KeepTogether>true</KeepTogether>
+                            <Paragraphs>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value>=Fields!Month.Value</Value>
+                                    <Style>
+                                      <FontSize>8pt</FontSize>
+                                      <FontWeight>Bold</FontWeight>
+                                      <Color>White</Color>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style>
+                                  <TextAlign>Center</TextAlign>
+                                </Style>
+                              </Paragraph>
+                            </Paragraphs>
+                            <rd:DefaultName>Month</rd:DefaultName>
+                            <Style>
+                              <Border>
+                                <Style>None</Style>
+                              </Border>
+                              <BackgroundColor>Teal</BackgroundColor>
+                              <VerticalAlign>Middle</VerticalAlign>
+                              <PaddingLeft>2pt</PaddingLeft>
+                              <PaddingRight>2pt</PaddingRight>
+                              <PaddingTop>2pt</PaddingTop>
+                              <PaddingBottom>2pt</PaddingBottom>
+                            </Style>
+                          </Textbox>
+                        </CellContents>
+                      </TablixHeader>
+                    </TablixMember>
+                  </TablixMembers>
                 </TablixMember>
               </TablixMembers>
             </TablixColumnHierarchy>
@@ -2487,7 +3014,7 @@ GROUP BY MetricName</CommandText>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
-                    <Size>1in</Size>
+                    <Size>1.14583in</Size>
                     <CellContents>
                       <Textbox Name="BranchName1">
                         <CanGrow>true</CanGrow>
@@ -2522,7 +3049,7 @@ GROUP BY MetricName</CommandText>
                 </TablixMember>
                 <TablixMember>
                   <TablixHeader>
-                    <Size>1in</Size>
+                    <Size>1.14583in</Size>
                     <CellContents>
                       <Textbox Name="Textbox561">
                         <CanGrow>true</CanGrow>
@@ -2565,9 +3092,9 @@ GROUP BY MetricName</CommandText>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>AdmitsHistorical</DataSetName>
-            <Top>5.86333in</Top>
-            <Height>0.75in</Height>
-            <Width>1.90625in</Width>
+            <Top>8.23833in</Top>
+            <Height>1.13542in</Height>
+            <Width>2.05208in</Width>
             <ZIndex>4</ZIndex>
             <Style>
               <Border>
@@ -2575,8 +3102,1097 @@ GROUP BY MetricName</CommandText>
               </Border>
             </Style>
           </Tablix>
+          <Tablix Name="Tablix12">
+            <TablixCorner>
+              <TablixCornerRows>
+                <TablixCornerRow>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="Textbox39">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Discharge HIstorical</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox36</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>None</Style>
+                          </Border>
+                          <TopBorder>
+                            <Style>Solid</Style>
+                          </TopBorder>
+                          <BackgroundColor>White</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                </TablixCornerRow>
+                <TablixCornerRow>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="Textbox8">
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value />
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox6</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>None</Style>
+                          </Border>
+                          <BackgroundColor>Teal</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                </TablixCornerRow>
+              </TablixCornerRows>
+            </TablixCorner>
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>0.90625in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="admits2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Sum(Fields!Discharges.Value) Is Nothing, 0,Sum(Fields!Discharges.Value))</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>n0</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>admits</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="admits3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Sum(Fields!Discharges.Value) Is Nothing, 0,Sum(Fields!Discharges.Value))</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>n0</Format>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>admits1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Teal</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>0.375in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox38">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value />
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox37</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>None</Style>
+                          </Border>
+                          <TopBorder>
+                            <Style>Solid</Style>
+                          </TopBorder>
+                          <BackgroundColor>White</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <TablixMembers>
+                    <TablixMember>
+                      <Group Name="Month2">
+                        <GroupExpressions>
+                          <GroupExpression>=Fields!Month.Value</GroupExpression>
+                        </GroupExpressions>
+                      </Group>
+                      <SortExpressions>
+                        <SortExpression>
+                          <Value>=Fields!MonthInt.Value</Value>
+                        </SortExpression>
+                      </SortExpressions>
+                      <TablixHeader>
+                        <Size>0.40625in</Size>
+                        <CellContents>
+                          <Textbox Name="Month2">
+                            <KeepTogether>true</KeepTogether>
+                            <Paragraphs>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value>=Fields!Month.Value</Value>
+                                    <Style>
+                                      <FontSize>8pt</FontSize>
+                                      <FontWeight>Bold</FontWeight>
+                                      <Color>White</Color>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style>
+                                  <TextAlign>Center</TextAlign>
+                                </Style>
+                              </Paragraph>
+                            </Paragraphs>
+                            <rd:DefaultName>Month</rd:DefaultName>
+                            <Style>
+                              <Border>
+                                <Style>None</Style>
+                              </Border>
+                              <BackgroundColor>Teal</BackgroundColor>
+                              <VerticalAlign>Middle</VerticalAlign>
+                              <PaddingLeft>2pt</PaddingLeft>
+                              <PaddingRight>2pt</PaddingRight>
+                              <PaddingTop>2pt</PaddingTop>
+                              <PaddingBottom>2pt</PaddingBottom>
+                            </Style>
+                          </Textbox>
+                        </CellContents>
+                      </TablixHeader>
+                    </TablixMember>
+                  </TablixMembers>
+                </TablixMember>
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="Branch_Code2">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!BranchName.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!BranchName.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <TablixHeader>
+                    <Size>1.14583in</Size>
+                    <CellContents>
+                      <Textbox Name="BranchName2">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>=Fields!BranchName.Value</Value>
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>BranchName1</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>1.14583in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox562">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Total</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Left</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox561</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Teal</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>DischargeHistorical</DataSetName>
+            <Top>9.59833in</Top>
+            <Height>1.28125in</Height>
+            <Width>2.05208in</Width>
+            <ZIndex>5</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Tablix Name="Tablix13">
+            <TablixCorner>
+              <TablixCornerRows>
+                <TablixCornerRow>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="Textbox41">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>ADC Historical</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox36</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>None</Style>
+                          </Border>
+                          <TopBorder>
+                            <Style>Solid</Style>
+                          </TopBorder>
+                          <BackgroundColor>White</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                </TablixCornerRow>
+                <TablixCornerRow>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="Textbox10">
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value />
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox6</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>None</Style>
+                          </Border>
+                          <BackgroundColor>Teal</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                </TablixCornerRow>
+              </TablixCornerRows>
+            </TablixCorner>
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>0.90625in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="admits4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Sum(Fields!ADC.Value) Is Nothing, 0,Sum(Fields!ADC.Value))</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>n1</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>admits</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="admits5">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Sum(Fields!ADC.Value) Is Nothing, 0,Sum(Fields!ADC.Value))</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>n1</Format>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>admits1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Teal</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>0.375in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox40">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value />
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox37</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>None</Style>
+                          </Border>
+                          <TopBorder>
+                            <Style>Solid</Style>
+                          </TopBorder>
+                          <BackgroundColor>White</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <TablixMembers>
+                    <TablixMember>
+                      <Group Name="Month3">
+                        <GroupExpressions>
+                          <GroupExpression>=Fields!Month.Value</GroupExpression>
+                        </GroupExpressions>
+                      </Group>
+                      <SortExpressions>
+                        <SortExpression>
+                          <Value>=Fields!MonthInt.Value</Value>
+                        </SortExpression>
+                      </SortExpressions>
+                      <TablixHeader>
+                        <Size>0.39583in</Size>
+                        <CellContents>
+                          <Textbox Name="Month3">
+                            <KeepTogether>true</KeepTogether>
+                            <Paragraphs>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value>=Fields!Month.Value</Value>
+                                    <Style>
+                                      <FontSize>8pt</FontSize>
+                                      <FontWeight>Bold</FontWeight>
+                                      <Color>White</Color>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style>
+                                  <TextAlign>Center</TextAlign>
+                                </Style>
+                              </Paragraph>
+                            </Paragraphs>
+                            <rd:DefaultName>Month</rd:DefaultName>
+                            <Style>
+                              <Border>
+                                <Style>None</Style>
+                              </Border>
+                              <BackgroundColor>Teal</BackgroundColor>
+                              <VerticalAlign>Middle</VerticalAlign>
+                              <PaddingLeft>2pt</PaddingLeft>
+                              <PaddingRight>2pt</PaddingRight>
+                              <PaddingTop>2pt</PaddingTop>
+                              <PaddingBottom>2pt</PaddingBottom>
+                            </Style>
+                          </Textbox>
+                        </CellContents>
+                      </TablixHeader>
+                    </TablixMember>
+                  </TablixMembers>
+                </TablixMember>
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="Branch_Code3">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!BranchName.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!BranchName.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <TablixHeader>
+                    <Size>1.14583in</Size>
+                    <CellContents>
+                      <Textbox Name="BranchName3">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>=Fields!BranchName.Value</Value>
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>BranchName1</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>1.14583in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox563">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Total</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Left</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox561</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Teal</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>ADCHistorical</DataSetName>
+            <Top>6.81708in</Top>
+            <Height>1.27083in</Height>
+            <Width>2.05208in</Width>
+            <ZIndex>6</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Tablix Name="Tablix4">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>0.64583in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ADC">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!ADC.Value)</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>n0</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ADC</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="MonthDesc">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!MonthDesc.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!Monthint.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <TablixHeader>
+                    <Size>0.38542in</Size>
+                    <CellContents>
+                      <Textbox Name="MonthDesc">
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>=Fields!MonthDesc.Value</Value>
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>MonthDesc</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>LightGrey</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember />
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>Budget</DataSetName>
+            <Top>1.83208in</Top>
+            <Height>0.63542in</Height>
+            <Width>0.64583in</Width>
+            <ZIndex>7</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Tablix Name="Tablix5">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>1.66667in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox69">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=First(Fields!ReportingMonth.Value, "SingleValues") &amp; " ADC Goal: "</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox69</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ADCGoal">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!ADCGoal.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ADCGoal</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox75">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>="MTD ADC: "</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox75</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox76">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!adc.Value, "SummaryData")</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>n1</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox76</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>SingleValues</DataSetName>
+            <Top>0.86333in</Top>
+            <Height>0.5in</Height>
+            <Width>2.66667in</Width>
+            <ZIndex>8</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Textbox Name="Textbox78">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Upcoming ADC Goals</Value>
+                    <Style>
+                      <FontSize>9pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox78</rd:DefaultName>
+            <Top>1.49875in</Top>
+            <Height>0.25in</Height>
+            <Width>3.13542in</Width>
+            <ZIndex>9</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
         </ReportItems>
-        <Height>9.30083in</Height>
+        <Height>11.50458in</Height>
         <Style />
       </Body>
       <Width>7.57291in</Width>
