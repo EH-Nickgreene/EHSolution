@@ -1059,7 +1059,6 @@ ORDER BY
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -1687,7 +1686,6 @@ ORDER BY
                               <GroupExpression>=Fields!BranchName.Value</GroupExpression>
                               <GroupExpression>=Fields!HireDate.Value</GroupExpression>
                               <GroupExpression>=Fields!TerminationDate.Value</GroupExpression>
-                              <GroupExpression>=Fields!ScheduledHours.Value</GroupExpression>
                             </GroupExpressions>
                           </Group>
                           <SortExpressions>
@@ -1732,6 +1730,7 @@ ORDER BY
                                       <PaddingBottom>2pt</PaddingBottom>
                                     </Style>
                                   </Textbox>
+                                  <rd:Selected>true</rd:Selected>
                                 </CellContents>
                               </TablixHeader>
                               <TablixMembers>
