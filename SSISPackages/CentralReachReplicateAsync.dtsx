@@ -13,8 +13,8 @@
   DTS:ObjectName="CentralReachReplicateAsync"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="78"
-  DTS:VersionGUID="{E5B4FB37-086C-4F38-9A19-528F1F823302}">
+  DTS:VersionBuild="79"
+  DTS:VersionGUID="{2010A9B4-5413-4CA5-ABA7-C3445D51FC01}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -1318,6 +1318,24 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
                           cachedScale="6"
                           externalMetadataColumnId="Package\Sequence Container\Clients\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RowModifiedAt]"
                           lineageId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Output].Columns[RowModifiedAt]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Clients\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ClientPrincipal]"
+                          cachedDataType="i4"
+                          cachedName="ClientPrincipal"
+                          externalMetadataColumnId="Package\Sequence Container\Clients\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ClientPrincipal]"
+                          lineageId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Output].Columns[ClientPrincipal]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Clients\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ClientAvailability]"
+                          cachedDataType="i4"
+                          cachedName="ClientAvailability"
+                          externalMetadataColumnId="Package\Sequence Container\Clients\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ClientAvailability]"
+                          lineageId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Output].Columns[ClientAvailability]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\Clients\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ClientPayorPlan]"
+                          cachedDataType="i4"
+                          cachedName="ClientPayorPlan"
+                          externalMetadataColumnId="Package\Sequence Container\Clients\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ClientPayorPlan]"
+                          lineageId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Output].Columns[ClientPayorPlan]" />
                       </inputColumns>
                       <externalMetadataColumns
                         isUsed="True">
@@ -1544,6 +1562,18 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
                           dataType="dbTimeStamp2"
                           name="RowModifiedAt"
                           scale="7" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Clients\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ClientPrincipal]"
+                          dataType="i4"
+                          name="ClientPrincipal" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Clients\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ClientAvailability]"
+                          dataType="i4"
+                          name="ClientAvailability" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\Clients\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ClientPayorPlan]"
+                          dataType="i4"
+                          name="ClientPayorPlan" />
                       </externalMetadataColumns>
                     </input>
                   </inputs>
@@ -2024,7 +2054,7 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
                           refId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Output].Columns[ClientPayorPlan]"
-                          dataType="nText"
+                          dataType="i4"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
                           externalMetadataColumnId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ClientPayorPlan]"
@@ -2042,7 +2072,7 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
                           refId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Output].Columns[ClientPrincipal]"
-                          dataType="nText"
+                          dataType="i4"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
                           externalMetadataColumnId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ClientPrincipal]"
@@ -2051,7 +2081,7 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
                           refId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Output].Columns[ClientAvailability]"
-                          dataType="nText"
+                          dataType="i4"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
                           externalMetadataColumnId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ClientAvailability]"
@@ -2327,7 +2357,7 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
                           name="ClientCellPhoneNumber" />
                         <externalMetadataColumn
                           refId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ClientPayorPlan]"
-                          dataType="nText"
+                          dataType="i4"
                           name="ClientPayorPlan" />
                         <externalMetadataColumn
                           refId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ClientCreationDate]"
@@ -2335,11 +2365,11 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
                           name="ClientCreationDate" />
                         <externalMetadataColumn
                           refId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ClientPrincipal]"
-                          dataType="nText"
+                          dataType="i4"
                           name="ClientPrincipal" />
                         <externalMetadataColumn
                           refId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ClientAvailability]"
-                          dataType="nText"
+                          dataType="i4"
                           name="ClientAvailability" />
                         <externalMetadataColumn
                           refId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ClientDeletedBy]"
@@ -2601,7 +2631,7 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
                           name="ClientCellPhoneNumber" />
                         <outputColumn
                           refId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ClientPayorPlan]"
-                          dataType="nText"
+                          dataType="i4"
                           lineageId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ClientPayorPlan]"
                           name="ClientPayorPlan" />
                         <outputColumn
@@ -2611,12 +2641,12 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
                           name="ClientCreationDate" />
                         <outputColumn
                           refId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ClientPrincipal]"
-                          dataType="nText"
+                          dataType="i4"
                           lineageId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ClientPrincipal]"
                           name="ClientPrincipal" />
                         <outputColumn
                           refId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ClientAvailability]"
-                          dataType="nText"
+                          dataType="i4"
                           lineageId="Package\Sequence Container\Clients\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ClientAvailability]"
                           name="ClientAvailability" />
                         <outputColumn
@@ -3284,7 +3314,7 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Activity"
-          DTS:ThreadHint="1">
+          DTS:ThreadHint="0">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -3300,7 +3330,7 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Clients Data"
-          DTS:ThreadHint="2">
+          DTS:ThreadHint="1">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -3316,7 +3346,7 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ContactCustomField Data"
-          DTS:ThreadHint="0">
+          DTS:ThreadHint="2">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -3652,7 +3682,7 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
     design-time-name="Package\Sequence Container\Clients">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="157,42"
           Id="Package\Sequence Container\Clients\OLE DB Source"
@@ -3692,9 +3722,7 @@ WHERE [RowModifiedAt]&gt;=Dateadd(mi,-?,GETDATE())</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
