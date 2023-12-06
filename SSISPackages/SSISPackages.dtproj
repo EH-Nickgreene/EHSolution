@@ -48,6 +48,11 @@
           <FullPath>EmployeeRosterImport.dtsx</FullPath>
           <References />
         </DtsPackage>
+        <DtsPackage FormatVersion="8">
+          <Name>Generate Cancellation Reports by Location.dtsx</Name>
+          <FullPath>Generate Cancellation Reports by Location.dtsx</FullPath>
+          <References />
+        </DtsPackage>
         <DtsPackage FormatVersion="3">
           <Name>GroupResources_AirTractor_Eligibility.dtsx</Name>
           <FullPath>GroupResources_AirTractor_Eligibility.dtsx</FullPath>
@@ -58,19 +63,34 @@
           <FullPath>PayrollImportTest.dtsx</FullPath>
           <References />
         </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>ReportSenderABABCBACaseloadToDOOs.dtsx</Name>
+          <FullPath>ReportSenderABABCBACaseloadToDOOs.dtsx</FullPath>
+          <References />
+        </DtsPackage>
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderABABillingHoursByLocation.dtsx</Name>
           <FullPath>ReportSenderABABillingHoursByLocation.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="0">
-          <Name>ReportSenderABAUpNext.dtsx</Name>
-          <FullPath>ReportSenderABAUpNext.dtsx</FullPath>
+          <Name>ReportSenderABAEOBDailyReport.dtsx</Name>
+          <FullPath>ReportSenderABAEOBDailyReport.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>ReportSenderABAEOBDailyReportInEmailBody.dtsx</Name>
+          <FullPath>ReportSenderABAEOBDailyReportInEmailBody.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderABARBTandBCBATimeWorked.dtsx</Name>
           <FullPath>ReportSenderABARBTandBCBATimeWorked.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="8">
+          <Name>ReportSenderABAUpNext.dtsx</Name>
+          <FullPath>ReportSenderABAUpNext.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">
@@ -101,6 +121,11 @@
         <DtsPackage FormatVersion="8">
           <Name>SSRSWakeUp.dtsx</Name>
           <FullPath>SSRSWakeUp.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="8">
+          <Name>zzDeleteGenerate Cancellation Reports by Location-1.dtsx</Name>
+          <FullPath>zzDeleteGenerate Cancellation Reports by Location-1.dtsx</FullPath>
           <References />
         </DtsPackage>
       </DTSPackages>

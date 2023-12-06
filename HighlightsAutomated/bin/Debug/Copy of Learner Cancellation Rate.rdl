@@ -127,7 +127,7 @@ ORDER BY BranchName</CommandText>
             <ChartSeriesHierarchy>
               <ChartMembers>
                 <ChartMember>
-                  <Label>Learner Cancellations</Label>
+                  <Label>Total Completed Sessions</Label>
                 </ChartMember>
               </ChartMembers>
             </ChartSeriesHierarchy>
@@ -137,7 +137,7 @@ ORDER BY BranchName</CommandText>
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
-                        <Y>=SUM(Fields!LearnerCancellations.Value)/(SUM(Fields!TotalCompletedSessions.Value)+SUM(Fields!LearnerCancellations.Value))</Y>
+                        <Y>=SUM(Fields!LearnerCancellations.Value)/SUM(Fields!TotalCompletedSessions.Value)</Y>
                       </ChartDataPointValues>
                       <ChartDataLabel>
                         <Style>
@@ -599,12 +599,7 @@ ORDER BY BranchName</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Sum(Fields!TotalCompletedSessions.Value) = 0 And Sum(Fields!LearnerCancellations.Value) &gt; 0, 
-	1, 
-	IIF(Sum(Fields!TotalCompletedSessions.Value) = 0, 
-		0, 
-		Sum(Fields!LearnerCancellations.Value) / (Sum(Fields!TotalCompletedSessions.Value)+Sum(Fields!LearnerCancellations.Value)))
-		)</Value>
+                                  <Value>=IIF(Sum(Fields!TotalCompletedSessions.Value) = 0 And Sum(Fields!LearnerCancellations.Value) &gt; 0, 1, IIF(Sum(Fields!TotalCompletedSessions.Value) = 0, 0, Sum(Fields!LearnerCancellations.Value) / Sum(Fields!TotalCompletedSessions.Value)))</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -638,12 +633,14 @@ ORDER BY BranchName</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Sum(Fields!TotalCompletedSessions.Value) = 0 And Sum(Fields!LearnerCancellations.Value) &gt; 0, 
+                                  <Value>=IIF(
+	SUM(Fields!TotalCompletedSessions.Value)=0 and SUM(Fields!LearnerCancellations.Value)&gt;0,
 	1, 
-	IIF(Sum(Fields!TotalCompletedSessions.Value) = 0, 
-		0, 
-		Sum(Fields!LearnerCancellations.Value) / (Sum(Fields!TotalCompletedSessions.Value)+Sum(Fields!LearnerCancellations.Value)))
-		)</Value>
+	IIF(SUM(Fields!TotalCompletedSessions.Value)=0,
+		0,  
+		SUM(Fields!LearnerCancellations.Value)/SUM(Fields!TotalCompletedSessions.Value)
+		)
+	)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -716,12 +713,7 @@ ORDER BY BranchName</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Sum(Fields!TotalCompletedSessions.Value) = 0 And Sum(Fields!LearnerCancellations.Value) &gt; 0, 
-	1, 
-	IIF(Sum(Fields!TotalCompletedSessions.Value) = 0, 
-		0, 
-		Sum(Fields!LearnerCancellations.Value) / (Sum(Fields!TotalCompletedSessions.Value)+Sum(Fields!LearnerCancellations.Value)))
-		)</Value>
+                                  <Value>=IIF(Sum(Fields!TotalCompletedSessions.Value) = 0 And Sum(Fields!LearnerCancellations.Value) &gt; 0, 1, IIF(Sum(Fields!TotalCompletedSessions.Value) = 0, 0, Sum(Fields!LearnerCancellations.Value) / Sum(Fields!TotalCompletedSessions.Value)))</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -756,12 +748,7 @@ ORDER BY BranchName</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Sum(Fields!TotalCompletedSessions.Value) = 0 And Sum(Fields!LearnerCancellations.Value) &gt; 0, 
-	1, 
-	IIF(Sum(Fields!TotalCompletedSessions.Value) = 0, 
-		0, 
-		Sum(Fields!LearnerCancellations.Value) / (Sum(Fields!TotalCompletedSessions.Value)+Sum(Fields!LearnerCancellations.Value)))
-		)</Value>
+                                  <Value>=IIF(Sum(Fields!TotalCompletedSessions.Value) = 0 And Sum(Fields!LearnerCancellations.Value) &gt; 0, 1, IIF(Sum(Fields!TotalCompletedSessions.Value) = 0, 0, Sum(Fields!LearnerCancellations.Value) / Sum(Fields!TotalCompletedSessions.Value)))</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -1235,7 +1222,7 @@ ORDER BY BranchName</CommandText>
                   <TextRun>
                     <Value>Logic:
      Only tracks service code 97153
-     Exlcludes cancellation reasons "Learner: Sleeping", "Corporate: Scheduling" and "Provider Change"
+     Exlcludes cancellation reason "Learner: Sleeping"
      When multiple cancellations or sessions occur in 1 day, it will only count as 1 cancellation or 1 session for the learner</Value>
                     <Style>
                       <FontSize>8pt</FontSize>

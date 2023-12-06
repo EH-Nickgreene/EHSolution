@@ -13,15 +13,13 @@
     <DataSet Name="HiringStats">
       <Query>
         <DataSourceName>HumanResourcesElevated</DataSourceName>
-        <QueryParameters>
-          <QueryParameter Name="@WeekStartDate">
-            <Value>=Parameters!WeekStartDate.Value</Value>
-          </QueryParameter>
-          <QueryParameter Name="@WeekEndDate">
-            <Value>=Parameters!WeekEndDate.Value</Value>
-          </QueryParameter>
-        </QueryParameters>
         <CommandText>
+
+DECLARE @WeekStartDate date, @WeekEndDate date
+
+SET @WeekStartDate ='2023-12-4'
+SET @WeekEndDate  = '2023-12-8'
+
 DECLARE @WeekDisplay varchar(100)
 
 SET @WeekDisplay=(SELECT WeekOfYearDisplay FROM reference.dbo.dimdate WHERE date=@WeekStartDate)
@@ -138,8 +136,43 @@ SET @WeekDisplay=(SELECT WeekOfYearDisplay FROM reference.dbo.dimdate WHERE date
 		FULL JOIN Hires h ON
 							bno.Branch=h.BranchName and 
 							bno.jobType=h.ABAJobCategoryGroup
-		ORDER By 1
-</CommandText>
+		--ORDER By 1
+
+		UNION ALL 
+
+		SELECT
+			@WeekDisplay WeekDisplay,
+			'ADP Onboarding to Move over' Branch,
+			CASE
+				WHEN ao.experience IN ('Clinician- Director of Ops.') THEN 'DOO'
+				WHEN ao.experience IN ('Clinician- BCBA Full-Time') THEN 'BCBA'
+				WHEN ao.experience IN ('Clinician- BT','Clinician- RBT') THEN 'Tech'
+				WHEN ao.experience IN ('Highlights Healthcare-Corporate') THEN 'Corporate'
+				ELSE ''
+			END as JobType,
+			0 NewOffers,
+			0 SignedOffers,
+			COUNT(*) Hires
+			
+			
+		--SELECT ao.*,e.*
+		FROM ADPOnboarding ao
+		--LEFT JOIN #ManagerToBranch mb on ao.Manager=mb.Manager
+		LEFT JOIN Employee e on ao.Email=e.PersonalContactPersonalEmail
+		LEFT JOIN Reference.dbo.DimDate dd on dd.date=ao.hiredate
+		LEFT JOIN JobCodes jc on jc.JobCode=e.JobTitleCode
+		WHERE e.AssociateID IS NULL
+		and ao.experience IN ('Clinician- BCBA Full-Time','Clinician- BT','Clinician- RBT','Highlights Healthcare-Corporate','Clinician- Director of Ops.')
+		and ao.hiredate&gt;=@WeekStartDate
+		and ao.hiredate&lt;=@WeekEndDate
+		GROUP BY 
+			CASE
+				WHEN ao.experience IN ('Clinician- Director of Ops.') THEN 'DOO'
+				WHEN ao.experience IN ('Clinician- BCBA Full-Time') THEN 'BCBA'
+				WHEN ao.experience IN ('Clinician- BT','Clinician- RBT') THEN 'Tech'
+				WHEN ao.experience IN ('Highlights Healthcare-Corporate') THEN 'Corporate'
+				ELSE ''
+			END</CommandText>
       </Query>
       <Fields>
         <Field Name="WeekDisplay">
@@ -168,7 +201,7 @@ SET @WeekDisplay=(SELECT WeekOfYearDisplay FROM reference.dbo.dimdate WHERE date
         </Field>
       </Fields>
     </DataSet>
-    <DataSet Name="DateFields">
+    <DataSet Name="Intake">
       <Query>
         <DataSourceName>HumanResourcesElevated</DataSourceName>
         <QueryParameters>
@@ -179,7 +212,8 @@ SET @WeekDisplay=(SELECT WeekOfYearDisplay FROM reference.dbo.dimdate WHERE date
             <Value>=Parameters!WeekEndDate.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>DECLARE @WeekDisplay varchar(100)
+        <CommandText>
+DECLARE @WeekDisplay varchar(100)
 
 SET @WeekDisplay=(SELECT WeekOfYearDisplay FROM reference.dbo.dimdate WHERE date=@WeekStartDate)
 
@@ -277,10 +311,12 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 		LEFT JOIN Reference.dbo.branchData bdp on bdp.branchcode=bd.ParentBranchCode
 		INNER JOIN Reference.dbo.DimDate dd on dd.date=cmd.[Planned Start Week ]
 		WHERE dd.date&gt;=@WeekStartDate
-		and dd.date&lt;@WeekEndDate
+		and dd.date&lt;=@WeekEndDate
 		GROUP BY 
 		ISNULL(bdp.branchCode,'EZZ'),
 		dd.weekofyearDisplay
+
+		
 
 		SELECT 
 			CASE
@@ -295,14 +331,23 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 			bd.BranchName ClientOfficeLocationName,
 			COALESCE(c.Week,st.ReportingPeriod) ReportingWeek,
 			COALESCE(c.MetricType,st.metricType) MetricType,
-			'('+CONVERT(varchar(10),(ISNULL(CONVERT(INT,c.MetricValue),0)-ISNULL(CONVERT(INT,st.MetricValue),0)))+') '+CONVERT(varchar(10),ISNULL(c.MetricValue,0)) MetricValue,
+			CASE
+				WHEN ISNULL(CONVERT(INT,c.MetricValue),0)&gt;ISNULL(CONVERT(INT,st.MetricValue),0)
+				THEN '(+'+CONVERT(varchar(10),(ISNULL(CONVERT(INT,c.MetricValue),0)-ISNULL(CONVERT(INT,st.MetricValue),0)))+') '+CONVERT(varchar(10),ISNULL(c.MetricValue,0)) 
+				ELSE '('+CONVERT(varchar(10),(ISNULL(CONVERT(INT,c.MetricValue),0)-ISNULL(CONVERT(INT,st.MetricValue),0)))+') '+CONVERT(varchar(10),ISNULL(c.MetricValue,0)) 
+			END MetricValue,
 			0 Completed--c.Completed
 		--SELECT * 
 		FROM #Current c
-		FULL JOIN CentralReach.dbo.StatsTracker st on 
+		FULL JOIN  (
+			SELECT *
+			FROM CentralReach.dbo.StatsTracker 
+			WHERE ReportingPeriod=@WeekDisplay 
+			) st on 
 						c.branchCode=st.branchCode and 
 						c.Week=st.ReportingPeriod and
-						c.MetricType=st.MetricType
+						c.MetricType=st.MetricType AND
+						st.ReportingPeriod=@WeekDisplay 
 		LEFT JOIN Reference.dbo.BranchData bd on bd.BranchCode=COALESCE(c.branchCode,st.branchCode)
 		UNION ALL 
 		SELECT 
@@ -318,19 +363,29 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 			'Total' as Branch,
 			COALESCE(c.Week,st.ReportingPeriod),
 			COALESCE(c.MetricType,st.metricType),
-			'('+CONVERT(varchar(10),(SUM(ISNULL(CONVERT(INT,c.MetricValue),0))-SUM(ISNULL(CONVERT(INT,st.MetricValue),0))))+') '+CONVERT(varchar(10),SUM(ISNULL(CONVERT(INT,c.MetricValue),0))),
+			CASE
+				WHEN SUM(ISNULL(CONVERT(INT,c.MetricValue),0))&gt;SUM(ISNULL(CONVERT(INT,st.MetricValue),0))
+				THEN '(+'+CONVERT(varchar(10),(SUM(ISNULL(CONVERT(INT,c.MetricValue),0))-SUM(ISNULL(CONVERT(INT,st.MetricValue),0))))+') '+CONVERT(varchar(10),SUM(ISNULL(CONVERT(INT,c.MetricValue),0)))
+				ELSE '('+CONVERT(varchar(10),(SUM(ISNULL(CONVERT(INT,c.MetricValue),0))-SUM(ISNULL(CONVERT(INT,st.MetricValue),0))))+') '+CONVERT(varchar(10),SUM(ISNULL(CONVERT(INT,c.MetricValue),0)))
+			END,
 			SUM(c.completed) 
 		--SELECT * 
 		FROM #Current c
-		FULL JOIN CentralReach.dbo.StatsTracker st on 
+		FULL JOIN (
+			SELECT *
+			FROM CentralReach.dbo.StatsTracker 
+			WHERE ReportingPeriod=@WeekDisplay 
+			) st on 
 						c.branchCode=st.branchCode and 
 						c.Week=st.ReportingPeriod and
-						c.MetricType=st.MetricType
-		LEFT JOIN Reference.dbo.BranchData bd on bd.BranchCode=COALESCE(c.branchCode,st.branchCode)
+						c.MetricType=st.MetricType 
+		LEFT JOIN Reference.dbo.BranchData bd on bd.BranchCode=COALESCE(c.branchCode,st.branchCode) 
+		
 		GROUP BY 
 			COALESCE(c.Week,st.ReportingPeriod),
 			COALESCE(c.MetricType,st.metricType)
-</CommandText>
+
+			</CommandText>
       </Query>
       <Fields>
         <Field Name="ColumnOrder">
@@ -663,7 +718,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Hires</Value>
+                                  <Value>Starting this week</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -1090,7 +1145,11 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>HiringStats</DataSetName>
-            <Top>1.17583in</Top>
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
+            <Top>0.31944in</Top>
+            <Left>0in</Left>
             <Height>0.86458in</Height>
             <Width>5.28125in</Width>
             <Style>
@@ -1382,8 +1441,11 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
-            <DataSetName>DateFields</DataSetName>
-            <Top>2.75917in</Top>
+            <DataSetName>Intake</DataSetName>
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
+            <Top>1.78125in</Top>
             <Height>0.91667in</Height>
             <Width>3.5in</Width>
             <ZIndex>1</ZIndex>
@@ -1397,13 +1459,92 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>0.59375in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>0.625in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
+                <TablixRow>
+                  <Height>0.40625in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox6">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>7pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox6</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <BackgroundColor>White</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox8">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>7pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox8</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <BackgroundColor>White</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
                 <TablixRow>
                   <Height>0.39583in</Height>
                   <TablixCells>
@@ -1417,7 +1558,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                 <TextRun>
                                   <Value>=Fields!Reason_Code.Value</Value>
                                   <Style>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -1455,7 +1596,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                 <TextRun>
                                   <Value>Total</Value>
                                   <Style>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -1499,7 +1640,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=Sum(Fields!Learners.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -1537,7 +1678,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=Sum(Fields!Learners.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -1579,7 +1720,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                 <TextRun>
                                   <Value>=Sum(Fields!Learners.Value)</Value>
                                   <Style>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1615,7 +1756,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=Sum(Fields!Learners.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1656,7 +1797,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=Sum(Fields!Learners.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -1694,7 +1835,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=Sum(Fields!Learners.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -1748,6 +1889,9 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                     <GroupExpressions>
                       <GroupExpression>=Fields!CurrentStatus.Value</GroupExpression>
                     </GroupExpressions>
+                    <PageBreak>
+                      <BreakLocation>Between</BreakLocation>
+                    </PageBreak>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
@@ -1757,7 +1901,58 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                   <TablixMembers>
                     <TablixMember>
                       <TablixHeader>
-                        <Size>1in</Size>
+                        <Size>2.5in</Size>
+                        <CellContents>
+                          <Textbox Name="Textbox2">
+                            <CanGrow>true</CanGrow>
+                            <KeepTogether>true</KeepTogether>
+                            <Paragraphs>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value>Actionable Referrals by Service </Value>
+                                    <Style>
+                                      <FontWeight>Bold</FontWeight>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style>
+                                  <TextAlign>Left</TextAlign>
+                                </Style>
+                              </Paragraph>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value>and Location</Value>
+                                    <Style>
+                                      <FontWeight>Bold</FontWeight>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style>
+                                  <TextAlign>Left</TextAlign>
+                                </Style>
+                              </Paragraph>
+                            </Paragraphs>
+                            <rd:DefaultName>Textbox2</rd:DefaultName>
+                            <Style>
+                              <Border>
+                                <Style>None</Style>
+                              </Border>
+                              <BackgroundColor>White</BackgroundColor>
+                              <VerticalAlign>Middle</VerticalAlign>
+                              <PaddingLeft>2pt</PaddingLeft>
+                              <PaddingRight>2pt</PaddingRight>
+                              <PaddingTop>2pt</PaddingTop>
+                              <PaddingBottom>2pt</PaddingBottom>
+                            </Style>
+                          </Textbox>
+                        </CellContents>
+                      </TablixHeader>
+                    </TablixMember>
+                    <TablixMember>
+                      <TablixHeader>
+                        <Size>0.625in</Size>
                         <CellContents>
                           <Textbox Name="Textbox27">
                             <KeepTogether>true</KeepTogether>
@@ -1768,7 +1963,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                     <Value>Current Status</Value>
                                     <Style>
                                       <FontFamily>Arial</FontFamily>
-                                      <FontSize>8pt</FontSize>
+                                      <FontSize>7pt</FontSize>
                                       <FontWeight>Bold</FontWeight>
                                       <Color>White</Color>
                                     </Style>
@@ -1798,7 +1993,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                       <TablixMembers>
                         <TablixMember>
                           <TablixHeader>
-                            <Size>2.3125in</Size>
+                            <Size>1.875in</Size>
                             <CellContents>
                               <Textbox Name="Textbox28">
                                 <CanGrow>true</CanGrow>
@@ -1809,7 +2004,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                       <TextRun>
                                         <Value>Learning Center</Value>
                                         <Style>
-                                          <FontSize>8pt</FontSize>
+                                          <FontSize>7pt</FontSize>
                                           <FontWeight>Bold</FontWeight>
                                           <Color>White</Color>
                                         </Style>
@@ -1841,7 +2036,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                     </TablixMember>
                     <TablixMember>
                       <TablixHeader>
-                        <Size>1in</Size>
+                        <Size>0.625in</Size>
                         <CellContents>
                           <Textbox Name="CurrentStatus">
                             <CanGrow>true</CanGrow>
@@ -1853,6 +2048,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                     <Value>=Fields!CurrentStatus.Value</Value>
                                     <Style>
                                       <FontFamily>Arial</FontFamily>
+                                      <FontSize>7pt</FontSize>
                                       <FontWeight>Bold</FontWeight>
                                     </Style>
                                   </TextRun>
@@ -1880,7 +2076,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                       <TablixMembers>
                         <TablixMember>
                           <TablixHeader>
-                            <Size>2.3125in</Size>
+                            <Size>1.875in</Size>
                             <CellContents>
                               <Textbox Name="Textbox29">
                                 <CanGrow>true</CanGrow>
@@ -1892,7 +2088,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                         <Value>=Fields!CurrentStatus.Value &amp; " Total"</Value>
                                         <Style>
                                           <FontFamily>Arial</FontFamily>
-                                          <FontSize>8pt</FontSize>
+                                          <FontSize>7pt</FontSize>
                                           <FontWeight>Bold</FontWeight>
                                         </Style>
                                       </TextRun>
@@ -1929,7 +2125,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                             </SortExpression>
                           </SortExpressions>
                           <TablixHeader>
-                            <Size>2.3125in</Size>
+                            <Size>1.875in</Size>
                             <CellContents>
                               <Textbox Name="ClientOfficeLocationName1">
                                 <CanGrow>true</CanGrow>
@@ -1940,7 +2136,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                       <TextRun>
                                         <Value>=Fields!ClientOfficeLocationName.Value</Value>
                                         <Style>
-                                          <FontSize>8pt</FontSize>
+                                          <FontSize>7pt</FontSize>
                                         </Style>
                                       </TextRun>
                                     </TextRuns>
@@ -1968,7 +2164,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                 </TablixMember>
                 <TablixMember>
                   <TablixHeader>
-                    <Size>3.3125in</Size>
+                    <Size>2.5in</Size>
                     <CellContents>
                       <Textbox Name="Textbox31">
                         <CanGrow>true</CanGrow>
@@ -1980,7 +2176,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                 <Value>Grand Total</Value>
                                 <Style>
                                   <FontFamily>Arial</FontFamily>
-                                  <FontSize>8pt</FontSize>
+                                  <FontSize>7pt</FontSize>
                                   <FontWeight>Bold</FontWeight>
                                 </Style>
                               </TextRun>
@@ -2011,9 +2207,12 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>ActionableReferrals</DataSetName>
-            <Top>4.16542in</Top>
-            <Height>1.14583in</Height>
-            <Width>5.3125in</Width>
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
+            <Top>2.95709in</Top>
+            <Height>1.55208in</Height>
+            <Width>3.71875in</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -2030,6 +2229,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                   <TextRun>
                     <Value>Hires and Offers</Value>
                     <Style>
+                      <FontSize>12pt</FontSize>
                       <FontWeight>Bold</FontWeight>
                     </Style>
                   </TextRun>
@@ -2038,7 +2238,8 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox58</rd:DefaultName>
-            <Top>0.92583in</Top>
+            <Top>0.01389in</Top>
+            <Left>0in</Left>
             <Height>0.25in</Height>
             <Width>2.5in</Width>
             <ZIndex>3</ZIndex>
@@ -2061,6 +2262,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                   <TextRun>
                     <Value>Intake</Value>
                     <Style>
+                      <FontSize>12pt</FontSize>
                       <FontWeight>Bold</FontWeight>
                     </Style>
                   </TextRun>
@@ -2069,41 +2271,10 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox58</rd:DefaultName>
-            <Top>2.25917in</Top>
+            <Top>1.25347in</Top>
             <Height>0.25in</Height>
             <Width>2.5in</Width>
             <ZIndex>4</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox60">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Actionable Referrals by Service and Location</Value>
-                    <Style>
-                      <FontWeight>Bold</FontWeight>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox58</rd:DefaultName>
-            <Top>3.87375in</Top>
-            <Height>0.25in</Height>
-            <Width>3.3125in</Width>
-            <ZIndex>5</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2118,28 +2289,28 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>2.5in</Width>
+                  <Width>2.21874in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.66667in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>0.625in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>0.63542in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>0.6875in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>0.58333in</Width>
+                  <Width>0.56251in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.625in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.67708in</Width>
+                  <Width>0.38542in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.55208in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.46875in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.5in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.57291in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -2158,7 +2329,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value />
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -2197,7 +2368,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>Active</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -2239,7 +2410,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>Probable</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -2281,7 +2452,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value />
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -2323,7 +2494,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                 <TextRun>
                                   <Value>Learning Center</Value>
                                   <Style>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -2360,7 +2531,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                 <TextRun>
                                   <Value>On Service</Value>
                                   <Style>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -2397,7 +2568,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                 <TextRun>
                                   <Value>Exclude From Stat</Value>
                                   <Style>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -2436,7 +2607,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>Total</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -2475,7 +2646,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>Up Next</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -2514,7 +2685,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>Other</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -2553,7 +2724,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>Total</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -2591,7 +2762,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>Grand Total</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -2634,7 +2805,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                 <TextRun>
                                   <Value>=Fields!LearningCenter.Value</Value>
                                   <Style>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2666,7 +2837,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                 <TextRun>
                                   <Value>=Fields!Active_OnService.Value</Value>
                                   <Style>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2701,7 +2872,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                 <TextRun>
                                   <Value>=Fields!Active_ExcludeFromStat.Value</Value>
                                   <Style>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2737,7 +2908,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=Fields!Active_OnService.Value+Fields!Active_ExcludeFromStat.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2773,7 +2944,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=Fields!Probable_UpNext.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2809,7 +2980,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=Fields!Probable_Other.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2845,7 +3016,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=Fields!Probable_UpNext.Value+Fields!Probable_Other.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2881,7 +3052,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=Fields!Active_OnService.Value+Fields!Active_ExcludeFromStat.Value+Fields!Probable_UpNext.Value+Fields!Probable_Other.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -2922,7 +3093,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>Total</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -2957,7 +3128,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=Sum(Fields!Active_OnService.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -2995,7 +3166,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=Sum(Fields!Active_ExcludeFromStat.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -3033,7 +3204,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=SUM(Fields!Active_OnService.Value)+SUM(Fields!Active_ExcludeFromStat.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -3071,7 +3242,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=Sum(Fields!Probable_UpNext.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -3109,7 +3280,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=Sum(Fields!Probable_Other.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -3147,7 +3318,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=SUM(Fields!Probable_UpNext.Value)+SUM(Fields!Probable_Other.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -3185,7 +3356,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=SUM(Fields!Active_OnService.Value)+SUM(Fields!Active_ExcludeFromStat.Value)+SUM(Fields!Probable_UpNext.Value)+SUM(Fields!Probable_Other.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -3250,25 +3421,60 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>CurrentCensus</DataSetName>
-            <Top>5.655in</Top>
+            <Top>4.99875in</Top>
+            <Left>0in</Left>
             <Height>1.125in</Height>
-            <Width>7in</Width>
-            <ZIndex>6</ZIndex>
+            <Width>5.88541in</Width>
+            <ZIndex>5</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Tablix>
-          <Textbox Name="Textbox100">
+          <Textbox Name="Textbox62">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Highlights End of Day Report</Value>
+                    <Value>number in parenthesis represents change since Monday morning</Value>
                     <Style>
+                      <FontStyle>Italic</FontStyle>
+                      <FontSize>9pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox58</rd:DefaultName>
+            <Top>1.54514in</Top>
+            <Height>0.25in</Height>
+            <Width>3.79167in</Width>
+            <ZIndex>6</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox64">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Current Census</Value>
+                    <Style>
+                      <FontSize>12pt</FontSize>
                       <FontWeight>Bold</FontWeight>
                     </Style>
                   </TextRun>
@@ -3276,9 +3482,11 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                 <Style />
               </Paragraph>
             </Paragraphs>
-            <rd:DefaultName>Textbox100</rd:DefaultName>
+            <rd:DefaultName>Textbox58</rd:DefaultName>
+            <Top>4.62375in</Top>
+            <Left>0in</Left>
             <Height>0.25in</Height>
-            <Width>5.3125in</Width>
+            <Width>3.3125in</Width>
             <ZIndex>7</ZIndex>
             <Style>
               <Border>
@@ -3290,111 +3498,147 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
-          <Textbox Name="Textbox101">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>="Executed On: " &amp; FORMAT(TODAY,"MM/dd/yyyy")</Value>
-                    <Style>
-                      <FontWeight>Normal</FontWeight>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox100</rd:DefaultName>
-            <Top>0.515in</Top>
-            <Height>0.25in</Height>
-            <Width>5.3125in</Width>
+          <Rectangle Name="Rectangle1">
+            <PageBreak>
+              <BreakLocation>Start</BreakLocation>
+            </PageBreak>
+            <Top>2.74875in</Top>
+            <Height>0.20833in</Height>
+            <Width>4.14583in</Width>
             <ZIndex>8</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
             </Style>
-          </Textbox>
-          <Textbox Name="Textbox102">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>="Date Range: " &amp; FORMAT(Parameters!WeekStartDate.Value,"MM/dd/yyyy") &amp; " - " &amp; FORMAT(Parameters!WeekEndDate.Value,"MM/dd/yyyy")</Value>
-                    <Style>
-                      <FontWeight>Normal</FontWeight>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox100</rd:DefaultName>
-            <Top>0.265in</Top>
-            <Height>0.25in</Height>
-            <Width>5.3125in</Width>
-            <ZIndex>9</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox62">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>number in parenthesis represents change since Monday morning</Value>
-                    <Style>
-                      <FontStyle>Italic</FontStyle>
-                      <FontSize>8pt</FontSize>
-                      <FontWeight>Normal</FontWeight>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox58</rd:DefaultName>
-            <Top>2.52306in</Top>
-            <Height>0.25in</Height>
-            <Width>3.61458in</Width>
-            <ZIndex>10</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
+          </Rectangle>
         </ReportItems>
-        <Height>6.78in</Height>
+        <Height>6.12375in</Height>
         <Style />
       </Body>
-      <Width>7.32292in</Width>
+      <Width>5.88541in</Width>
       <Page>
-        <LeftMargin>1in</LeftMargin>
-        <RightMargin>1in</RightMargin>
-        <TopMargin>1in</TopMargin>
-        <BottomMargin>1in</BottomMargin>
+        <PageHeader>
+          <Height>0.96292in</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="Textbox100">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Highlights End of Day Report</Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox100</rd:DefaultName>
+              <Height>0.25in</Height>
+              <Width>5.3125in</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox101">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="Executed On: " &amp; FORMAT(TODAY,"MM/dd/yyyy")</Value>
+                      <Style>
+                        <FontWeight>Normal</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox100</rd:DefaultName>
+              <Top>0.515in</Top>
+              <Height>0.25in</Height>
+              <Width>5.3125in</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox102">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="Date Range: " &amp; FORMAT(Parameters!WeekStartDate.Value,"MM/dd/yyyy") &amp; " - " &amp; FORMAT(Parameters!WeekEndDate.Value,"MM/dd/yyyy")</Value>
+                      <Style>
+                        <FontWeight>Normal</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox100</rd:DefaultName>
+              <Top>0.265in</Top>
+              <Height>0.25in</Height>
+              <Width>5.3125in</Width>
+              <ZIndex>2</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Line Name="Line1">
+              <Top>0.87375in</Top>
+              <Left>0.01958in</Left>
+              <Height>0in</Height>
+              <Width>5.86583in</Width>
+              <ZIndex>3</ZIndex>
+              <Style>
+                <Border>
+                  <Style>Solid</Style>
+                </Border>
+              </Style>
+            </Line>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageHeader>
+        <PageHeight>8.5in</PageHeight>
+        <PageWidth>11in</PageWidth>
+        <LeftMargin>0.25in</LeftMargin>
+        <RightMargin>0.25in</RightMargin>
+        <TopMargin>0.25in</TopMargin>
+        <BottomMargin>0.25in</BottomMargin>
         <Style />
       </Page>
     </ReportSection>

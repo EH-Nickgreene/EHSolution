@@ -53,7 +53,11 @@
     <DataSource Include="HumanResourcesElevated.rds" />
   </ItemGroup>
   <ItemGroup>
+    <Report Include="Active Learners.rdl" />
+    <Report Include="BCBA Caseload Summary Report by DOO.rdl" />
     <Report Include="BCBA Caseload Summary Report.rdl" />
+    <Report Include="Copy of Learner Cancellation Rate.rdl" />
+    <Report Include="Copy of Productivity And Auth Utilization.rdl" />
     <Report Include="DOO Incentive Plan.rdl" />
     <Report Include="Highlights Daily Report.rdl" />
     <Report Include="Highlights Leadership Report.rdl" />

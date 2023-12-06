@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report MustUnderstand="df" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily">
+  <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="CentralReach">
+      <DataSourceReference>CentralReach</DataSourceReference>
+      <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>3a0137cd-177a-452f-8364-6fb4c1f31477</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DOOandBCBA">
+      <Query>
+        <DataSourceName>CentralReach</DataSourceName>
+        <CommandText>SELECT bd.BranchDirectorName,bd.BranchNameGroupShort+'-'+LegalFirstName+' '+LegalLastName BCBA,EmployeeNumber
+FROM HumanResources.dbo.employee e
+INNER JOIN HumanResources.dbo.JobCodes jc on jc.JobCode=e.JobTitleCode
+LEFT JOIN Reference.dbo.branchdata bd on e.HomeDepartmentCode=bd.ADPHomeDepartmentCode
+WHERE ISNULL(TerminationDate,'9999-12-31')='9999-12-31'
+and jc.JobCategory IN ('BCBA','LBA','DOO') 
+and e.PayrollCompanyCode='K86'
+and bd.BranchStatus='Active'
+ORDER BY 1</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="BranchDirectorName">
+          <DataField>BranchDirectorName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BCBA">
+          <DataField>BCBA</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EmployeeNumber">
+          <DataField>EmployeeNumber</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <Filters>
+        <Filter>
+          <FilterExpression>=Fields!BranchDirectorName.Value</FilterExpression>
+          <Operator>Equal</Operator>
+          <FilterValues>
+            <FilterValue>=Parameters!DOO.Value</FilterValue>
+          </FilterValues>
+        </Filter>
+      </Filters>
+    </DataSet>
+    <DataSet Name="paramDOO">
+      <Query>
+        <DataSourceName>CentralReach</DataSourceName>
+        <CommandText>SELECT DISTINCT bd.BranchDirectorName
+FROM HumanResources.dbo.employee e
+INNER JOIN HumanResources.dbo.JobCodes jc on jc.JobCode=e.JobTitleCode
+LEFT JOIN Reference.dbo.branchdata bd on e.HomeDepartmentCode=bd.ADPHomeDepartmentCode
+WHERE ISNULL(TerminationDate,'9999-12-31')='9999-12-31'
+and jc.JobCategory IN ('BCBA','LBA','DOO') 
+and e.PayrollCompanyCode='K86'
+and bd.BranchStatus='Active'
+ORDER BY 1
+</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="BranchDirectorName">
+          <DataField>BranchDirectorName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="Tablix1">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>2.01042in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.60417in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="Subreport2">
+                          <ReportName>BCBA Caseload Summary Report</ReportName>
+                          <Parameters>
+                            <Parameter Name="StartDate">
+                              <Value>=Parameters!StartDate.Value</Value>
+                            </Parameter>
+                            <Parameter Name="EndDate">
+                              <Value>=Parameters!EndDate.Value</Value>
+                            </Parameter>
+                            <Parameter Name="EmployeeNumber">
+                              <Value>=Fields!EmployeeNumber.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Subreport>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="Details">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!BCBA.Value</GroupExpression>
+                    </GroupExpressions>
+                    <PageBreak>
+                      <BreakLocation>Between</BreakLocation>
+                    </PageBreak>
+                    <PageName>=Fields!BCBA.Value</PageName>
+                  </Group>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>DOOandBCBA</DataSetName>
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
+            <Top>0.01958in</Top>
+            <Height>0.60417in</Height>
+            <Width>2.01042in</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>0.62375in</Height>
+        <Style />
+      </Body>
+      <Width>2.01042in</Width>
+      <Page>
+        <LeftMargin>1in</LeftMargin>
+        <RightMargin>1in</RightMargin>
+        <TopMargin>1in</TopMargin>
+        <BottomMargin>1in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="StartDate">
+      <DataType>DateTime</DataType>
+      <Prompt>StartDate</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="EndDate">
+      <DataType>DateTime</DataType>
+      <Prompt>EndDate</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="DOO">
+      <DataType>String</DataType>
+      <Prompt>DOO</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>paramDOO</DataSetName>
+          <ValueField>BranchDirectorName</ValueField>
+          <LabelField>BranchDirectorName</LabelField>
+        </DataSetReference>
+      </ValidValues>
+    </ReportParameter>
+  </ReportParameters>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>4</NumberOfColumns>
+      <NumberOfRows>2</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>StartDate</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>EndDate</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>DOO</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>06b8f901-ce7e-4933-9951-ddfcccca0a24</rd:ReportID>
+</Report>

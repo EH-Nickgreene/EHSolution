@@ -17,15 +17,11 @@
     <DataSet Name="SummaryData">
       <Query>
         <DataSourceName>EHClinical</DataSourceName>
-        <QueryParameters>
-          <QueryParameter Name="@StartDate">
-            <Value>=Parameters!StartDate.Value</Value>
-          </QueryParameter>
-          <QueryParameter Name="@EndDate">
-            <Value>=Parameters!EndDate.Value</Value>
-          </QueryParameter>
-        </QueryParameters>
-        <CommandText>
+        <CommandText>USE EHClinical
+DECLARE @StartDate date,@EndDate date
+SET @StartDate = '2023-12-1'
+SET @EndDate = '2023-12-5'
+
 DECLARE @monthint int
 SELECT @monthint=monthint
 FROM Reference.dbo.dimdate
@@ -41,6 +37,7 @@ WHERE epi_status='Pending'
 AND epi_admitType IN('NEW ADMISSION','READMISSION')
 GROUP BY Epi_branchCode
 
+
 IF OBJECT_ID('tempdb..#adc') IS NOT NULL DROP TABLE #adc
 SELECT
 Branch_code,
@@ -50,6 +47,8 @@ FROM wh_patientdays
 WHERE ServiceDate&gt;=@StartDate
 and ServiceDate&lt;@EndDate
 GROUP BY Branch_code
+UNION ALL
+SELECT 'ENW',0
 
 --census
 IF OBJECT_ID('tempdb..#census') IS NOT NULL DROP TABLE #census
@@ -132,7 +131,6 @@ LEFT JOIN (
 	GROUP By bd.BranchCode
 	) track on track.branchCode=adc.branch_Code
 LEFT JOIN reference.dbo.BranchData bd on bd.branchCode=COALESCE(adc.Branch_Code,pa.Branch_Code,cen.Branch_Code,admit.Branch_Code,dc.Branch_Code)
-
 
 
 </CommandText>
