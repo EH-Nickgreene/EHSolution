@@ -13,13 +13,15 @@
     <DataSet Name="HiringStats">
       <Query>
         <DataSourceName>HumanResourcesElevated</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@WeekStartDate">
+            <Value>=Parameters!WeekStartDate.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@WeekEndDate">
+            <Value>=Parameters!WeekEndDate.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
         <CommandText>
-
-DECLARE @WeekStartDate date, @WeekEndDate date
-
-SET @WeekStartDate ='2023-12-4'
-SET @WeekEndDate  = '2023-12-8'
-
 DECLARE @WeekDisplay varchar(100)
 
 SET @WeekDisplay=(SELECT WeekOfYearDisplay FROM reference.dbo.dimdate WHERE date=@WeekStartDate)
@@ -142,7 +144,7 @@ SET @WeekDisplay=(SELECT WeekOfYearDisplay FROM reference.dbo.dimdate WHERE date
 
 		SELECT
 			@WeekDisplay WeekDisplay,
-			'ADP Onboarding to Move over' Branch,
+			'Candidate Onboarding' Branch,
 			CASE
 				WHEN ao.experience IN ('Clinician- Director of Ops.') THEN 'DOO'
 				WHEN ao.experience IN ('Clinician- BCBA Full-Time') THEN 'BCBA'
@@ -212,8 +214,7 @@ SET @WeekDisplay=(SELECT WeekOfYearDisplay FROM reference.dbo.dimdate WHERE date
             <Value>=Parameters!WeekEndDate.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>
-DECLARE @WeekDisplay varchar(100)
+        <CommandText>DECLARE @WeekDisplay varchar(100)
 
 SET @WeekDisplay=(SELECT WeekOfYearDisplay FROM reference.dbo.dimdate WHERE date=@WeekStartDate)
 
@@ -227,7 +228,9 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 		dd.weekofyearDisplay Week,
 		'PreScreens' MetricType,
 		COUNT(*) MetricValue,
-		SUM(CASE WHEN dd.date&lt;=CONVERT(Date,GETDATE()) THEN 1 ELSE 0 END) Completed
+		SUM(CASE WHEN dd.date&lt;=CONVERT(Date,GETDATE()) THEN 1 ELSE 0 END) Completed,
+		0 ScheduledHours,
+		0 CompletedHours
 		INTO #Current
 		FROM CentralReach.dbo.ClientMasterSheet cmd
 		LEFT JOIN CentralReach.insights.Client c on cmd.CLientID=c.ClientId
@@ -247,7 +250,9 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 		dd.weekofyearDisplay,
 		'Diagnosis' MetricType,
 		COUNT(*) MetricValue,
-		SUM(CASE WHEN dd.date&lt;=CONVERT(Date,GETDATE()) THEN 1 ELSE 0 END) Completed
+		SUM(CASE WHEN dd.date&lt;=CONVERT(Date,GETDATE()) THEN 1 ELSE 0 END) Completed,
+		0 ScheduledHours,
+		0 CompletedHours
 		FROM CentralReach.dbo.ClientMasterSheet cmd
 		LEFT JOIN CentralReach.insights.Client c on cmd.CLientID=c.ClientId
 		LEFT JOIN Reference.dbo.branchData bd on LEFT(cmd.serviceLocation,3)=bd.ABACode
@@ -266,7 +271,9 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 		dd.weekofyearDisplay,
 		'Assessments' MetricType,
 		COUNT(*) MetricValue,
-		SUM(CASE WHEN dd.date&lt;=CONVERT(Date,GETDATE()) THEN 1 ELSE 0 END) Completed
+		SUM(CASE WHEN dd.date&lt;=CONVERT(Date,GETDATE()) THEN 1 ELSE 0 END) Completed,
+		SUM([Normalized Scheduled Hours]) ScheduledHours,
+		0 CompletedHours
 		FROM CentralReach.dbo.ClientMasterSheet cmd
 		LEFT JOIN CentralReach.insights.Client c on cmd.CLientID=c.ClientId
 		LEFT JOIN Reference.dbo.branchData bd on LEFT(cmd.serviceLocation,3)=bd.ABACode
@@ -285,7 +292,9 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 		dd.weekofyearDisplay,
 		'Referrals' MetricType,
 		COUNT(*) MetricValue,
-		0 Completed
+		0 Completed,
+		0 ScheduledHours,
+		0 CompletedHours
 		FROM CentralReach.dbo.ClientMasterSheet cmd
 		LEFT JOIN CentralReach.insights.Client c on cmd.CLientID=c.ClientId
 		LEFT JOIN Reference.dbo.branchData bd on LEFT(cmd.serviceLocation,3)=bd.ABACode
@@ -304,7 +313,9 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 		dd.weekofyearDisplay,
 		'Planned Start Week' MetricType,
 		COUNT(*) MetricValue,
-		SUM(CASE WHEN dd.date&lt;=CONVERT(Date,GETDATE()) THEN 1 ELSE 0 END) Completed
+		SUM(CASE WHEN cmd.[Date ABA Service Began]&lt;=CONVERT(Date,GETDATE()) THEN 1 ELSE 0 END) Completed,
+		SUM([Normalized Scheduled Hours]) ScheduledHours,
+		SUM(CASE WHEN cmd.[Date ABA Service Began]&lt;=CONVERT(Date,GETDATE()) THEN [Normalized Scheduled Hours] ELSE 0 END) CompletedHours
 		FROM CentralReach.dbo.ClientMasterSheet cmd
 		LEFT JOIN CentralReach.insights.Client c on cmd.CLientID=c.ClientId
 		LEFT JOIN Reference.dbo.branchData bd on LEFT(cmd.serviceLocation,3)=bd.ABACode
@@ -332,11 +343,15 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 			COALESCE(c.Week,st.ReportingPeriod) ReportingWeek,
 			COALESCE(c.MetricType,st.metricType) MetricType,
 			CASE
+				WHEN COALESCE(c.MetricType,st.metricType)='Referrals' THEN CONVERT(varchar(10),(ISNULL(CONVERT(INT,c.MetricValue),0)))
 				WHEN ISNULL(CONVERT(INT,c.MetricValue),0)&gt;ISNULL(CONVERT(INT,st.MetricValue),0)
 				THEN '(+'+CONVERT(varchar(10),(ISNULL(CONVERT(INT,c.MetricValue),0)-ISNULL(CONVERT(INT,st.MetricValue),0)))+') '+CONVERT(varchar(10),ISNULL(c.MetricValue,0)) 
 				ELSE '('+CONVERT(varchar(10),(ISNULL(CONVERT(INT,c.MetricValue),0)-ISNULL(CONVERT(INT,st.MetricValue),0)))+') '+CONVERT(varchar(10),ISNULL(c.MetricValue,0)) 
 			END MetricValue,
-			0 Completed--c.Completed
+			0 Completed,--c.Completed
+			0 ScheduledHours,
+			0 ProjectedForWeek,
+			0 CompletedHours
 		--SELECT * 
 		FROM #Current c
 		FULL JOIN  (
@@ -360,15 +375,19 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 				ELSE 6
 			END ColumnOrder,	
 			2 as BranchOrder,
-			'Total' as Branch,
+			'Current total for week' as Branch,
 			COALESCE(c.Week,st.ReportingPeriod),
 			COALESCE(c.MetricType,st.metricType),
 			CASE
+				WHEN COALESCE(c.MetricType,st.metricType)='Referrals' THEN CONVERT(varchar(10),(SUM(ISNULL(CONVERT(INT,c.MetricValue),0))))
 				WHEN SUM(ISNULL(CONVERT(INT,c.MetricValue),0))&gt;SUM(ISNULL(CONVERT(INT,st.MetricValue),0))
 				THEN '(+'+CONVERT(varchar(10),(SUM(ISNULL(CONVERT(INT,c.MetricValue),0))-SUM(ISNULL(CONVERT(INT,st.MetricValue),0))))+') '+CONVERT(varchar(10),SUM(ISNULL(CONVERT(INT,c.MetricValue),0)))
 				ELSE '('+CONVERT(varchar(10),(SUM(ISNULL(CONVERT(INT,c.MetricValue),0))-SUM(ISNULL(CONVERT(INT,st.MetricValue),0))))+') '+CONVERT(varchar(10),SUM(ISNULL(CONVERT(INT,c.MetricValue),0)))
 			END,
-			SUM(c.completed) 
+			SUM(c.completed) ,
+			SUM(ScheduledHours) ScheduledHours,
+			SUM(CONVERT(INT,ISNULL(st.MetricValue,0))) ProjectedForWeek,
+			SUM(CompletedHours)
 		--SELECT * 
 		FROM #Current c
 		FULL JOIN (
@@ -416,6 +435,18 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
           <DataField>Completed</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
+        <Field Name="ScheduledHours">
+          <DataField>ScheduledHours</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="ProjectedForWeek">
+          <DataField>ProjectedForWeek</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="CompletedHours">
+          <DataField>CompletedHours</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="ActionableReferrals">
@@ -436,7 +467,6 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 			C.ClientOfficeLocationName,
 			CMD.CurrentStatus,
 			[Reason Code]
-
 </CommandText>
       </Query>
       <Fields>
@@ -525,6 +555,48 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
         <Field Name="Probable_Other">
           <DataField>Probable_Other</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="DumbyQuery">
+      <Query>
+        <DataSourceName>HumanResourcesElevated</DataSourceName>
+        <CommandText>Select 1 total</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="total">
+          <DataField>total</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="OriginalScheduledHours">
+      <Query>
+        <DataSourceName>HumanResourcesElevated</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@WeekStartDate">
+            <Value>=Parameters!WeekStartDate.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@WeekEndDate">
+            <Value>=Parameters!WeekEndDate.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>SELECT 
+SUM([Normalized Scheduled Hours]) ScheduledHours		
+FROM CentralReach.dbo.ClientMasterSheetHistory cmd
+LEFT JOIN CentralReach.insights.Client c on cmd.CLientID=c.ClientId
+LEFT JOIN Reference.dbo.branchData bd on LEFT(cmd.serviceLocation,3)=bd.ABACode
+LEFT JOIN Reference.dbo.branchData bdp on bdp.branchcode=bd.ParentBranchCode
+INNER JOIN Reference.dbo.DimDate dd on dd.date=cmd.[Planned Start Week ]
+WHERE dd.date&gt;=@WeekStartDate
+and dd.date&lt;=@WeekEndDate
+and CONVERT(date,TrackingDate)=@WeekStartDate
+		</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="ScheduledHours">
+          <DataField>ScheduledHours</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -1148,8 +1220,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
             <PageBreak>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
-            <Top>0.31944in</Top>
-            <Left>0in</Left>
+            <Top>5.43973in</Top>
             <Height>0.86458in</Height>
             <Width>5.28125in</Width>
             <Style>
@@ -1224,7 +1295,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                   <Value>=Fields!MetricValue.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
-                                    <FontWeight>=IIF(Fields!ClientOfficeLocationName.Value="Total","Bold","Normal")</FontWeight>
+                                    <FontWeight>=IIF(Fields!ClientOfficeLocationName.Value="Current total for week","Bold","Normal")</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -1239,7 +1310,50 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>=IIF(Fields!ClientOfficeLocationName.Value="Total","LightGrey","White")</BackgroundColor>
+                            <BackgroundColor>=IIF(Fields!ClientOfficeLocationName.Value="Current total for week","LightGrey","White")</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ProjectedForWeek">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!ProjectedForWeek.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ProjectedForWeek</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>WhiteSmoke</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
@@ -1277,6 +1391,92 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Completed</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>WhiteSmoke</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ScheduledHours">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!ScheduledHours.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ScheduledHours</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>WhiteSmoke</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox15">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Fields!MetricType.Value="Planned Start Week",100,"-")</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox15</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1376,7 +1576,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                 <Value>=Fields!ClientOfficeLocationName.Value</Value>
                                 <Style>
                                   <FontSize>8pt</FontSize>
-                                  <FontWeight>=IIF(Fields!ClientOfficeLocationName.Value="Total","Bold","Normal")</FontWeight>
+                                  <FontWeight>=IIF(Fields!ClientOfficeLocationName.Value="Current total for week","Bold","Normal")</FontWeight>
                                 </Style>
                               </TextRun>
                             </TextRuns>
@@ -1389,7 +1589,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                             <Color>LightGrey</Color>
                             <Style>Solid</Style>
                           </Border>
-                          <BackgroundColor>=IIF(Fields!ClientOfficeLocationName.Value="Total","LightGrey","White")</BackgroundColor>
+                          <BackgroundColor>=IIF(Fields!ClientOfficeLocationName.Value="Current total for week","LightGrey","White")</BackgroundColor>
                           <PaddingLeft>2pt</PaddingLeft>
                           <PaddingRight>2pt</PaddingRight>
                           <PaddingTop>2pt</PaddingTop>
@@ -1403,6 +1603,46 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                   <TablixHeader>
                     <Size>2.5in</Size>
                     <CellContents>
+                      <Textbox Name="Textbox43">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Projected for Week</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox43</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>WhiteSmoke</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>2.5in</Size>
+                    <CellContents>
                       <Textbox Name="Textbox104">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
@@ -1410,7 +1650,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>Completed For Week</Value>
+                                <Value>Completed for Week</Value>
                                 <Style>
                                   <FontFamily>Arial</FontFamily>
                                   <FontSize>8pt</FontSize>
@@ -1439,6 +1679,86 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                   </TablixHeader>
                   <KeepWithGroup>Before</KeepWithGroup>
                 </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>2.5in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox10">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Expected Additional Hours</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox10</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>WhiteSmoke</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>2.5in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox14">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Goal</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox14</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>WhiteSmoke</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>Intake</DataSetName>
@@ -1446,7 +1766,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <Top>1.78125in</Top>
-            <Height>0.91667in</Height>
+            <Height>1.66667in</Height>
             <Width>3.5in</Width>
             <ZIndex>1</ZIndex>
             <Style>
@@ -1459,7 +1779,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>0.59375in</Width>
+                  <Width>0.57417in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.625in</Width>
@@ -1467,7 +1787,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>0.40625in</Height>
+                  <Height>0.59375in</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -1896,12 +2216,13 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                   <SortExpressions>
                     <SortExpression>
                       <Value>=Fields!CurrentStatus.Value</Value>
+                      <Direction>Descending</Direction>
                     </SortExpression>
                   </SortExpressions>
                   <TablixMembers>
                     <TablixMember>
                       <TablixHeader>
-                        <Size>2.5in</Size>
+                        <Size>1.92583in</Size>
                         <CellContents>
                           <Textbox Name="Textbox2">
                             <CanGrow>true</CanGrow>
@@ -1910,21 +2231,9 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>Actionable Referrals by Service </Value>
+                                    <Value>Actionable Referrals by Service and Location</Value>
                                     <Style>
-                                      <FontWeight>Bold</FontWeight>
-                                    </Style>
-                                  </TextRun>
-                                </TextRuns>
-                                <Style>
-                                  <TextAlign>Left</TextAlign>
-                                </Style>
-                              </Paragraph>
-                              <Paragraph>
-                                <TextRuns>
-                                  <TextRun>
-                                    <Value>and Location</Value>
-                                    <Style>
+                                      <FontSize>9pt</FontSize>
                                       <FontWeight>Bold</FontWeight>
                                     </Style>
                                   </TextRun>
@@ -1952,17 +2261,17 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                     </TablixMember>
                     <TablixMember>
                       <TablixHeader>
-                        <Size>0.625in</Size>
+                        <Size>1.92583in</Size>
                         <CellContents>
-                          <Textbox Name="Textbox27">
+                          <Textbox Name="Textbox28">
+                            <CanGrow>true</CanGrow>
                             <KeepTogether>true</KeepTogether>
                             <Paragraphs>
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>Current Status</Value>
+                                    <Value>Learning Center</Value>
                                     <Style>
-                                      <FontFamily>Arial</FontFamily>
                                       <FontSize>7pt</FontSize>
                                       <FontWeight>Bold</FontWeight>
                                       <Color>White</Color>
@@ -1974,7 +2283,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                 </Style>
                               </Paragraph>
                             </Paragraphs>
-                            <rd:DefaultName>Textbox26</rd:DefaultName>
+                            <rd:DefaultName>Textbox25</rd:DefaultName>
                             <Style>
                               <Border>
                                 <Color>LightGrey</Color>
@@ -1990,62 +2299,19 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                           </Textbox>
                         </CellContents>
                       </TablixHeader>
-                      <TablixMembers>
-                        <TablixMember>
-                          <TablixHeader>
-                            <Size>1.875in</Size>
-                            <CellContents>
-                              <Textbox Name="Textbox28">
-                                <CanGrow>true</CanGrow>
-                                <KeepTogether>true</KeepTogether>
-                                <Paragraphs>
-                                  <Paragraph>
-                                    <TextRuns>
-                                      <TextRun>
-                                        <Value>Learning Center</Value>
-                                        <Style>
-                                          <FontSize>7pt</FontSize>
-                                          <FontWeight>Bold</FontWeight>
-                                          <Color>White</Color>
-                                        </Style>
-                                      </TextRun>
-                                    </TextRuns>
-                                    <Style>
-                                      <TextAlign>Center</TextAlign>
-                                    </Style>
-                                  </Paragraph>
-                                </Paragraphs>
-                                <rd:DefaultName>Textbox25</rd:DefaultName>
-                                <Style>
-                                  <Border>
-                                    <Color>LightGrey</Color>
-                                    <Style>Solid</Style>
-                                  </Border>
-                                  <BackgroundColor>Teal</BackgroundColor>
-                                  <VerticalAlign>Middle</VerticalAlign>
-                                  <PaddingLeft>2pt</PaddingLeft>
-                                  <PaddingRight>2pt</PaddingRight>
-                                  <PaddingTop>2pt</PaddingTop>
-                                  <PaddingBottom>2pt</PaddingBottom>
-                                </Style>
-                              </Textbox>
-                            </CellContents>
-                          </TablixHeader>
-                        </TablixMember>
-                      </TablixMembers>
                     </TablixMember>
                     <TablixMember>
                       <TablixHeader>
-                        <Size>0.625in</Size>
+                        <Size>1.92583in</Size>
                         <CellContents>
-                          <Textbox Name="CurrentStatus">
+                          <Textbox Name="Textbox29">
                             <CanGrow>true</CanGrow>
                             <KeepTogether>true</KeepTogether>
                             <Paragraphs>
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>=Fields!CurrentStatus.Value</Value>
+                                    <Value>=Fields!CurrentStatus.Value &amp; " Total"</Value>
                                     <Style>
                                       <FontFamily>Arial</FontFamily>
                                       <FontSize>7pt</FontSize>
@@ -2053,18 +2319,16 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                                     </Style>
                                   </TextRun>
                                 </TextRuns>
-                                <Style>
-                                  <TextAlign>Center</TextAlign>
-                                </Style>
+                                <Style />
                               </Paragraph>
                             </Paragraphs>
-                            <rd:DefaultName>CurrentStatus</rd:DefaultName>
+                            <rd:DefaultName>Textbox29</rd:DefaultName>
                             <Style>
                               <Border>
                                 <Color>LightGrey</Color>
                                 <Style>Solid</Style>
                               </Border>
-                              <VerticalAlign>Middle</VerticalAlign>
+                              <BackgroundColor>LightGrey</BackgroundColor>
                               <PaddingLeft>2pt</PaddingLeft>
                               <PaddingRight>2pt</PaddingRight>
                               <PaddingTop>2pt</PaddingTop>
@@ -2073,100 +2337,60 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                           </Textbox>
                         </CellContents>
                       </TablixHeader>
-                      <TablixMembers>
-                        <TablixMember>
-                          <TablixHeader>
-                            <Size>1.875in</Size>
-                            <CellContents>
-                              <Textbox Name="Textbox29">
-                                <CanGrow>true</CanGrow>
-                                <KeepTogether>true</KeepTogether>
-                                <Paragraphs>
-                                  <Paragraph>
-                                    <TextRuns>
-                                      <TextRun>
-                                        <Value>=Fields!CurrentStatus.Value &amp; " Total"</Value>
-                                        <Style>
-                                          <FontFamily>Arial</FontFamily>
-                                          <FontSize>7pt</FontSize>
-                                          <FontWeight>Bold</FontWeight>
-                                        </Style>
-                                      </TextRun>
-                                    </TextRuns>
-                                    <Style />
-                                  </Paragraph>
-                                </Paragraphs>
-                                <rd:DefaultName>Textbox29</rd:DefaultName>
-                                <Style>
-                                  <Border>
-                                    <Color>LightGrey</Color>
-                                    <Style>Solid</Style>
-                                  </Border>
-                                  <BackgroundColor>LightGrey</BackgroundColor>
-                                  <PaddingLeft>2pt</PaddingLeft>
-                                  <PaddingRight>2pt</PaddingRight>
-                                  <PaddingTop>2pt</PaddingTop>
-                                  <PaddingBottom>2pt</PaddingBottom>
-                                </Style>
-                              </Textbox>
-                            </CellContents>
-                          </TablixHeader>
-                          <KeepWithGroup>After</KeepWithGroup>
-                        </TablixMember>
-                        <TablixMember>
-                          <Group Name="ClientOfficeLocationName1">
-                            <GroupExpressions>
-                              <GroupExpression>=Fields!ClientOfficeLocationName.Value</GroupExpression>
-                            </GroupExpressions>
-                          </Group>
-                          <SortExpressions>
-                            <SortExpression>
-                              <Value>=Fields!ClientOfficeLocationName.Value</Value>
-                            </SortExpression>
-                          </SortExpressions>
-                          <TablixHeader>
-                            <Size>1.875in</Size>
-                            <CellContents>
-                              <Textbox Name="ClientOfficeLocationName1">
-                                <CanGrow>true</CanGrow>
-                                <KeepTogether>true</KeepTogether>
-                                <Paragraphs>
-                                  <Paragraph>
-                                    <TextRuns>
-                                      <TextRun>
-                                        <Value>=Fields!ClientOfficeLocationName.Value</Value>
-                                        <Style>
-                                          <FontSize>7pt</FontSize>
-                                        </Style>
-                                      </TextRun>
-                                    </TextRuns>
-                                    <Style />
-                                  </Paragraph>
-                                </Paragraphs>
-                                <rd:DefaultName>ClientOfficeLocationName1</rd:DefaultName>
-                                <Style>
-                                  <Border>
-                                    <Color>LightGrey</Color>
-                                    <Style>Solid</Style>
-                                  </Border>
-                                  <PaddingLeft>2pt</PaddingLeft>
-                                  <PaddingRight>2pt</PaddingRight>
-                                  <PaddingTop>2pt</PaddingTop>
-                                  <PaddingBottom>2pt</PaddingBottom>
-                                </Style>
-                              </Textbox>
-                            </CellContents>
-                          </TablixHeader>
-                        </TablixMember>
-                      </TablixMembers>
+                      <KeepWithGroup>After</KeepWithGroup>
+                    </TablixMember>
+                    <TablixMember>
+                      <Group Name="ClientOfficeLocationName1">
+                        <GroupExpressions>
+                          <GroupExpression>=Fields!ClientOfficeLocationName.Value</GroupExpression>
+                        </GroupExpressions>
+                      </Group>
+                      <SortExpressions>
+                        <SortExpression>
+                          <Value>=Fields!ClientOfficeLocationName.Value</Value>
+                        </SortExpression>
+                      </SortExpressions>
+                      <TablixHeader>
+                        <Size>1.92583in</Size>
+                        <CellContents>
+                          <Textbox Name="ClientOfficeLocationName1">
+                            <CanGrow>true</CanGrow>
+                            <KeepTogether>true</KeepTogether>
+                            <Paragraphs>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value>=Fields!ClientOfficeLocationName.Value</Value>
+                                    <Style>
+                                      <FontSize>7pt</FontSize>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style />
+                              </Paragraph>
+                            </Paragraphs>
+                            <rd:DefaultName>ClientOfficeLocationName1</rd:DefaultName>
+                            <Style>
+                              <Border>
+                                <Color>LightGrey</Color>
+                                <Style>Solid</Style>
+                              </Border>
+                              <PaddingLeft>2pt</PaddingLeft>
+                              <PaddingRight>2pt</PaddingRight>
+                              <PaddingTop>2pt</PaddingTop>
+                              <PaddingBottom>2pt</PaddingBottom>
+                            </Style>
+                          </Textbox>
+                        </CellContents>
+                      </TablixHeader>
                     </TablixMember>
                   </TablixMembers>
                 </TablixMember>
                 <TablixMember>
                   <TablixHeader>
-                    <Size>2.5in</Size>
+                    <Size>1.92583in</Size>
                     <CellContents>
-                      <Textbox Name="Textbox31">
+                      <Textbox Name="Textbox90">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
@@ -2186,7 +2410,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                             </Style>
                           </Paragraph>
                         </Paragraphs>
-                        <rd:DefaultName>Textbox31</rd:DefaultName>
+                        <rd:DefaultName>Textbox90</rd:DefaultName>
                         <Style>
                           <Border>
                             <Color>LightGrey</Color>
@@ -2207,12 +2431,9 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>ActionableReferrals</DataSetName>
-            <PageBreak>
-              <BreakLocation>End</BreakLocation>
-            </PageBreak>
-            <Top>2.95709in</Top>
-            <Height>1.55208in</Height>
-            <Width>3.71875in</Width>
+            <Top>8.19667in</Top>
+            <Height>1.73958in</Height>
+            <Width>3.125in</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -2227,7 +2448,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Hires and Offers</Value>
+                    <Value>Weekly Hires and Offer Status</Value>
                     <Style>
                       <FontSize>12pt</FontSize>
                       <FontWeight>Bold</FontWeight>
@@ -2238,8 +2459,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox58</rd:DefaultName>
-            <Top>0.01389in</Top>
-            <Left>0in</Left>
+            <Top>3.50917in</Top>
             <Height>0.25in</Height>
             <Width>2.5in</Width>
             <ZIndex>3</ZIndex>
@@ -2260,7 +2480,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Intake</Value>
+                    <Value>Weekly Intake Status</Value>
                     <Style>
                       <FontSize>12pt</FontSize>
                       <FontWeight>Bold</FontWeight>
@@ -2271,7 +2491,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox58</rd:DefaultName>
-            <Top>1.25347in</Top>
+            <Top>0.00347in</Top>
             <Height>0.25in</Height>
             <Width>2.5in</Width>
             <ZIndex>4</ZIndex>
@@ -3421,8 +3641,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>CurrentCensus</DataSetName>
-            <Top>4.99875in</Top>
-            <Left>0in</Left>
+            <Top>6.7175in</Top>
             <Height>1.125in</Height>
             <Width>5.88541in</Width>
             <ZIndex>5</ZIndex>
@@ -3439,7 +3658,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>number in parenthesis represents change since Monday morning</Value>
+                    <Value>number in parenthesis below represents change from weekly projected</Value>
                     <Style>
                       <FontStyle>Italic</FontStyle>
                       <FontSize>9pt</FontSize>
@@ -3451,9 +3670,9 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox58</rd:DefaultName>
-            <Top>1.54514in</Top>
+            <Top>1.48958in</Top>
             <Height>0.25in</Height>
-            <Width>3.79167in</Width>
+            <Width>4.55209in</Width>
             <ZIndex>6</ZIndex>
             <Style>
               <Border>
@@ -3483,8 +3702,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox58</rd:DefaultName>
-            <Top>4.62375in</Top>
-            <Left>0in</Left>
+            <Top>6.3425in</Top>
             <Height>0.25in</Height>
             <Width>3.3125in</Width>
             <ZIndex>7</ZIndex>
@@ -3502,7 +3720,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
             <PageBreak>
               <BreakLocation>Start</BreakLocation>
             </PageBreak>
-            <Top>2.74875in</Top>
+            <Top>7.98833in</Top>
             <Height>0.20833in</Height>
             <Width>4.14583in</Width>
             <ZIndex>8</ZIndex>
@@ -3512,8 +3730,621 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
               </Border>
             </Style>
           </Rectangle>
+          <Tablix Name="Tablix6">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>2.3125in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.40625in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox39">
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Expected New Learner  Normalized Hours for week</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox39</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Teal</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ScheduledHours1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!ScheduledHours.Value, "OriginalScheduledHours")</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ScheduledHours1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.38542in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox57">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Confirmed New Learner Normalized H</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>ours Week-to-date</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox57</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Teal</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="CompletedHours">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!CompletedHours.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>CompletedHours</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.27083in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox41">
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Additional Hours Goal</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox41</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Teal</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox42">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>100</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox42</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>Intake</DataSetName>
+            <Filters>
+              <Filter>
+                <FilterExpression>=Fields!MetricType.Value</FilterExpression>
+                <Operator>Equal</Operator>
+                <FilterValues>
+                  <FilterValue>Planned Start Week</FilterValue>
+                </FilterValues>
+              </Filter>
+              <Filter>
+                <FilterExpression>=Fields!ClientOfficeLocationName.Value</FilterExpression>
+                <Operator>Equal</Operator>
+                <FilterValues>
+                  <FilterValue>Current total for week</FilterValue>
+                </FilterValues>
+              </Filter>
+            </Filters>
+            <Top>0.29514in</Top>
+            <Height>1.06249in</Height>
+            <Width>3.3125in</Width>
+            <ZIndex>9</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Tablix Name="Tablix4">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>1.60417in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>3.67708in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox25">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>New Offers</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox25</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox26">
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>New offers sent this week</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox26</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.4375in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox32">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Signed Offers</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox32</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox33">
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Offers that were signed this week.  Offer could have been sent in previous week.</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox33</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.3807in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox53">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Starting this week</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox53</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox54">
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Employees expected to start this week</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox54</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.4375in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox55">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>"Candidate Onboarding" Learning Center </Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox55</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox56">
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Candidate is still onboarding, but expected to start this week.</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox56</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>DumbyQuery</DataSetName>
+            <Top>3.82861in</Top>
+            <Height>1.5057in</Height>
+            <Width>5.28125in</Width>
+            <ZIndex>10</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
         </ReportItems>
-        <Height>6.12375in</Height>
+        <Height>9.93625in</Height>
         <Style />
       </Body>
       <Width>5.88541in</Width>
@@ -3559,7 +4390,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>="Executed On: " &amp; FORMAT(TODAY,"MM/dd/yyyy")</Value>
+                      <Value>="Executed On: " &amp; FORMAT(NOW(),"MM/dd/yyyy hh:mm tt")</Value>
                       <Style>
                         <FontWeight>Normal</FontWeight>
                       </Style>
@@ -3633,8 +4464,6 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
             </Border>
           </Style>
         </PageHeader>
-        <PageHeight>8.5in</PageHeight>
-        <PageWidth>11in</PageWidth>
         <LeftMargin>0.25in</LeftMargin>
         <RightMargin>0.25in</RightMargin>
         <TopMargin>0.25in</TopMargin>

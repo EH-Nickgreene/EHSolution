@@ -261,7 +261,7 @@ ORDER BY 4,1,2
         <DataSourceName>DataSource1</DataSourceName>
         <CommandText>DECLARE @startdate date,@enddate date
 SET @startdate = '2023-8-1'
-SET @enddate='2023-10-31' 
+SET @enddate='2023-11-30' 
 
 IF OBJECT_ID('tempdb..#months') IS NOT NULL DROP TABLE #months
 SELECT 
@@ -290,7 +290,7 @@ IF OBJECT_ID('tempdb..#adc') IS NOT NULL DROP TABLE #adc
 SELECT
 dd.MonthInt,
 Branch_code,
-ROUND(CONVERT(float,COUNT(*))/MAX(dd.DaysInMonth),1) ADC,
+CONVERT(float,COUNT(*))/MAX(dd.DaysInMonth) ADC,
 CONVERT(float,COUNT(*)) PatientDays,
 MAX(dd.DaysInMonth) DaysInMonth
 INTO #adc
@@ -298,7 +298,7 @@ FROM wh_patientdays wh
 INNER JOIN #months dd on wh.ServiceDate&gt;=MonthStartDate and ServiceDate&lt;=MonthEndDate and wh.Branch_Code=dd.BranchCode
 GROUP BY dd.MonthInt,Branch_code
 
-
+--SELECT * FROM #adc
 --SELECT* FROM #adc
 
 IF OBJECT_ID('tempdb..#admissions') IS NOT NULL DROP TABLE #admissions
@@ -358,9 +358,7 @@ LEFT JOIN #dc dc on adc.Branch_Code=dc.Branch_Code and m.MonthInt=dc.MonthInt
 LEFT JOIN reference.dbo.BranchData bd on bd.branchCode=m.BranchCode--COALESCE(adc.Branch_Code,admit.Branch_Code,dc.Branch_Code)
 WHERE adc.adc&gt;0
 OR Admit.admits&gt;0
-ORDER By 2,1
-
-</CommandText>
+ORDER By 2,1</CommandText>
       </Query>
       <Fields>
         <Field Name="MonthInt">

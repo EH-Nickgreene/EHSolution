@@ -17,12 +17,15 @@
     <DataSet Name="SummaryData">
       <Query>
         <DataSourceName>EHClinical</DataSourceName>
-        <CommandText>USE EHClinical
-DECLARE @StartDate date,@EndDate date
-SET @StartDate = '2023-12-1'
-SET @EndDate = '2023-12-5'
-
-DECLARE @monthint int
+        <QueryParameters>
+          <QueryParameter Name="@StartDate">
+            <Value>=Parameters!StartDate.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@EndDate">
+            <Value>=Parameters!EndDate.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>DECLARE @monthint int
 SELECT @monthint=monthint
 FROM Reference.dbo.dimdate
 WHERE date=@StartDate
@@ -131,7 +134,6 @@ LEFT JOIN (
 	GROUP By bd.BranchCode
 	) track on track.branchCode=adc.branch_Code
 LEFT JOIN reference.dbo.BranchData bd on bd.branchCode=COALESCE(adc.Branch_Code,pa.Branch_Code,cen.Branch_Code,admit.Branch_Code,dc.Branch_Code)
-
 
 </CommandText>
       </Query>

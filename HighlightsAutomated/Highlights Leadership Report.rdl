@@ -171,16 +171,26 @@
 		And [Current Service] IN ('ABA','ABA (Dx)','DIAG')
 
 		UPDATE #masterSheet
-		SET [Normalized Scheduled Hours]=20
-		WHERE ISNULL([Normalized Scheduled Hours],'')=''
+		SET [Normalized Scheduled Hours]=20.0
+		WHERE [Normalized Scheduled Hours] IS NULL
 
 		--RUN SQL TO CREATE #AuthFinal TABLE FIRST
 
+		IF OBJECT_ID('tempdb..#normalizedActualHoursCMS') IS NOT NULL DROP TABLE #normalizedActualHoursCMS
+		SELECT bdp.BranchCode,SUM(ISNULL([Normalized Scheduled Hours],20)) [Normalized Scheduled Hours]
+		INTO #normalizedActualHoursCMS
+		FROM ClientMasterSheet cmd
+		LEFT JOIN Reference.dbo.branchData bd on LEFT(cmd.serviceLocation,3)=bd.ABACode
+		LEFT JOIN Reference.dbo.branchData bdp on bdp.branchcode=bd.ParentBranchCode
+		WHERE CurrentStatus='Active'
+		GROUP BY bdp.BranchCode
+		
 
 
 	SELECT 
-		BranchName,
-		Sum(AuthHours) ActiveNormalizedHours,
+		/*bd.abacode+' - '+*/BranchName BranchName,
+		--Sum(AuthHours) ActiveNormalizedHours,--THESE ARE THE HOURS BASED ON CLIENT ACCEPTED HOURS
+		nah.[Normalized Scheduled Hours] ActiveNormalizedHours, 
 		SUM(BillingHours) ActualBillingHours,
 		MAX(bd.HourCapacityPerWeek) HoursCapacity,
 		MAX(ISNULL(ms.ProableABADx,0)) ProableABADx,
@@ -189,6 +199,7 @@
 	
 	FROM #AuthFinal a
 	LEFT JOIN Reference.dbo.BranchData bd on bd.BranchCode=a.BranchCode
+	LEFT JOIN #normalizedActualHoursCMS nah on nah.BranchCode=a.BranchCode
 	LEFT JOIN (
 		SELECT 
 			LEFT(ServiceLocation,3) as ABCode,--[Current Service],COUNT(*),SUM(CASE WHEN ISNULL([Normalized Scheduled Hours],'')='' THEN 20 ELSE [Normalized Scheduled Hours] END)
@@ -202,8 +213,8 @@
 		) ms on ms.ABCode=bd.ABACode
 	WHERE BranchName IS NOT NULL
 	GROUP By 
-		BranchName
-</CommandText>
+		/*bd.abacode+' - '+*/BranchName,
+		nah.[Normalized Scheduled Hours]</CommandText>
       </Query>
       <Fields>
         <Field Name="BranchName">
@@ -387,7 +398,29 @@ GROUP By bdp.Branchname,WeekOfYearDisplay</CommandText>
             <Value>=Parameters!EndDate.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>SELECT 
+        <CommandText>
+----Below query is based on scheduling data
+--SELECT 
+--	bd.BranchName,
+--	SUM(EventHours) TotalImpactHours,
+--	COUNT(DISTINCT tb.ClientID) TotalLearners,
+--	SUM(CASE WHEN tb.ServiceCode='97153' THEN EventHours ELSE 0 END) as DirectCareImpactHours,
+--	COUNT(DISTINCT CASE WHEN tb.ServiceCode='97153' THEN ClientID ELSE NULL END) as DirectCareLearners
+--FROM v_scheduling tb
+--LEFT JOIN Reference.dbo.BranchData bd on bd.branchCode=tb.BranchCodeAssignedToLearner
+--LEFT JOIN Reference.dbo.BranchData bdp on bdp.branchCode=bd.ParentBranchCode
+--WHERE SchedulingDate&gt;=@StartDate 
+--and SchedulingDate&lt;dateadd(dd,1,@EndDate)
+--and tb.serviceCode IN('97151','97152','97153','97154','97155')
+--and IsConvertable=1
+--and CancelledReason=''
+--GROUP BY bd.BranchName
+
+
+
+
+--Below Query is based on billed data
+SELECT 
 	bd.BranchName,
 	SUM(DurationHours) TotalImpactHours,
 	COUNT(DISTINCT tb.ClientID) TotalLearners,
@@ -399,8 +432,7 @@ LEFT JOIN Reference.dbo.BranchData bdp on bdp.branchCode=bd.ParentBranchCode
 WHERE ServiceDate&gt;=@StartDate 
 and ServiceDate&lt;dateadd(dd,1,@EndDate)
 and tb.serviceCode IN('97151','97152','97153','97154','97155')
-GROUP BY bd.BranchName
-</CommandText>
+GROUP BY bd.BranchName</CommandText>
       </Query>
       <Fields>
         <Field Name="BranchName">
@@ -862,7 +894,12 @@ SELECT
 	d.RowID ColumnOrder,
 	ms.ServiceLocation ,
 	CONVERT(varchar(10),ms.[Planned Start Week ],101) [Projected Start Week],
-	COUNT(*) Learners
+	COUNT(*) Learners,
+	SUM(CASE
+			WHEN [Tech Assigned AM] LIKE '%need%' OR [Tech Assigned PM] LIKE '%need%' OR [Tech Assigned Other] LIKE '%need%'
+			THEN 1
+			ELSE 0
+		END) as StaffNeed
 
 --SELECT *
 FROM ClientMasterSheet ms
@@ -883,7 +920,12 @@ SELECT
 	ms.ServiceLocation ,
 	(SELECT CONVERT(varchar(10),MIN([Planned Start Week ]),101) FROM #dates WHERE Rowid&gt;=5)+' - '+ 
 	(SELECT CONVERT(varchar(10),MAX([Planned Start Week ]),101) FROM #dates WHERE Rowid&gt;=5),
-	COUNT(*) Learners
+	COUNT(*) Learners,
+	SUM(CASE
+			WHEN [Tech Assigned AM] LIKE '%need%' OR [Tech Assigned PM] LIKE '%need%' OR [Tech Assigned Other] LIKE '%need%'
+			THEN 1
+			ELSE 0
+		END) as StaffNeed
 
 --SELECT *
 FROM ClientMasterSheet ms
@@ -911,16 +953,27 @@ GROUP BY ms.ServiceLocation </CommandText>
           <DataField>Projected Start Week</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="StaffNeed">
+          <DataField>StaffNeed</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="ProbableAndLikely">
       <Query>
         <DataSourceName>CentralReach</DataSourceName>
-        <CommandText>SELECT ServiceLocation,CurrentStatus,[Current Service], COUNT (*) Learners
+        <CommandText>
+SELECT ServiceLocation,CurrentStatus,[Current Service], COUNT (*) Learners
 FROM ClientMasterSheet ms
 LEFT JOIN insights.Client c on ms.ClientID=c.ClientId
 WHERE CurrentStatus IN ('Probable','Likely')
-GROUP BY ServiceLocation,[Current Service],CurrentStatus</CommandText>
+GROUP BY ServiceLocation,[Current Service],CurrentStatus
+UNION ALL
+SELECT ServiceLocation,CurrentStatus,'Total' [Current Service], COUNT (*) Learners
+FROM ClientMasterSheet ms
+LEFT JOIN insights.Client c on ms.ClientID=c.ClientId
+WHERE CurrentStatus IN ('Probable','Likely')
+GROUP BY ServiceLocation,CurrentStatus</CommandText>
       </Query>
       <Fields>
         <Field Name="ServiceLocation">
@@ -956,8 +1009,11 @@ SELECT
 	COUNT(*) as Employees
 FROM v_employee e
 LEFT JOIN JobCodes jc on e.JobTitleCode=jc.JobCode
-WHERE PayrollCompanyCode='K86'
-and e.PositionStatus='Active'
+WHERE e.PositionStatus='Active'
+AND (
+PayrollCompanyCode IN('K86','ODJ')
+OR HomeDepartmentDescription IN ('Support Center','Support Center- Other','Corporate Employee')
+)
 GROUP BY 
 	WorkerCategoryDescription,
 	RegularPayRateDescription,
@@ -966,6 +1022,7 @@ GROUP BY
 		WHEN jobCategory IN ('Student Tech') THEN 'Student Tech'
 		ELSE ABAJobCategoryGroup
 	END
+
 </CommandText>
       </Query>
       <Fields>
@@ -1018,10 +1075,12 @@ LEFT JOIN Reference.dbo.branchdata bd ON e.HomeDepartmentCode=bd.ADPHomeDepartme
 LEFT JOIN Reference.dbo.branchdata bdp ON bd.ParentBranchCode=bdp.BranchCode
 LEFT JOIN Centralreach.insights.employee ei on e.EmployeeNumber=ei.EmployeePayrollReference
 LEFT JOIN Centralreach.insights.ContactCustomField md on md.ContactId=ei.employeeid and md.fieldname = 'recruiter'
-WHERE PayrollCompanyCode='K86'
-and e.hiredate&gt;=@CustomStartDate
+WHERE e.hiredate&gt;='2023-6-5'
 and e.hireDate&lt;dateadd(dd,1,@EndDate)
 and bdp.BranchStatus='Active'
+AND PayrollCompanyCode IN('K86','ODJ')
+AND HomeDepartmentDescription NOT IN ('Support Center','Support Center- Other','Corporate Employee')
+
 GROUP BY bdp.BranchName
 )
 
@@ -1036,10 +1095,13 @@ LEFT JOIN Reference.dbo.branchdata bd ON e.HomeDepartmentCode=bd.ADPHomeDepartme
 LEFT JOIN Reference.dbo.branchdata bdp ON bd.ParentBranchCode=bdp.BranchCode
 LEFT JOIN Centralreach.insights.employee ei on e.EmployeeNumber=ei.EmployeePayrollReference
 LEFT JOIN Centralreach.insights.ContactCustomField md on md.ContactId=ei.employeeid and md.fieldname = 'recruiter'
-WHERE PayrollCompanyCode='K86'
-and e.TerminationDate&gt;=@CustomStartDate
+WHERE e.TerminationDate&gt;='2023-6-5'
+and e.HireDate&gt;='2023-6-5'
 and e.TerminationDate&lt;dateadd(dd,1,@EndDate)
 and bdp.BranchStatus='Active'
+AND PayrollCompanyCode IN('K86','ODJ')
+AND HomeDepartmentDescription NOT IN ('Support Center','Support Center- Other','Corporate Employee')
+
 GROUP BY bdp.BranchName
 )
 
@@ -1055,6 +1117,10 @@ SELECT
 --SELECT * 
 FROM CteHires hire
 FULL JOIN CteTerms term on hire.BranchName=term.BranchName 
+
+
+
+
 </CommandText>
       </Query>
       <Fields>
@@ -1147,6 +1213,211 @@ ORDER BY e.TerminationDate </CommandText>
         </Field>
       </Fields>
     </DataSet>
+    <DataSet Name="DARS">
+      <Query>
+        <DataSourceName>CentralReach</DataSourceName>
+        <CommandText>
+	SELECT 
+	1 as OrderBy,
+	bd.ShortName ServiceLocation,
+	'Diagnosis' as CurrentService,
+	[Reason Code],
+	CASE
+		WHEN [Reason Code]='Ready to Schedule' THEN 1
+		WHEN [Reason Code]='ADOS Scheduled' THEN 2
+		WHEN [Reason Code]='Prescreen Scheduled' THEN 3
+		WHEN [Reason Code]='Need to reschedule' THEN 4
+		WHEN [Reason Code]='Diag Complete' THEN 5
+		ELSE 99
+	END as ReasonCodeOrder,
+	--ServiceLocation
+	COUNT(*) Learners
+	FROM ClientMasterSheet cms
+	LEFT JOIN Reference.dbo.branchdata bd on LEFT(cms.servicelocation,3)=bd.AbaCode  
+	WHERE CurrentStatus='Probable'
+	AND [Current Service]='DIAG'
+	GROUP BY
+	[Reason Code],
+	bd.ShortName,
+	CASE
+		WHEN [Reason Code]='Ready to Schedule' THEN 1
+		WHEN [Reason Code]='ADOS Scheduled' THEN 2
+		WHEN [Reason Code]='Prescreen Scheduled' THEN 3
+		WHEN [Reason Code]='Need to reschedule' THEN 4
+		WHEN [Reason Code]='Diag Complete' THEN 5
+		ELSE 99
+	END
+	--ORDER BY 1,2
+
+
+	UNION ALL
+
+	SELECT 
+	2 as OrderBy,
+	bd.ShortName ServiceLocation,
+	'ABA Probable' as CurrentService,
+	CASE
+		WHEN [Reason Code]='Up Next' AND [ABA Assess Scheduled Date]&lt;=CONVERT(DATE,GETDATE()) THEN 'UpNext (Assessment Completed)'
+		WHEN [Reason Code]='Up Next' AND [ABA Assess Scheduled Date]&gt;CONVERT(DATE,GETDATE()) THEN 'UpNext (Assessment Scheduled)'
+		WHEN [Reason Code]='Need to reschedule' THEN 'Need to Reschedule Assessments'
+		WHEN [Reason Code]='Ready to Schedule' THEN 'Ready to Schedule Assessments'
+		ELSE [Reason Code]
+	END [Reason Code],
+	CASE
+		WHEN [Reason Code]='Up Next' AND [ABA Assess Scheduled Date]&lt;=CONVERT(DATE,GETDATE()) THEN 1
+		WHEN [Reason Code]='Up Next' AND [ABA Assess Scheduled Date]&gt;CONVERT(DATE,GETDATE()) THEN 2
+		WHEN [Reason Code]='Need to reschedule' THEN 3
+		WHEN [Reason Code]='Ready to Schedule' THEN 4
+		ELSE 99
+	END [ReasonCodeOrder],
+	--ServiceLocation
+	COUNT(*)
+	FROM ClientMasterSheet cms
+	LEFT JOIN Reference.dbo.branchdata bd on LEFT(cms.servicelocation,3)=bd.AbaCode  
+	WHERE CurrentStatus='Probable'
+	AND [Current Service]&lt;&gt;'DIAG'
+	GROUP BY
+	CASE
+		WHEN [Reason Code]='Up Next' AND [ABA Assess Scheduled Date]&lt;=CONVERT(DATE,GETDATE()) THEN 'UpNext (Assessment Completed)'
+		WHEN [Reason Code]='Up Next' AND [ABA Assess Scheduled Date]&gt;CONVERT(DATE,GETDATE()) THEN 'UpNext (Assessment Scheduled)'
+		WHEN [Reason Code]='Need to reschedule' THEN 'Need to Reschedule Assessments'
+		WHEN [Reason Code]='Ready to Schedule' THEN 'Ready to Schedule Assessments'
+		ELSE [Reason Code]
+	END,
+	bd.ShortName ,
+	CASE
+		WHEN [Reason Code]='Up Next' AND [ABA Assess Scheduled Date]&lt;=CONVERT(DATE,GETDATE()) THEN 1
+		WHEN [Reason Code]='Up Next' AND [ABA Assess Scheduled Date]&gt;CONVERT(DATE,GETDATE()) THEN 2
+		WHEN [Reason Code]='Need to reschedule' THEN 3
+		WHEN [Reason Code]='Ready to Schedule' THEN 4
+		ELSE 99
+	END
+	--ORDER BY 1,2
+	UNION ALL
+	SELECT 
+	3 as OrderBy,
+	bd.ShortName ServiceLocation,
+	'ABA Probable By Age' as CurrentService,
+	CASE
+		WHEN [Current Age]&lt;=5 THEN '5 and Under'
+		ELSE '6 and Up'
+	END as	[Reason Code],
+	CASE
+		WHEN [Current Age]&lt;=5 THEN 1
+		ELSE 2
+	END as	ReasonCodeOrder,
+	--ServiceLocation
+	COUNT(*)
+	FROM ClientMasterSheet cms
+	LEFT JOIN Reference.dbo.branchdata bd on LEFT(cms.servicelocation,3)=bd.AbaCode  
+	WHERE CurrentStatus='Probable'
+	AND [Current Service]&lt;&gt;'DIAG'
+	GROUP BY
+	CASE
+		WHEN [Current Age]&lt;=5 THEN '5 and Under'
+		ELSE '6 and Up'
+	END,
+	bd.ShortName ,
+	CASE
+		WHEN [Current Age]&lt;=5 THEN 1
+		ELSE 2
+	END
+	--ORDER BY 1,2
+
+	UNION ALL
+	SELECT 
+	4 as OrderBy,
+	bd.ShortName ServiceLocation,
+	'UpNext Category' as CurrentService,
+	CASE
+		WHEN [Current Service]='ABA' THEN 'UpNext ABA'
+		ELSE 'UpNext ABA (Dx)'
+	END	as	[Reason Code],
+	CASE
+		WHEN [Current Service]='ABA' THEN 2
+		ELSE 1 
+	END	as	[ReasonCodeOrder],
+	--ServiceLocation
+	COUNT(*)
+	FROM ClientMasterSheet cms
+	LEFT JOIN Reference.dbo.branchdata bd on LEFT(cms.servicelocation,3)=bd.AbaCode  
+	WHERE CurrentStatus='Probable'
+	AND [Current Service]&lt;&gt;'DIAG'
+	AND [Reason Code]='Up Next'
+	GROUP BY
+	CASE
+		WHEN [Current Service]='ABA' THEN 'UpNext ABA'
+		ELSE 'UpNext ABA (Dx)'
+	END,
+	bd.ShortName ,
+	CASE
+		WHEN [Current Service]='ABA' THEN 2
+		ELSE 1 
+	END
+	--ORDER BY 1,2
+	UNION ALL
+
+	SELECT 
+	5 as OrderBy,
+	bd.ShortName ServiceLocation,
+	'Ready to Schedule Category' as CurrentService,
+	CASE
+		WHEN [Current Service]='ABA' THEN 'Ready to Schedule ABA'
+		ELSE 'Ready to Schedule ABA (Dx)'
+	END	as	[Reason Code],
+	CASE
+		WHEN [Current Service]='ABA' THEN 2
+		ELSE 1
+	END	as	[ReasonCodeOrder],
+	--ServiceLocation
+	COUNT(*)
+	FROM ClientMasterSheet cms
+	LEFT JOIN Reference.dbo.branchdata bd on LEFT(cms.servicelocation,3)=bd.AbaCode  
+	WHERE CurrentStatus='Probable'
+	AND [Current Service]&lt;&gt;'DIAG'
+	AND [Reason Code]='Ready to Schedule'
+	GROUP BY
+	CASE
+		WHEN [Current Service]='ABA' THEN 'Ready to Schedule ABA'
+		ELSE 'Ready to Schedule ABA (Dx)'
+	END,
+	bd.ShortName ,
+	CASE
+		WHEN [Current Service]='ABA' THEN 2
+		ELSE 1
+	END
+	ORDER BY 1,2
+
+
+</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="OrderBy">
+          <DataField>OrderBy</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="ServiceLocation">
+          <DataField>ServiceLocation</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CurrentService">
+          <DataField>CurrentService</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Reason_Code">
+          <DataField>Reason Code</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ReasonCodeOrder">
+          <DataField>ReasonCodeOrder</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Learners">
+          <DataField>Learners</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
   </DataSets>
   <ReportSections>
     <ReportSection>
@@ -1156,10 +1427,10 @@ ORDER BY e.TerminationDate </CommandText>
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1.75in</Width>
+                  <Width>1.9909in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.5625in</Width>
+                  <Width>0.61193in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.52084in</Width>
@@ -2162,7 +2433,7 @@ Conversion ABADx</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=(Fields!ActiveNormalizedHours.Value + Fields!ProableABADx.Value + Fields!ProbableABA.Value + Fields!ProbablyDx.Value) * .5</Value>
+                                  <Value>=Fields!ActiveNormalizedHours.Value+((Fields!ProableABADx.Value+Fields!ProbableABA.Value+Fields!ProbablyDx.Value)/2)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>7pt</FontSize>
@@ -2197,7 +2468,7 @@ Conversion ABADx</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=((Fields!ActiveNormalizedHours.Value + Fields!ProableABADx.Value + Fields!ProbableABA.Value + Fields!ProbablyDx.Value) * 0.5)/Fields!HoursCapacity.Value</Value>
+                                  <Value>=(Fields!ActiveNormalizedHours.Value+((Fields!ProableABADx.Value+Fields!ProbableABA.Value+Fields!ProbablyDx.Value)/2))/Fields!HoursCapacity.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>7pt</FontSize>
@@ -2300,7 +2571,7 @@ Conversion ABADx</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="HoursCapacity1">
+                        <Textbox Name="HoursCapacityTotal">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -2319,7 +2590,6 @@ Conversion ABADx</Value>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>HoursCapacity1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -2516,7 +2786,7 @@ Conversion ABADx</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="ActiveNormalizedHours3">
+                        <Textbox Name="ActiveNormalizedHoursEstimate100">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -2535,7 +2805,6 @@ Conversion ABADx</Value>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>ActiveNormalizedHours2</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -2660,14 +2929,14 @@ Conversion ABADx</Value>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="ActiveNormalizedHours7">
+                        <Textbox Name="ActiveNormalizedHoursEstimate50">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=(Sum(Fields!ActiveNormalizedHours.Value) + Sum(Fields!ProableABADx.Value) + Sum(Fields!ProbableABA.Value) + Sum(Fields!ProbablyDx.Value)) * .5</Value>
+                                  <Value>=SUM(Fields!ActiveNormalizedHours.Value)+((SUM(Fields!ProableABADx.Value)+SUM(Fields!ProbableABA.Value)+SUM(Fields!ProbablyDx.Value))/2)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>7pt</FontSize>
@@ -2679,7 +2948,6 @@ Conversion ABADx</Value>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>ActiveNormalizedHours2</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -2703,7 +2971,7 @@ Conversion ABADx</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=((Sum(Fields!ActiveNormalizedHours.Value) + Sum(Fields!ProableABADx.Value) + Sum(Fields!ProbableABA.Value) + Sum(Fields!ProbablyDx.Value)) * 0.5)/Fields!HoursCapacity.Value</Value>
+                                  <Value>=ReportItems!ActiveNormalizedHoursEstimate50.Value/ReportItems!HoursCapacityTotal.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>7pt</FontSize>
@@ -2761,7 +3029,8 @@ Conversion ABADx</Value>
                   <Group Name="Details" />
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!BranchName.Value</Value>
+                      <Value>=Fields!ActualBillingHours.Value</Value>
+                      <Direction>Descending</Direction>
                     </SortExpression>
                   </SortExpressions>
                 </TablixMember>
@@ -2774,10 +3043,9 @@ Conversion ABADx</Value>
             <PageBreak>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
-            <Top>9.35292in</Top>
-            <Left>0in</Left>
+            <Top>10.97792in</Top>
             <Height>1.11458in</Height>
-            <Width>10.13002in</Width>
+            <Width>10.42035in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -3924,7 +4192,6 @@ Conversion ABADx</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <Top>0.45771in</Top>
-            <Left>0in</Left>
             <Height>1.125in</Height>
             <Width>7in</Width>
             <ZIndex>1</ZIndex>
@@ -3954,7 +4221,6 @@ Conversion ABADx</Value>
             </Paragraphs>
             <rd:DefaultName>Textbox189</rd:DefaultName>
             <Top>0.02715in</Top>
-            <Left>0in</Left>
             <Height>0.36112in</Height>
             <Width>7in</Width>
             <ZIndex>2</ZIndex>
@@ -3988,7 +4254,6 @@ Conversion ABADx</Value>
             </Paragraphs>
             <rd:DefaultName>Textbox189</rd:DefaultName>
             <Top>3.11333in</Top>
-            <Left>0in</Left>
             <Height>0.3125in</Height>
             <Width>4.54167in</Width>
             <ZIndex>3</ZIndex>
@@ -4069,14 +4334,16 @@ Conversion ABADx</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!BillingHours.Value) / Fields!UniqueLearners.Value</Value>
+                                  <Value>=IIF(Fields!UniqueLearners.Value=0,0,Sum(Fields!BillingHours.Value) / Fields!UniqueLearners.Value)</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                     <Format>n1</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>BillingHours</rd:DefaultName>
@@ -4085,6 +4352,7 @@ Conversion ABADx</Value>
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -4109,7 +4377,9 @@ Conversion ABADx</Value>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox23</rd:DefaultName>
@@ -4118,6 +4388,7 @@ Conversion ABADx</Value>
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -4149,7 +4420,9 @@ Conversion ABADx</Value>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <Style>
@@ -4158,6 +4431,7 @@ Conversion ABADx</Value>
                               <Style>Solid</Style>
                             </Border>
                             <BackgroundColor>LightGrey</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -4184,7 +4458,9 @@ Conversion ABADx</Value>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox24</rd:DefaultName>
@@ -4194,6 +4470,7 @@ Conversion ABADx</Value>
                               <Style>Solid</Style>
                             </Border>
                             <BackgroundColor>LightGrey</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -4312,7 +4589,8 @@ Conversion ABADx</Value>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!Branchname.Value</Value>
+                      <Value>=Avg(Sum(Fields!BillingHours.Value) / Sum(Fields!UniqueLearners.Value))</Value>
+                      <Direction>Descending</Direction>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
@@ -4395,7 +4673,6 @@ Conversion ABADx</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <Top>3.48833in</Top>
-            <Left>0in</Left>
             <Height>0.86458in</Height>
             <Width>4.54167in</Width>
             <ZIndex>4</ZIndex>
@@ -4983,7 +5260,9 @@ Conversion ABADx</Value>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox226</rd:DefaultName>
@@ -5019,7 +5298,9 @@ Conversion ABADx</Value>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>TotalImpactHours1</rd:DefaultName>
@@ -5055,7 +5336,9 @@ Conversion ABADx</Value>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>TotalLearners1</rd:DefaultName>
@@ -5091,7 +5374,9 @@ Conversion ABADx</Value>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox225</rd:DefaultName>
@@ -5127,7 +5412,9 @@ Conversion ABADx</Value>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>DirectCareImpactHours1</rd:DefaultName>
@@ -5163,7 +5450,9 @@ Conversion ABADx</Value>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>DirectCareLearners1</rd:DefaultName>
@@ -5198,7 +5487,9 @@ Conversion ABADx</Value>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox217</rd:DefaultName>
@@ -5238,6 +5529,12 @@ Conversion ABADx</Value>
                 </TablixMember>
                 <TablixMember>
                   <Group Name="Details2" />
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!TotalImpactHours.Value</Value>
+                      <Direction>Descending</Direction>
+                    </SortExpression>
+                  </SortExpressions>
                 </TablixMember>
                 <TablixMember>
                   <KeepWithGroup>Before</KeepWithGroup>
@@ -5249,7 +5546,6 @@ Conversion ABADx</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <Top>2.03347in</Top>
-            <Left>0in</Left>
             <Height>1.01042in</Height>
             <Width>8in</Width>
             <ZIndex>5</ZIndex>
@@ -5279,7 +5575,6 @@ Conversion ABADx</Value>
             </Paragraphs>
             <rd:DefaultName>Textbox189</rd:DefaultName>
             <Top>1.61681in</Top>
-            <Left>0in</Left>
             <Height>0.38888in</Height>
             <Width>7in</Width>
             <ZIndex>6</ZIndex>
@@ -5556,7 +5851,9 @@ Conversion ABADx</Value>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox52</rd:DefaultName>
@@ -5592,7 +5889,9 @@ Conversion ABADx</Value>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox53</rd:DefaultName>
@@ -5628,7 +5927,9 @@ Conversion ABADx</Value>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox54</rd:DefaultName>
@@ -5669,7 +5970,9 @@ Conversion ABADx</Value>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox64</rd:DefaultName>
@@ -5706,7 +6009,9 @@ Conversion ABADx</Value>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox68</rd:DefaultName>
@@ -5743,7 +6048,9 @@ Conversion ABADx</Value>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox69</rd:DefaultName>
@@ -6683,7 +6990,9 @@ Conversion ABADx</Value>
                                                                 </Style>
                                                               </TextRun>
                                                             </TextRuns>
-                                                            <Style />
+                                                            <Style>
+                                                              <TextAlign>Center</TextAlign>
+                                                            </Style>
                                                           </Paragraph>
                                                         </Paragraphs>
                                                         <rd:DefaultName>Textbox51</rd:DefaultName>
@@ -7056,7 +7365,6 @@ Conversion ABADx</Value>
             </PageBreak>
             <PageName>Productivity</PageName>
             <Top>4.43562in</Top>
-            <Left>0in</Left>
             <Height>1.10627in</Height>
             <Width>8.84876in</Width>
             <ZIndex>7</ZIndex>
@@ -7277,6 +7585,87 @@ Conversion ABADx</Value>
                     </TablixCell>
                   </TablixCells>
                 </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="StaffNeed">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!StaffNeed.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>StaffNeed</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>LightGrey</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="StaffNeed1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!StaffNeed.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>StaffNeed1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>LightGrey</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
               </TablixRows>
             </TablixBody>
             <TablixColumnHierarchy>
@@ -7384,7 +7773,8 @@ Conversion ABADx</Value>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!ServiceLocation.Value</Value>
+                      <Value>=Sum(Fields!Learners.Value)</Value>
+                      <Direction>Descending</Direction>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
@@ -7432,7 +7822,7 @@ Conversion ABADx</Value>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>Total</Value>
+                                <Value>Total Up Next</Value>
                                 <Style>
                                   <FontFamily>Arial</FontFamily>
                                   <FontSize>8pt</FontSize>
@@ -7460,6 +7850,45 @@ Conversion ABADx</Value>
                   </TablixHeader>
                   <KeepWithGroup>Before</KeepWithGroup>
                 </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>2.32292in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox2">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Learners Needing Staff</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox2</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>LightGrey</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>UpNext</DataSetName>
@@ -7467,8 +7896,7 @@ Conversion ABADx</Value>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <Top>6.02106in</Top>
-            <Left>0in</Left>
-            <Height>0.90625in</Height>
+            <Height>1.15625in</Height>
             <Width>4.11459in</Width>
             <ZIndex>8</ZIndex>
             <Style>
@@ -7484,7 +7912,7 @@ Conversion ABADx</Value>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Sum(Fields!Learners.Value, "UpNext") &amp; " Learners Up Next"</Value>
+                    <Value>=Sum(Fields!Learners.Value, "UpNext") &amp; " Learners Up Next by Planned Start Week"</Value>
                     <Style>
                       <FontSize>14pt</FontSize>
                       <FontWeight>Bold</FontWeight>
@@ -7497,7 +7925,6 @@ Conversion ABADx</Value>
             </Paragraphs>
             <rd:DefaultName>Textbox189</rd:DefaultName>
             <Top>5.61133in</Top>
-            <Left>0in</Left>
             <Height>0.35417in</Height>
             <Width>4.54167in</Width>
             <ZIndex>9</ZIndex>
@@ -7530,8 +7957,7 @@ Conversion ABADx</Value>
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox189</rd:DefaultName>
-            <Top>7.06187in</Top>
-            <Left>0in</Left>
+            <Top>7.31187in</Top>
             <Height>0.35417in</Height>
             <Width>4.54167in</Width>
             <ZIndex>10</ZIndex>
@@ -7675,7 +8101,7 @@ Conversion ABADx</Value>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>Total</Value>
+                                <Value>Grand Total</Value>
                                 <Style>
                                   <FontFamily>Arial</FontFamily>
                                   <FontSize>8pt</FontSize>
@@ -7811,6 +8237,7 @@ Conversion ABADx</Value>
                   <SortExpressions>
                     <SortExpression>
                       <Value>=Fields!CurrentStatus.Value</Value>
+                      <Direction>Descending</Direction>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
@@ -7918,7 +8345,8 @@ Conversion ABADx</Value>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!ServiceLocation.Value</Value>
+                      <Value>=Sum(IIF(Fields!Current_Service.Value&lt;&gt;"Total",Fields!Learners.Value,0))</Value>
+                      <Direction>Descending</Direction>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
@@ -7966,7 +8394,7 @@ Conversion ABADx</Value>
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>=Sum(Fields!Learners.Value)</Value>
+                                    <Value>=Sum(IIF(Fields!Current_Service.Value&lt;&gt;"Total",Fields!Learners.Value,0))</Value>
                                     <Style>
                                       <FontFamily>Arial</FontFamily>
                                       <FontSize>8pt</FontSize>
@@ -8049,7 +8477,7 @@ Conversion ABADx</Value>
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>=Sum(Fields!Learners.Value)</Value>
+                                    <Value>=Sum(IIF(Fields!Current_Service.Value&lt;&gt;"Total",Fields!Learners.Value,0))</Value>
                                     <Style>
                                       <FontFamily>Arial</FontFamily>
                                       <FontSize>8pt</FontSize>
@@ -8091,8 +8519,7 @@ Conversion ABADx</Value>
             <PageBreak>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
-            <Top>7.47792in</Top>
-            <Left>0in</Left>
+            <Top>7.72792in</Top>
             <Height>1.09375in</Height>
             <Width>3.62368in</Width>
             <ZIndex>11</ZIndex>
@@ -8373,7 +8800,7 @@ Conversion ABADx</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
-                    <Size>0.48958in</Size>
+                    <Size>0.57291in</Size>
                     <CellContents>
                       <Textbox Name="WorkerCategoryDescription">
                         <KeepTogether>true</KeepTogether>
@@ -8552,7 +8979,8 @@ Conversion ABADx</Value>
                       </Group>
                       <SortExpressions>
                         <SortExpression>
-                          <Value>=Fields!jobCategory.Value</Value>
+                          <Value>=Sum(Fields!Employees.Value)</Value>
+                          <Direction>Descending</Direction>
                         </SortExpression>
                       </SortExpressions>
                       <TablixHeader>
@@ -8754,9 +9182,8 @@ Conversion ABADx</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>EmployeeCounts</DataSetName>
-            <Top>11.35292in</Top>
-            <Left>0in</Left>
-            <Height>1.23958in</Height>
+            <Top>12.97792in</Top>
+            <Height>1.32291in</Height>
             <Width>3.5in</Width>
             <ZIndex>12</ZIndex>
             <Style>
@@ -8772,7 +9199,7 @@ Conversion ABADx</Value>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Employee Totals - bug</Value>
+                    <Value>Employee Totals</Value>
                     <Style>
                       <FontSize>14pt</FontSize>
                       <FontWeight>Bold</FontWeight>
@@ -8784,8 +9211,7 @@ Conversion ABADx</Value>
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox189</rd:DefaultName>
-            <Top>10.98486in</Top>
-            <Left>0in</Left>
+            <Top>12.60986in</Top>
             <Height>0.35417in</Height>
             <Width>4.54167in</Width>
             <ZIndex>13</ZIndex>
@@ -8818,8 +9244,7 @@ Conversion ABADx</Value>
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox189</rd:DefaultName>
-            <Top>8.99875in</Top>
-            <Left>0in</Left>
+            <Top>10.62375in</Top>
             <Height>0.35417in</Height>
             <Width>4.54167in</Width>
             <ZIndex>14</ZIndex>
@@ -9441,6 +9866,12 @@ Conversion ABADx</Value>
                 </TablixMember>
                 <TablixMember>
                   <Group Name="Details3" />
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!Hires.Value-Fields!Terms.Value</Value>
+                      <Direction>Descending</Direction>
+                    </SortExpression>
+                  </SortExpressions>
                 </TablixMember>
                 <TablixMember>
                   <KeepWithGroup>Before</KeepWithGroup>
@@ -9448,8 +9879,7 @@ Conversion ABADx</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>TurnoverPercentage</DataSetName>
-            <Top>14.36333in</Top>
-            <Left>0in</Left>
+            <Top>15.98833in</Top>
             <Height>0.92708in</Height>
             <Width>4.75001in</Width>
             <ZIndex>15</ZIndex>
@@ -9466,7 +9896,7 @@ Conversion ABADx</Value>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>="Employee Tunover by Location " &amp; FORMAT(First(Fields!StartDate.Value, "TurnoverPercentage"),"MM/dd/yyyy") &amp; " - " &amp; FORMAT(Parameters!EndDate.Value,"MM/dd/yyyy")</Value>
+                    <Value>="Employee Tunover by Location 06/05/2023 - " &amp; FORMAT(Parameters!EndDate.Value,"MM/dd/yyyy")</Value>
                     <Style>
                       <FontSize>14pt</FontSize>
                       <FontWeight>Bold</FontWeight>
@@ -9478,7 +9908,7 @@ Conversion ABADx</Value>
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox189</rd:DefaultName>
-            <Top>13.91604in</Top>
+            <Top>15.54104in</Top>
             <Height>0.35417in</Height>
             <Width>6.01042in</Width>
             <ZIndex>16</ZIndex>
@@ -10133,7 +10563,7 @@ Conversion ABADx</Value>
             <PageBreak>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
-            <Top>13.17583in</Top>
+            <Top>14.80083in</Top>
             <Height>0.625in</Height>
             <Width>9.41759in</Width>
             <ZIndex>17</ZIndex>
@@ -10162,8 +10592,7 @@ Conversion ABADx</Value>
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox189</rd:DefaultName>
-            <Top>12.82166in</Top>
-            <Left>0in</Left>
+            <Top>14.44666in</Top>
             <Height>0.35417in</Height>
             <Width>4.54167in</Width>
             <ZIndex>18</ZIndex>
@@ -10177,8 +10606,773 @@ Conversion ABADx</Value>
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
+          <Tablix Name="Tablix15">
+            <TablixCorner>
+              <TablixCornerRows>
+                <TablixCornerRow>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="Textbox303">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Current Service</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>7pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox303</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Teal</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="Textbox300">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Reason Code</Value>
+                                <Style>
+                                  <FontSize>7pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox300</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Teal</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                </TablixCornerRow>
+              </TablixCornerRows>
+            </TablixCorner>
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>0.56118in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.59242in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Learners6">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!Learners.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Learners6</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <BackgroundColor>LightGrey</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Learners7">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!Learners.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Learners7</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <BackgroundColor>LightGrey</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Learners4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!Learners.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Learners4</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Learners8">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!Learners.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Learners8</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BottomBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Learners9">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!Learners.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Learners9</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BackgroundColor>LightGrey</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox314">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!Learners.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox314</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
+                            <BackgroundColor>LightGrey</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="ServiceLocation2">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!ServiceLocation.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!ServiceLocation.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <TablixHeader>
+                    <Size>0.36458in</Size>
+                    <CellContents>
+                      <Textbox Name="ServiceLocation2">
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>=Fields!ServiceLocation.Value</Value>
+                                <Style>
+                                  <FontSize>7pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>ServiceLocation2</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Teal</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>0.36458in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox308">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Total</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>7pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox308</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Teal</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="CurrentService">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!CurrentService.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!OrderBy.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <TablixHeader>
+                    <Size>0.86326in</Size>
+                    <CellContents>
+                      <Textbox Name="CurrentService">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>=Fields!CurrentService.Value</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>7pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>CurrentService</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <TopBorder>
+                            <Color>Black</Color>
+                            <Style>Solid</Style>
+                            <Width>1pt</Width>
+                          </TopBorder>
+                          <BottomBorder>
+                            <Color>Black</Color>
+                            <Style>Solid</Style>
+                            <Width>1pt</Width>
+                          </BottomBorder>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <TablixMembers>
+                    <TablixMember>
+                      <TablixHeader>
+                        <Size>1.45833in</Size>
+                        <CellContents>
+                          <Textbox Name="Textbox306">
+                            <CanGrow>true</CanGrow>
+                            <KeepTogether>true</KeepTogether>
+                            <Paragraphs>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value>="Total "  &amp; Fields!CurrentService.Value</Value>
+                                    <Style>
+                                      <FontFamily>Arial</FontFamily>
+                                      <FontSize>7pt</FontSize>
+                                      <FontWeight>Bold</FontWeight>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style />
+                              </Paragraph>
+                            </Paragraphs>
+                            <rd:DefaultName>Textbox306</rd:DefaultName>
+                            <Style>
+                              <Border>
+                                <Color>LightGrey</Color>
+                                <Style>Solid</Style>
+                              </Border>
+                              <TopBorder>
+                                <Color>Black</Color>
+                                <Style>Solid</Style>
+                                <Width>1pt</Width>
+                              </TopBorder>
+                              <BottomBorder>
+                                <Color>Black</Color>
+                                <Style>Solid</Style>
+                                <Width>1pt</Width>
+                              </BottomBorder>
+                              <BackgroundColor>LightGrey</BackgroundColor>
+                              <PaddingLeft>2pt</PaddingLeft>
+                              <PaddingRight>2pt</PaddingRight>
+                              <PaddingTop>2pt</PaddingTop>
+                              <PaddingBottom>2pt</PaddingBottom>
+                            </Style>
+                          </Textbox>
+                        </CellContents>
+                      </TablixHeader>
+                      <KeepWithGroup>After</KeepWithGroup>
+                    </TablixMember>
+                    <TablixMember>
+                      <Group Name="Reason_Code">
+                        <GroupExpressions>
+                          <GroupExpression>=Fields!Reason_Code.Value</GroupExpression>
+                        </GroupExpressions>
+                      </Group>
+                      <SortExpressions>
+                        <SortExpression>
+                          <Value>=Fields!ReasonCodeOrder.Value</Value>
+                        </SortExpression>
+                      </SortExpressions>
+                      <TablixHeader>
+                        <Size>1.45833in</Size>
+                        <CellContents>
+                          <Textbox Name="Reason_Code">
+                            <CanGrow>true</CanGrow>
+                            <KeepTogether>true</KeepTogether>
+                            <Paragraphs>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value>=Fields!Reason_Code.Value</Value>
+                                    <Style>
+                                      <FontSize>7pt</FontSize>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style />
+                              </Paragraph>
+                            </Paragraphs>
+                            <rd:DefaultName>Reason_Code</rd:DefaultName>
+                            <Style>
+                              <Border>
+                                <Color>LightGrey</Color>
+                                <Style>Solid</Style>
+                              </Border>
+                              <BottomBorder>
+                                <Color>Black</Color>
+                                <Style>Solid</Style>
+                                <Width>1pt</Width>
+                              </BottomBorder>
+                              <PaddingLeft>2pt</PaddingLeft>
+                              <PaddingRight>2pt</PaddingRight>
+                              <PaddingTop>2pt</PaddingTop>
+                              <PaddingBottom>2pt</PaddingBottom>
+                            </Style>
+                          </Textbox>
+                        </CellContents>
+                      </TablixHeader>
+                    </TablixMember>
+                  </TablixMembers>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>0.86326in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox311">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Total</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>7pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox311</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <TopBorder>
+                            <Color>Black</Color>
+                            <Style>Solid</Style>
+                            <Width>1pt</Width>
+                          </TopBorder>
+                          <BackgroundColor>LightGrey</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <TablixMembers>
+                    <TablixMember>
+                      <TablixHeader>
+                        <Size>1.45833in</Size>
+                        <CellContents>
+                          <Textbox Name="Textbox316">
+                            <CanGrow>true</CanGrow>
+                            <KeepTogether>true</KeepTogether>
+                            <Paragraphs>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value />
+                                    <Style>
+                                      <FontFamily>Arial</FontFamily>
+                                      <FontSize>7pt</FontSize>
+                                      <FontWeight>Bold</FontWeight>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style>
+                                  <TextAlign>Center</TextAlign>
+                                </Style>
+                              </Paragraph>
+                            </Paragraphs>
+                            <rd:DefaultName>Textbox316</rd:DefaultName>
+                            <Style>
+                              <Border>
+                                <Color>LightGrey</Color>
+                                <Style>Solid</Style>
+                              </Border>
+                              <TopBorder>
+                                <Color>Black</Color>
+                                <Style>Solid</Style>
+                                <Width>1pt</Width>
+                              </TopBorder>
+                              <BackgroundColor>LightGrey</BackgroundColor>
+                              <VerticalAlign>Middle</VerticalAlign>
+                              <PaddingLeft>2pt</PaddingLeft>
+                              <PaddingRight>2pt</PaddingRight>
+                              <PaddingTop>2pt</PaddingTop>
+                              <PaddingBottom>2pt</PaddingBottom>
+                            </Style>
+                          </Textbox>
+                        </CellContents>
+                      </TablixHeader>
+                    </TablixMember>
+                  </TablixMembers>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>DARS</DataSetName>
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
+            <Top>9.29042in</Top>
+            <Height>1.11458in</Height>
+            <Width>3.47519in</Width>
+            <ZIndex>19</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Textbox Name="Textbox198">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="DX, ASSESSMENT, RECRUITING, STAFFING as of "  &amp; FORMAT(TODAY,"MM/dd/yyyy")</Value>
+                    <Style>
+                      <FontSize>14pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>#575757</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox189</rd:DefaultName>
+            <Top>8.90562in</Top>
+            <Height>0.35417in</Height>
+            <Width>6.11459in</Width>
+            <ZIndex>20</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
         </ReportItems>
-        <Height>15.29042in</Height>
+        <Height>16.91541in</Height>
         <Style />
       </Body>
       <Width>10.43211in</Width>
@@ -10194,7 +11388,7 @@ Conversion ABADx</Value>
       <DataType>DateTime</DataType>
       <DefaultValue>
         <Values>
-          <Value>11/27/2023 00:00:00</Value>
+          <Value>12/4/2023 12:00:00 AM</Value>
         </Values>
       </DefaultValue>
       <Prompt>Start Date</Prompt>
@@ -10203,7 +11397,7 @@ Conversion ABADx</Value>
       <DataType>DateTime</DataType>
       <DefaultValue>
         <Values>
-          <Value>12/1/2023 12:00:00 AM</Value>
+          <Value>12/8/2023 12:00:00 AM</Value>
         </Values>
       </DefaultValue>
       <Prompt>End Date</Prompt>

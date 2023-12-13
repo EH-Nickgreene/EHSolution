@@ -63,7 +63,7 @@
           <FullPath>PayrollImportTest.dtsx</FullPath>
           <References />
         </DtsPackage>
-        <DtsPackage FormatVersion="0">
+        <DtsPackage FormatVersion="8">
           <Name>ReportSenderABABCBACaseloadToDOOs.dtsx</Name>
           <FullPath>ReportSenderABABCBACaseloadToDOOs.dtsx</FullPath>
           <References />
@@ -73,12 +73,12 @@
           <FullPath>ReportSenderABABillingHoursByLocation.dtsx</FullPath>
           <References />
         </DtsPackage>
-        <DtsPackage FormatVersion="0">
+        <DtsPackage FormatVersion="8">
           <Name>ReportSenderABAEOBDailyReport.dtsx</Name>
           <FullPath>ReportSenderABAEOBDailyReport.dtsx</FullPath>
           <References />
         </DtsPackage>
-        <DtsPackage FormatVersion="0">
+        <DtsPackage FormatVersion="8">
           <Name>ReportSenderABAEOBDailyReportInEmailBody.dtsx</Name>
           <FullPath>ReportSenderABAEOBDailyReportInEmailBody.dtsx</FullPath>
           <References />
