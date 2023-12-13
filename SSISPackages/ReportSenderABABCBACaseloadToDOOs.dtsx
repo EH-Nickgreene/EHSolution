@@ -13,8 +13,8 @@
   DTS:ObjectName="ReportSenderABABCBACaseloadToDOOs"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="74"
-  DTS:VersionGUID="{2481B5C4-95F6-462B-8219-E6013ACDA50C}">
+  DTS:VersionBuild="75"
+  DTS:VersionGUID="{F3B279BB-AF77-4812-B0DE-73BD7B727085}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -10260,7 +10260,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{9C420098-D309-4DF8-B1F8-2C2141DE6CBB}"
-          SQLTask:SqlStatementSource="SELECT DISTINCT &#xA;bd.BranchDirectorName,&#xA;'nick.greene@highlightshealthcare.com' BranchDirectorEmail,&#xA;--bd.BranchDirectorEmail&#xA;bd.Shortname BranchName&#xA;&#xA;FROM HumanResources.dbo.employee e&#xA;INNER JOIN HumanResources.dbo.JobCodes jc on jc.JobCode=e.JobTitleCode&#xA;LEFT JOIN Reference.dbo.branchdata bd on e.HomeDepartmentCode=bd.ADPHomeDepartmentCode&#xA;WHERE ISNULL(TerminationDate,'9999-12-31')='9999-12-31'&#xA;and jc.JobCategory IN ('BCBA','LBA','DOO') &#xA;and e.PayrollCompanyCode='K86'&#xA;and bd.BranchStatus='Active'&#xA;ORDER BY 1"
+          SQLTask:SqlStatementSource="SELECT DISTINCT &#xA;bd.BranchDirectorName,&#xA;'nick.greene@highlightshealthcare.com' BranchDirectorEmail&#xA;--bd.BranchDirectorEmail&#xA;&#xA;&#xA;FROM HumanResources.dbo.employee e&#xA;INNER JOIN HumanResources.dbo.JobCodes jc on jc.JobCode=e.JobTitleCode&#xA;LEFT JOIN Reference.dbo.branchdata bd on e.HomeDepartmentCode=bd.ADPHomeDepartmentCode&#xA;WHERE ISNULL(TerminationDate,'9999-12-31')='9999-12-31'&#xA;and jc.JobCategory IN ('BCBA','LBA','DOO') &#xA;and e.PayrollCompanyCode='K86'&#xA;and bd.BranchStatus='Active'&#xA;ORDER BY 1&#xA;&#xA;"
           SQLTask:ResultType="ResultSetType_Rowset" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ResultBinding
             SQLTask:ResultName="0"
