@@ -13,8 +13,8 @@
   DTS:ObjectName="Package1"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="80"
-  DTS:VersionGUID="{5B69E28C-3BE0-42B2-84AE-73CC83AF7D6C}">
+  DTS:VersionBuild="81"
+  DTS:VersionGUID="{EAF12968-A11A-40D3-BED2-938D6395EC21}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -17887,7 +17887,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Activity"
-          DTS:ThreadHint="5">
+          DTS:ThreadHint="1">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17903,7 +17903,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Clients Data"
-          DTS:ThreadHint="12">
+          DTS:ThreadHint="2">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17919,7 +17919,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ClinicalGoal Data"
-          DTS:ThreadHint="7">
+          DTS:ThreadHint="0">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17935,7 +17935,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ContactCustomField Data"
-          DTS:ThreadHint="8">
+          DTS:ThreadHint="3">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17951,7 +17951,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ContactEntityLabel Data"
-          DTS:ThreadHint="9">
+          DTS:ThreadHint="4">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17967,7 +17967,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ContactLabel Data"
-          DTS:ThreadHint="10">
+          DTS:ThreadHint="5">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17983,7 +17983,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Employee Data"
-          DTS:ThreadHint="11">
+          DTS:ThreadHint="6">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -17999,7 +17999,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update PayorAuthorization Data"
-          DTS:ThreadHint="1">
+          DTS:ThreadHint="7">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -18015,7 +18015,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update PayorPlan Data"
-          DTS:ThreadHint="2">
+          DTS:ThreadHint="8">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -18031,7 +18031,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Provider Data"
-          DTS:ThreadHint="3">
+          DTS:ThreadHint="9">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -18047,7 +18047,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Scheduling Data"
-          DTS:ThreadHint="4">
+          DTS:ThreadHint="10">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -18063,7 +18063,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ServiceCode Data"
-          DTS:ThreadHint="6">
+          DTS:ThreadHint="11">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -18079,7 +18079,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update TimeBilling Data"
-          DTS:ThreadHint="0">
+          DTS:ThreadHint="12">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -18484,7 +18484,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Sequence Container.PrecedenceConstraints[Constraint 3]"
-          TopLeft="786.972222222222,59">
+          TopLeft="786.972222222223,59">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
@@ -19515,13 +19515,13 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="157,42"
-          Id="Package\Sequence Container\Time billing\OLE DB Source"
-          TopLeft="235,135" />
-        <NodeLayout
           Size="177,42"
           Id="Package\Sequence Container\Time billing\OLE DB Destination"
           TopLeft="233,243" />
+        <NodeLayout
+          Size="157,42"
+          Id="Package\Sequence Container\Time billing\OLE DB Source"
+          TopLeft="235,135" />
         <EdgeLayout
           Id="Package\Sequence Container\Time billing.Paths[OLE DB Source Output]"
           TopLeft="313.5,177">

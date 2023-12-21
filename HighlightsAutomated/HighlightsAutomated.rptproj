@@ -61,6 +61,7 @@
     <Report Include="DOO Incentive Plan.rdl" />
     <Report Include="Highlights Daily Report.rdl" />
     <Report Include="Highlights Leadership Report.rdl" />
+    <Report Include="Highlights Morning Report.rdl" />
     <Report Include="Holiday Analysis By Learner Count By Center.rdl" />
     <Report Include="Holiday Analysis By Learner Hour By Center.rdl" />
     <Report Include="Holiday Analysis By Learner Hour.rdl" />
@@ -69,6 +70,7 @@
     <Report Include="Learners By Hour By Center Analysis By Learner Hour.rdl" />
     <Report Include="Learners By Hour By Center holiday Analysis.rdl" />
     <Report Include="Master Sheet Exception Report.rdl" />
+    <Report Include="MasterSheetDailyReport.rdl" />
     <Report Include="ParentHolidayAnalysis.rdl" />
     <Report Include="RBT and BCBA Time worked.rdl" />
     <Report Include="Referral Master Sheet.rdl" />

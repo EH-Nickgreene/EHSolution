@@ -13,7 +13,36 @@
     <DataSet Name="DataSet1">
       <Query>
         <DataSourceName>CentralReach</DataSourceName>
-        <CommandText>SELECT 
+        <CommandText>
+SELECT 
+	[ClientId], 
+	[Learner], 
+	[Age], 
+	[ReasonCode], 
+	[ServiceLocation], 
+	[ABA Assess Scheduled Date], 
+	[ABA Assessment Time], 
+	[Projected Start Week], 
+	[Date ABA Service Began], 
+	[Tech Assigned AM], 
+	[Tech Start Date AM], 
+	[Tech Level AM], 
+	[Tech Assigned PM], 
+	[Tech Start Date PM], 
+	[Tech Level PM], 
+	[Tech Assigned Other], 
+	[Tech Start Date Other], 
+	[Tech Level Other], 
+	[BCBAAssigned], 
+	[Recruiter], 
+	[Normalized Scheduled Hours], 
+	[Normalized Schedule], 
+	[Address], 
+	[Intake Staffing Considerations]
+FROM v_UpNext
+UNION ALL
+
+SELECT 
 	CASE 
 		WHEN [Current Service] IN ('ABA (Dx)') THEN ms.abaClientID
 		WHEN [Current Service] IN ('ABA') THEN ms.ClientID
@@ -21,7 +50,7 @@
 	END ClientId,
 	Learner,
 	[dbo].[Age](c.ClientBirthDate,GETDATE()) Age,
-	[Reason Code] ReasonCode,
+	'Active Learner - Needs Staff' ReasonCode,
 	ServiceLocation ,
 	[ABA Assess Scheduled Date],
 	[ABA Assessment Time],
@@ -47,12 +76,15 @@
 	c.ClientMailingPostalCode as Address,
 	[Intake Staffing Considerations]
 
-
---SELECT *
 FROM ClientMasterSheet ms
 LEFT JOIN insights.Client c on ms.ClientID=c.ClientId
-WHERE [Reason Code] IN ('Up Next','Ready to Schedule')
-and [Current Service] IN ('ABA','ABA (Dx)')</CommandText>
+WHERE 
+CurrentStatus='Active'
+AND (
+[Tech Assigned AM] LIKE '%need%'
+OR [Tech Assigned PM] LIKE '%need%'
+OR [Tech Assigned Other] LIKE '%need%'
+)</CommandText>
       </Query>
       <Fields>
         <Field Name="ClientId">
@@ -171,7 +203,7 @@ and [Current Service] IN ('ABA','ABA (Dx)')</CommandText>
                   <Width>0.41667in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>1.3125in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2.36458in</Width>
@@ -219,13 +251,13 @@ and [Current Service] IN ('ABA','ABA (Dx)')</CommandText>
                   <Width>1.19792in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.14583in</Width>
+                  <Width>1.63541in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>1.41667in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2.71875in</Width>
@@ -2040,7 +2072,7 @@ and [Current Service] IN ('ABA','ABA (Dx)')</CommandText>
             <DataSetName>DataSet1</DataSetName>
             <PageName>ALL</PageName>
             <Height>0.60417in</Height>
-            <Width>28.88542in</Width>
+            <Width>30.10417in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2057,7 +2089,7 @@ and [Current Service] IN ('ABA','ABA (Dx)')</CommandText>
                   <Width>0.41667in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>1.53125in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2.36458in</Width>
@@ -2105,13 +2137,13 @@ and [Current Service] IN ('ABA','ABA (Dx)')</CommandText>
                   <Width>1.19792in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.14583in</Width>
+                  <Width>1.73958in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>1.47917in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2.14583in</Width>
@@ -3862,7 +3894,7 @@ and [Current Service] IN ('ABA','ABA (Dx)')</CommandText>
             </PageBreak>
             <Top>0.61396in</Top>
             <Height>0.5in</Height>
-            <Width>27.38542in</Width>
+            <Width>28.98959in</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -3874,7 +3906,7 @@ and [Current Service] IN ('ABA','ABA (Dx)')</CommandText>
         <Height>1.11396in</Height>
         <Style />
       </Body>
-      <Width>28.88542in</Width>
+      <Width>30.10417in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>

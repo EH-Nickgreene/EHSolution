@@ -4777,12 +4777,14 @@ GROUP By
     </ReportParameter>
     <ReportParameter Name="BCBAName">
       <DataType>String</DataType>
+      <Nullable>true</Nullable>
       <DefaultValue>
         <DataSetReference>
           <DataSetName>BCBAName</DataSetName>
           <ValueField>EmployeeFullName</ValueField>
         </DataSetReference>
       </DefaultValue>
+      <AllowBlank>true</AllowBlank>
       <Prompt>BCBAName</Prompt>
       <Hidden>true</Hidden>
     </ReportParameter>

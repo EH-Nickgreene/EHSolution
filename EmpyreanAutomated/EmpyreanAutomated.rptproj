@@ -55,6 +55,7 @@
   <ItemGroup>
     <Report Include="Hospice Leadership Report - Clinical.rdl" />
     <Report Include="Hospice Leadership Report - HR.rdl" />
+    <Report Include="MTD Admissions by Sales Rep.rdl" />
     <Report Include="NewHiresReport.rdl" />
     <Report Include="SSRSWakeUp.rdl" />
   </ItemGroup>

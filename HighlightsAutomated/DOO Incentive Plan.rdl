@@ -21,7 +21,8 @@
             <Value>=Parameters!EndDate.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>		DECLARE @CurrentWeekYear varchar(6),@PriorWeekYear varchar(6)
+        <CommandText>
+		DECLARE @CurrentWeekYear varchar(6),@PriorWeekYear varchar(6)
 		DECLARE @ProductivityGracePeriod int=27--Grace period is 4 weeks, but datediff calc does not count last day, so to account for the datediff function we are using 27
 		DECLARE @NumberOfWeeks	 INT
 	
@@ -120,6 +121,7 @@
 				CREATE TABLE TO GET THE FIRST DATE AN EMPLOYE WAS BCBA.  THIS IS USED TO CALCULATE
 				THEIR EXPECTED WEEK HOURS
 			************************************************************************************/
+					IF OBJECT_ID('tempdb..#BCBAFirstDay') IS NOT NULL DROP TABLE #BCBAFirstDay
 					SELECT 
 						eh.AssociateID,MIN(eh.PositionStartDate) BCBAStartDate
 					INTO #BCBAFirstDay
@@ -160,7 +162,7 @@ dt.WeekOfyearDisplay WeekOfYear,
 dt.WeeksBack,
 			CASE 
 	
-					WHEN (ABACategory IN ('Level 2','Level 3') OR jc.jobCategory='DOO') AND datediff(dd,BCBAFirstDay.BCBAStartDate,dt.WeekDayEndDate)&gt;@ProductivityGracePeriod  --AND ee.PositionStartDate&gt;=WeekStartDate
+					WHEN (ABACategory IN ('Level 2','Level 3') OR jc.jobCategory='DOO' OR JObCode IN('RDOO','ADOO')) AND datediff(dd,BCBAFirstDay.BCBAStartDate,dt.WeekDayEndDate)&gt;@ProductivityGracePeriod  --AND ee.PositionStartDate&gt;=WeekStartDate
 					THEN datediff(dd,dt.WeekdayStartDate,dt.WeekDayEndDate)+1
 
 					--When week is withing 7 days (4 week) grace period, they have 0 expected hours
@@ -221,7 +223,7 @@ SELECT
 			CASE 
 	
 	
-					WHEN (ABACategory IN ('Level 2','Level 3') OR jc.jobCategory='DOO') AND datediff(dd,BCBAFirstDay.BCBAStartDate,dt.WeekDayEndDate)&gt;@ProductivityGracePeriod  --AND ee.PositionStartDate&gt;=WeekStartDate
+					WHEN (ABACategory IN ('Level 2','Level 3') OR jc.jobCategory='DOO'  OR JObCode IN('RDOO','ADOO')) AND datediff(dd,BCBAFirstDay.BCBAStartDate,dt.WeekDayEndDate)&gt;@ProductivityGracePeriod  --AND ee.PositionStartDate&gt;=WeekStartDate
 					THEN datediff(dd,dt.WeekdayStartDate,dt.WeekDayEndDate)+1
 
 						--When week is withing 7 days (4 week) grace period, they have 0 expected hours
@@ -275,7 +277,7 @@ ORDER BY
 
 	SELECT
 		Region	
-		,BranchNameGroup BranchName	
+		,REPLACE(BranchNameGroup,'Empyrean','Highlights')  BranchName	
 		,DOO
 		,JobTitleCode	
 		,HireDate	
@@ -301,10 +303,10 @@ ORDER BY
 		--CONVERT(DECIMAL(9,2),SUM(DurationHours)) ActualHours
 	--SELECT * 
 	FROm #Final f
-	--WHERE EmployeeName='Djuliet Thorn'
+	--WHERE EmployeeName='Elizabeth Zegowitz'
 	GROUP BY 
 		Region	
-		,BranchNameGroup
+		,REPLACE(BranchNameGroup,'Empyrean','Highlights') 
 		,DOO
 		,JobTitleCode	
 		,HireDate	
@@ -323,7 +325,7 @@ ORDER BY
 	UNION ALL
 	SELECT 
 		b.Region	,
-		b.BranchNameGroup	BranchName,
+		REPLACE(b.BranchNameGroup,'Empyrean','Highlights')	BranchName,
 		b.DOO,
 		b.JobCode	,
 		b.HireDate	,
@@ -344,7 +346,7 @@ ORDER BY
 	FROM #base b
 	LEFT JOIN #Final f on b.EmployeeName=f.EmployeeName and b.BranchNameGroup=f.BranchNameGroup and b.WeekOfYear=f.WeekOfYear and b.HireDate=f.HireDate
 	WHERE f.EmployeeName IS NULL
-	--AND f.EmployeeName ='Djuliet Thorn'</CommandText>
+	--AND f.EmployeeName ='Elizabeth Zegowitz'</CommandText>
       </Query>
       <Fields>
         <Field Name="Region">
