@@ -1,11 +1,11 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
   DTS:refId="Package"
   DTS:CreationDate="8/23/2012 2:08:19 PM"
   DTS:CreationName="Microsoft.Package"
   DTS:CreatorComputerName="NICKGW7"
   DTS:CreatorName="PPC\nickg"
-  DTS:DTSID="{26928A15-8894-48AC-99FC-85790B871D00}"
+  DTS:DTSID="{00950A87-BB52-4F5A-8377-3613342200DA}"
   DTS:EnableConfig="True"
   DTS:ExecutableType="Microsoft.Package"
   DTS:LastModifiedProductVersion="16.0.5270.0"
@@ -14,14 +14,14 @@
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
   DTS:VersionBuild="295"
-  DTS:VersionGUID="{A14E2F02-79B7-4ED9-BF81-44432497D5BF}">
+  DTS:VersionGUID="{9402C068-19A1-4906-B153-D11A678AFF5C}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[BreezyOfferFile]"
       DTS:CreationName="FLATFILE"
-      DTS:DTSID="{1AA8EFB6-2763-419B-963B-8254E6B7DB71}"
+      DTS:DTSID="{E414D91F-7C3E-451B-9228-2471C1846AB3}"
       DTS:ObjectName="BreezyOfferFile">
       <DTS:PropertyExpression
         DTS:Name="ConnectionString">@[User::FullFileName]</DTS:PropertyExpression>
@@ -43,7 +43,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Type"
-              DTS:DTSID="{3B0E26F6-B42D-4B03-B70E-8EAE2FDADEDA}"
+              DTS:DTSID="{82F3DE6C-D574-4436-8880-12FD6DDDC930}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -52,7 +52,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Template"
-              DTS:DTSID="{2AF2FB75-DD61-46DC-B91C-EC70B88D2777}"
+              DTS:DTSID="{A3A70C34-77BA-47CA-BD61-904DD65153B0}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -61,7 +61,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Name"
-              DTS:DTSID="{C98D1F09-6AC6-4A4A-B3DB-DD80C4FFF33B}"
+              DTS:DTSID="{9250E2EF-F3AB-49BF-B286-EBD527D3C917}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -70,7 +70,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Position"
-              DTS:DTSID="{97A0EF96-CBD7-4B47-B3E6-79DF1B47A1D0}"
+              DTS:DTSID="{5FC8D76F-83AC-4374-B59A-5BD6F8CF6CA8}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -79,7 +79,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Location"
-              DTS:DTSID="{FA1D9703-6278-4B0B-A7E8-9D6380224C6A}"
+              DTS:DTSID="{E2FE567F-39A1-4A34-AE67-A70AEDE77168}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -88,7 +88,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Internal ID"
-              DTS:DTSID="{650CD322-59D4-437C-9D56-95FFAC566DD6}"
+              DTS:DTSID="{826C2B3D-982D-44A9-B4FF-2AD223DF2810}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -97,7 +97,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Requested By"
-              DTS:DTSID="{DC3ADBD3-2947-401F-BA29-2210339ACAE4}"
+              DTS:DTSID="{098947AA-0ACC-4F46-B5A0-87948BC1A4DA}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -106,7 +106,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Current Signer"
-              DTS:DTSID="{56541A4C-DEE2-460D-AD83-16018C9866BE}"
+              DTS:DTSID="{665B2C7A-A0FF-40CB-B14D-3B7789B5F0BC}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -115,7 +115,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Date Sent"
-              DTS:DTSID="{239B8CD4-057F-420C-9FC1-D00533B6835E}"
+              DTS:DTSID="{1590BFE4-6686-4A59-9AC4-FEC1C65B8FCE}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -124,7 +124,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Date Expires"
-              DTS:DTSID="{338A5374-027C-44D3-8AA6-5B210E78E155}"
+              DTS:DTSID="{CAB40122-77C8-460A-B155-91CE8690C93E}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -133,7 +133,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Status"
-              DTS:DTSID="{8095D325-A0CD-4AAB-A30C-80A7CE4C0A8F}"
+              DTS:DTSID="{4E74F9A4-C3FC-4B78-997E-24C4BC5371D1}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -142,7 +142,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Status Date"
-              DTS:DTSID="{D94D256A-8939-4922-8E14-4D97D97ABDE2}"
+              DTS:DTSID="{01123C4E-9BA8-43AE-9202-C1BD91597D78}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -151,19 +151,19 @@
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[SQLVM.HumanResources]"
       DTS:CreationName="OLEDB"
-      DTS:DTSID="{9C436380-3C19-4169-A4E9-FA62422ED2D1}"
+      DTS:DTSID="{78EE7EB4-E917-4488-81B5-A60909FFE7C7}"
       DTS:ObjectName="SQLVM.HumanResources">
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:ConnectRetryCount="1"
           DTS:ConnectRetryInterval="5"
-          DTS:ConnectionString="Data Source=SQLVM;Initial Catalog=HumanResources;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-BreezyOffersImport-{9C436380-3C19-4169-A4E9-FA62422ED2D1}SQLVM.HumanResources;Auto Translate=False;" />
+          DTS:ConnectionString="Data Source=SQLVM;Initial Catalog=HumanResources;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-BreezyOffersImport-{78EE7EB4-E917-4488-81B5-A60909FFE7C7}SQLVM.HumanResources;Auto Translate=False;" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[SQLVM.HumanResourcesStaging]"
       DTS:CreationName="OLEDB"
-      DTS:DTSID="{999F9710-D59D-4807-A3AD-32CC9A08D380}"
+      DTS:DTSID="{F6882E62-BB4B-4545-A8C6-3915C23E33E3}"
       DTS:ObjectName="SQLVM.HumanResourcesStaging">
       <DTS:ObjectData>
         <DTS:ConnectionManager
@@ -175,7 +175,7 @@
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[SQLVM.Logging]"
       DTS:CreationName="OLEDB"
-      DTS:DTSID="{80834618-47A0-4AF0-AB32-23B31714FAAC}"
+      DTS:DTSID="{0AA8CC7A-1956-420D-8B2A-C4BD26D45C0A}"
       DTS:ObjectName="SQLVM.Logging">
       <DTS:ObjectData>
         <DTS:ConnectionManager
@@ -187,7 +187,7 @@
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[SQLVM.Reference]"
       DTS:CreationName="OLEDB"
-      DTS:DTSID="{9E4DD514-456B-4D83-A808-336584D51249}"
+      DTS:DTSID="{20DA9FC7-7131-4040-8B0B-E7193A779B42}"
       DTS:ObjectName="SQLVM.Reference">
       <DTS:ObjectData>
         <DTS:ConnectionManager
@@ -202,13 +202,13 @@
       DTS:ConfigurationString="&quot;SQLVM.Reference&quot;;&quot;[dbo].[SSIS Configurations]&quot;;&quot;BreezyOffersImport&quot;;"
       DTS:ConfigurationType="7"
       DTS:CreationName=""
-      DTS:DTSID="{0BC36074-1AA1-4B82-B66C-7950F3A9BAE7}"
+      DTS:DTSID="{D0458772-2066-48C1-9185-8C0FD0E907B7}"
       DTS:ObjectName="Configuration 1" />
   </DTS:Configurations>
   <DTS:Variables>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{F595839A-8AA2-4680-BE92-E87FA5CFF61E}"
+      DTS:DTSID="{7DBD5C4D-05F9-4319-A7FA-F2D85B090CD7}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="BackupDir">
@@ -217,7 +217,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{09E51472-261B-4F77-B9D7-DF6F294CF2C7}"
+      DTS:DTSID="{8DB6BDF0-0C08-48BC-9085-20F46F82664A}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="DuplicateFile">
@@ -226,7 +226,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{DDB148E3-F796-40B7-B2D0-082E0BFA9C33}"
+      DTS:DTSID="{EEFD58E3-0291-461B-81EE-9E5BAF2EA573}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EtlLoadId">
@@ -235,7 +235,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{F9A2C540-D7FF-4CB9-A5F7-FFA7062ACB54}"
+      DTS:DTSID="{37CE8AA8-4D36-46DF-9522-BC56403F7898}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="FileExists">
@@ -244,7 +244,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{0A8AC02B-2ACE-4A20-977D-DD9B0B764072}"
+      DTS:DTSID="{38BD2925-C206-4307-9A3A-B14E1BEDD457}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="FileLocation">
@@ -253,7 +253,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{B64BF2C0-1368-4BD8-B867-5EE735D6BC64}"
+      DTS:DTSID="{97648F87-E7A0-4238-B275-F1A0866DC224}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="FileName">
@@ -263,7 +263,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{65B4E8B4-326D-4153-B80E-F5DF0F5CA46D}"
+      DTS:DTSID="{90071EB8-DB0F-4D3B-80E4-4253055E86B5}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="FileProcessedRowCount">
@@ -272,7 +272,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{C0B89E6F-13F0-48DD-99E0-29AB733A130D}"
+      DTS:DTSID="{E1C741CB-3266-4F2E-A005-5D8989012A09}"
       DTS:EvaluateAsExpression="True"
       DTS:Expression="@[User::FileLocation]+ @[User::FileName]"
       DTS:IncludeInDebugDump="2345"
@@ -283,7 +283,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{E3A096CB-EA79-4B0B-90F6-CEF34F5CD804}"
+      DTS:DTSID="{2B3F781E-3D89-4792-9035-BD37E8BF6813}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="TaskDescription">
@@ -292,7 +292,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{C4C74D0C-D95D-4F93-B268-749E4E8C7EE1}"
+      DTS:DTSID="{219C2F77-8483-49A5-B1E2-F5721A74705D}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="ValidationFailure">
@@ -306,14 +306,14 @@
       DTS:CreationName="STOCK:FOREACHLOOP"
       DTS:DelayValidation="True"
       DTS:Description="Foreach Loop Container"
-      DTS:DTSID="{CD512B49-ECF4-4A39-93BA-CF11F5C06984}"
+      DTS:DTSID="{8E46B9F6-93D9-41B1-955C-BC4E90094A7F}"
       DTS:ExecutableType="STOCK:FOREACHLOOP"
       DTS:LocaleID="-1"
       DTS:ObjectName="Loop Through and process Files">
       <DTS:ForEachEnumerator
         DTS:CreationName="Microsoft.ForEachFileEnumerator"
-        DTS:DTSID="{6E69D015-4EA6-4DDE-A015-1B6DF53EEBEF}"
-        DTS:ObjectName="{6E69D015-4EA6-4DDE-A015-1B6DF53EEBEF}">
+        DTS:DTSID="{CCC76A22-56CD-495B-9BCA-A0E10F75A923}"
+        DTS:ObjectName="{CCC76A22-56CD-495B-9BCA-A0E10F75A923}">
         <DTS:PropertyExpression
           DTS:Name="Directory">@[User::FileLocation]</DTS:PropertyExpression>
         <DTS:ObjectData>
@@ -335,7 +335,7 @@
           DTS:refId="Package\Loop Through and process Files\Archive File"
           DTS:CreationName="Microsoft.FileSystemTask"
           DTS:Description="File System Task"
-          DTS:DTSID="{148764F7-A425-47FA-A0E3-B3FF42A69F23}"
+          DTS:DTSID="{A4BF695B-3DDF-4588-85DB-CD521D3A8AF5}"
           DTS:ExecutableType="Microsoft.FileSystemTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Archive File"
@@ -356,7 +356,7 @@
           DTS:refId="Package\Loop Through and process Files\Import File into staging table"
           DTS:CreationName="Microsoft.Pipeline"
           DTS:Description="Data Flow Task"
-          DTS:DTSID="{C81D8A29-3F7D-4195-8D74-1F9F0E394DD2}"
+          DTS:DTSID="{0865BC5B-6C15-40E9-A20E-BA726D40B99D}"
           DTS:ExecutableType="Microsoft.Pipeline"
           DTS:LocaleID="-1"
           DTS:ObjectName="Import File into staging table"
@@ -1178,7 +1178,7 @@
           DTS:refId="Package\Loop Through and process Files\Insert FilesProcessed Table"
           DTS:CreationName="Microsoft.ExecuteSQLTask"
           DTS:Description="Execute SQL Task"
-          DTS:DTSID="{D1891522-E792-42BF-8F27-AF30E09E20BA}"
+          DTS:DTSID="{25F13D65-77A5-46F7-94EB-77290F023ACE}"
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Insert FilesProcessed Table"
@@ -1187,7 +1187,7 @@
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
-              SQLTask:Connection="{80834618-47A0-4AF0-AB32-23B31714FAAC}"
+              SQLTask:Connection="{0AA8CC7A-1956-420D-8B2A-C4BD26D45C0A}"
               SQLTask:SqlStatementSource="DECLARE @return INT&#xA;EXEC Logging.dbo.InsetFilesProcessed @EtlLoadId=?, @TaskDescription=?, @FileName=?, @ResulsValue=@return OUTPUT&#xA;&#xA;SELECT @return "
               SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
               <SQLTask:ResultBinding
@@ -1218,7 +1218,7 @@
           DTS:refId="Package\Loop Through and process Files\Inserte into Final table and Capture Changes"
           DTS:CreationName="Microsoft.ExecuteSQLTask"
           DTS:Description="Execute SQL Task"
-          DTS:DTSID="{66CC4EB6-36E2-4DC5-9F9B-7E8D72E362E5}"
+          DTS:DTSID="{3AD99A96-955D-4FDA-815E-FA9DFAC1CDEB}"
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Inserte into Final table and Capture Changes"
@@ -1227,7 +1227,7 @@
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
-              SQLTask:Connection="{9C436380-3C19-4169-A4E9-FA62422ED2D1}"
+              SQLTask:Connection="{78EE7EB4-E917-4488-81B5-A60909FFE7C7}"
               SQLTask:SqlStatementSource="exec [usp_CaptureBreezyOfferChanges]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
               <SQLTask:ParameterBinding
                 SQLTask:ParameterName="0"
@@ -1242,7 +1242,7 @@
           DTS:refId="Package\Loop Through and process Files\TRUNCATE Import TABLE"
           DTS:CreationName="Microsoft.ExecuteSQLTask"
           DTS:Description="Execute SQL Task"
-          DTS:DTSID="{93DDFCE7-967B-40F6-8E9E-D12247979E18}"
+          DTS:DTSID="{281634AB-BAA0-4AD7-BC38-AD8924535257}"
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="TRUNCATE Import TABLE"
@@ -1251,7 +1251,7 @@
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
-              SQLTask:Connection="{999F9710-D59D-4807-A3AD-32CC9A08D380}"
+              SQLTask:Connection="{F6882E62-BB4B-4545-A8C6-3915C23E33E3}"
               SQLTask:SqlStatementSource="TRUNCATE TABLE HumanResourcesStaging.dbo.BreezyOffers" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
           </DTS:ObjectData>
         </DTS:Executable>
@@ -1259,7 +1259,7 @@
           DTS:refId="Package\Loop Through and process Files\Update Row Count FilesProcessed Table"
           DTS:CreationName="Microsoft.ExecuteSQLTask"
           DTS:Description="Execute SQL Task"
-          DTS:DTSID="{50310B50-30A7-4B35-B7D6-02CA6CA0B3B4}"
+          DTS:DTSID="{83448D14-E28F-41E3-A183-EAEFCCE3FE49}"
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Row Count FilesProcessed Table"
@@ -1268,7 +1268,7 @@
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
-              SQLTask:Connection="{80834618-47A0-4AF0-AB32-23B31714FAAC}"
+              SQLTask:Connection="{0AA8CC7A-1956-420D-8B2A-C4BD26D45C0A}"
               SQLTask:SqlStatementSource="EXEC Logging.dbo.UpdateFilesProcessed @EtlLoadId=?, @TaskDescription=?, @FileName=?, @RowCount=?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
               <SQLTask:ParameterBinding
                 SQLTask:ParameterName="0"
@@ -1302,7 +1302,7 @@
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Loop Through and process Files.PrecedenceConstraints[Constraint]"
           DTS:CreationName=""
-          DTS:DTSID="{4D9E1410-5523-4F43-B50A-38F3434AD169}"
+          DTS:DTSID="{A543666B-0CC5-49CF-A7FB-8E52DDAC9F81}"
           DTS:From="Package\Loop Through and process Files\Insert FilesProcessed Table"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint"
@@ -1310,7 +1310,7 @@
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 1]"
           DTS:CreationName=""
-          DTS:DTSID="{C9D094D4-042A-46AD-AE3F-11DEC16CA6CD}"
+          DTS:DTSID="{06276B56-3CF4-4ACA-B2C0-B273B97B360A}"
           DTS:From="Package\Loop Through and process Files\Import File into staging table"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 1"
@@ -1318,7 +1318,7 @@
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 10]"
           DTS:CreationName=""
-          DTS:DTSID="{1D6E11A4-8FA1-409E-BD5B-9BF3189B782C}"
+          DTS:DTSID="{2DA3B353-0A0E-4B2F-9B13-18682E595FD0}"
           DTS:From="Package\Loop Through and process Files\Update Row Count FilesProcessed Table"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 10"
@@ -1326,7 +1326,7 @@
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 2]"
           DTS:CreationName=""
-          DTS:DTSID="{6724D412-9950-4F21-B971-CF643BC25B59}"
+          DTS:DTSID="{7207E08E-638D-4AC5-BC35-35E77088865F}"
           DTS:From="Package\Loop Through and process Files\Inserte into Final table and Capture Changes"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 2"
@@ -1334,7 +1334,7 @@
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 4]"
           DTS:CreationName=""
-          DTS:DTSID="{C512F870-5CED-4594-9A69-D4CD541D7521}"
+          DTS:DTSID="{69F12BDF-08E7-46EA-8F60-6D38E3A3CC30}"
           DTS:From="Package\Loop Through and process Files\TRUNCATE Import TABLE"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 4"
@@ -1343,8 +1343,8 @@
       <DTS:ForEachVariableMappings>
         <DTS:ForEachVariableMapping
           DTS:CreationName=""
-          DTS:DTSID="{6D888F5C-3433-4AEA-8170-09A274E48F67}"
-          DTS:ObjectName="{6D888F5C-3433-4AEA-8170-09A274E48F67}"
+          DTS:DTSID="{891E1F84-DCF6-4E69-8AA3-950F594932DD}"
+          DTS:ObjectName="{891E1F84-DCF6-4E69-8AA3-950F594932DD}"
           DTS:ValueIndex="0"
           DTS:VariableName="User::FileName" />
       </DTS:ForEachVariableMappings>
@@ -1353,7 +1353,7 @@
       DTS:refId="Package\PostExecute"
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
-      DTS:DTSID="{F9791C2C-009A-4995-A0B0-56297D5C0FBE}"
+      DTS:DTSID="{97184960-2800-42EA-AFF4-F47455A2256F}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="PostExecute"
@@ -1364,7 +1364,7 @@
         DTS:FilterKind="0" />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{80834618-47A0-4AF0-AB32-23B31714FAAC}"
+          SQLTask:Connection="{0AA8CC7A-1956-420D-8B2A-C4BD26D45C0A}"
           SQLTask:SqlStatementSource="DECLARE @NextEtlLoadId varchar(20)&#xA;EXEC Logging.dbo.SSISPostExecute @EtlLoadId=?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ParameterBinding
             SQLTask:ParameterName="0"
@@ -1380,7 +1380,7 @@
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:DelayValidation="True"
       DTS:Description="Execute SQL Task"
-      DTS:DTSID="{0F22F03D-3BDE-4230-AC83-7464015B6667}"
+      DTS:DTSID="{C2B51A3F-A488-472B-AC3B-93C378796AA4}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="PreExecute"
@@ -1391,7 +1391,7 @@
         DTS:FilterKind="0" />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{80834618-47A0-4AF0-AB32-23B31714FAAC}"
+          SQLTask:Connection="{0AA8CC7A-1956-420D-8B2A-C4BD26D45C0A}"
           SQLTask:SqlStatementSource="DECLARE @NextEtlLoadId INT&#xA;EXEC Logging.dbo.SSISPreExecute @PackageName=?,@Servername=?,@EtlLoadId = @NextEtlLoadId"
           SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ResultBinding
@@ -1417,7 +1417,7 @@
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint]"
       DTS:CreationName=""
-      DTS:DTSID="{B6C61393-8C99-47A1-BDBE-834D07261BFE}"
+      DTS:DTSID="{240EBE94-B005-468B-B020-65711A2848A1}"
       DTS:From="Package\PreExecute"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint"
@@ -1425,7 +1425,7 @@
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
       DTS:CreationName=""
-      DTS:DTSID="{941D97CF-D210-4345-8B78-9F830ED4E9E6}"
+      DTS:DTSID="{4EEA1827-8554-49EE-B36C-6DA46812C8EB}"
       DTS:From="Package\Loop Through and process Files"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 1"

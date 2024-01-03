@@ -23,9 +23,19 @@
           <FullPath>AzureADUserImport.dtsx</FullPath>
           <References />
         </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>BreezyCandidatesImport.dtsx</Name>
+          <FullPath>BreezyCandidatesImport.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>BreezyOffersImport 1.dtsx</Name>
+          <FullPath>BreezyOffersImport 1.dtsx</FullPath>
+          <References />
+        </DtsPackage>
         <DtsPackage FormatVersion="8">
-          <Name>BreezyOffersImport.dtsx</Name>
-          <FullPath>BreezyOffersImport.dtsx</FullPath>
+          <Name>EHLeadTrackingImport.dtsx</Name>
+          <FullPath>EHLeadTrackingImport.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">
@@ -121,6 +131,11 @@
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderEHHospiceDailyReportNightly.dtsx</Name>
           <FullPath>ReportSenderEHHospiceDailyReportNightly.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>ReportSenderEHMTDAdmissionsBySalesRep.dtsx</Name>
+          <FullPath>ReportSenderEHMTDAdmissionsBySalesRep.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">

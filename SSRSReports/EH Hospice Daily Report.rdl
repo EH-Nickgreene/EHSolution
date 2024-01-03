@@ -17,200 +17,117 @@
     <DataSet Name="SummaryData">
       <Query>
         <DataSourceName>EHClinical</DataSourceName>
-        <QueryParameters>
-          <QueryParameter Name="@StartDate">
-            <Value>=Parameters!StartDate.Value</Value>
-          </QueryParameter>
-          <QueryParameter Name="@EndDate">
-            <Value>=Parameters!EndDate.Value</Value>
-          </QueryParameter>
-        </QueryParameters>
-        <CommandText>DECLARE @monthint int
-SELECT @monthint=monthint
+        <CommandText>DECLARE @MonthInt INT
+DECLARE @StartDate date, @EndDate date
+DECLARE @EmpyreanHoiday Tinyint
+
+
+--THESE ARE USED FOR CALCULTATING END DATE
+DECLARE @ReportingMonthInt INT,@currentMonthInt INT
+DECLARE @date date=getdate()
+
+
+SELECT @MonthInt =ConfiguredValue FROM reference.[dbo].[SSIS Configurations]
+WHERE ConfigurationFilter='ReportSenderEHHospiceDailyReportNightly'
+and PackagePath='\Package.Variables[User::MonthInt].Properties[Value]'
+
+
+SET @StartDate =(SELECT MIN(Date) FROM Reference.dbo.dimdate where monthint=@MonthInt)
+--SET @EndDate =(SELECT MAX(Date) FROM Reference.dbo.dimdate where monthint=@MonthInt and date&lt;=CONVERT(date,GETDATE()))
+
+
+SELECT  @currentMonthInt=monthint 
 FROM Reference.dbo.dimdate
-WHERE date=@StartDate
+WHERE date=@date
 
-IF OBJECT_ID('tempdb..#pendingAdmits') IS NOT NULL DROP TABLE #pendingAdmits
-SELECT 
-	Epi_branchCode Branch_Code,
-	COUNT(*) PendingAdmits
-INTO #pendingAdmits
-FROM HCHB_EMPYREAN.dbo.Client_episodes
-WHERE epi_status='Pending'
-AND epi_admitType IN('NEW ADMISSION','READMISSION')
-GROUP BY Epi_branchCode
+--CALCULATE END DATE 
+		SET @ReportingMonthInt=@MonthInt
+
+		SELECT  @currentMonthInt=monthint FROM Reference.dbo.dimdate
+		WHERE date=@date
 
 
-IF OBJECT_ID('tempdb..#adc') IS NOT NULL DROP TABLE #adc
-SELECT
-Branch_code,
-CONVERT(float,COUNT(*))/CONVERT(FLOAT,datediff(dd,@StartDate,@EndDate)) ADC
-INTO #adc
-FROM wh_patientdays
-WHERE ServiceDate&gt;=@StartDate
-and ServiceDate&lt;@EndDate
-GROUP BY Branch_code
-UNION ALL
-SELECT 'ENW',0
+		--USE IF IN THE MONTH
+		IF @currentMonthInt= @ReportingMonthInt
+		BEGIN
+			SELECT @EndDate=MAX(Date) FROM Reference.dbo.dimdate
+			WHERE monthint=@ReportingMonthInt
+			AND Date&lt;dateadd(dd,1,@date)
+		END
 
---census
-IF OBJECT_ID('tempdb..#census') IS NOT NULL DROP TABLE #census
-SELECT Branch_Code,COUNT(*) Census
-INTO #census
-FROM wh_patientdays
-WHERE serviceDate=dateadd(dd,-1,@EndDate)
-GROUP BY Branch_Code
+		--USE IF IN NEXT MONTH
+		ELSE IF @currentMonthInt&gt; @ReportingMonthInt
+		BEGIN
+			SELECT @EndDate=MIN(Date) FROM Reference.dbo.dimdate
+			WHERE monthint=@currentMonthInt
+			AND Date&lt;dateadd(dd,1,@date)
+		END
 
 
-IF OBJECT_ID('tempdb..#admissions') IS NOT NULL DROP TABLE #admissions
-SELECT 
-	Branch_Code,
-	SUM(CASE WHEN PayorSource='MEDICARE- HOSPICE' THEN 1 ELSE 0 END) as MEDICAREHOSPICE,
-	SUM(CASE WHEN PayorSource='MEDICARE PRO BONO' THEN 1 ELSE 0 END) as MEDICAREPROBONO,
-	SUM(CASE WHEN ISNULL(PayorSource,'') NOT IN ('MEDICARE- HOSPICE','MEDICARE PRO BONO') THEN 1 ELSE 0 END) as OtherPayor,
-	COUNT(*) admits
-INTO #admissions
-FROM wh_admissions
-WHERE epi_socdate&gt;=@StartDate
-and epi_socdate&lt;@EndDate
-GROUP BY Branch_Code
-ORDER BY 1 desc 
+--SET EmpyreanHoliday Flag
 
-IF OBJECT_ID('tempdb..#dc') IS NOT NULL DROP TABLE #dc
-SELECT 
-	Branch_Code,
-	SUM(CASE WHEN DischargeCategory='Live Discharge' THEN 1 ELSE 0 END) as LiveDC,
-	SUM(CASE WHEN DischargeCategory='Revocation' THEN 1 ELSE 0 END) as Revocation,
-	SUM(CASE WHEN DischargeCategory='Death' THEN 1 ELSE 0 END) as Death,
-	SUM(CASE WHEN DischargeCategory='Live Discharge:Pro-Bono' THEN 1 ELSE 0 END) as LiveDCProBono,
-	COUNT(*) discharges
-INTO #dc
-FROM wh_discharges
-WHERE epi_DischargeDate&gt;=@StartDate
-and epi_DischargeDate&lt;@EndDate
-GROUP By Branch_Code
+SELECT @EmpyreanHoiday=IsEmpyreanHoliday FROM Reference.dbo.DimDate
+WHERE date=CONVERT(date,getdate())
 
 
 
 
-SELECT 
-bd.BranchName,
-ISNULL(adc.adc,0) adc,
-ISNULL(pa.PendingAdmits,0) PendingAdmits,
-ISNULL(cen.Census,0) Census,
-ISNULL(admit.MEDICAREHOSPICE,0) MEDICAREHOSPICE_Admits,
-ISNULL(admit.MEDICAREPROBONO,0) MEDICAREPROBONO_Admits,
-ISNULL(admit.OtherPayor,0) as OtherPayor_Admits,
-ISNULL(Admit.admits,0) Total_Admits,
-ISNULL(dc.LiveDC,0) LiveDc,
-ISNULL(dc.Revocation,0) Revocation,
-ISNULL(dc.Death,0) Death,
-ISNULL(dc.LiveDCProBono,0) LiveDCProBono,
-ISNULL(dc.discharges,0) Total_discharges,
-ISNULL(track.ADC_Prior,0) ADC_Prior,
-ISNULL(cen.Census,0)-ISNULL(track.Census_Prior,0) as Census_Prior,
-ISNULL(Admit.admits,0)-ISNULL(track.Admit_Prior,0) as Admit_Prior,
-ISNULL(dc.discharges,0)-ISNULL(track.DC_Prior,0) as DC_Prior,
-ISNULL(pa.PendingAdmits,0)-ISNULL(track.Pending_Prior,0) as Pending_Prior
+IF NOT EXISTS(select TOP 1 * FROM HospiceDailyStatsTracker WHERE Trackingdate=CONVERT(date,getdate()))
+AND datename(dw,getdate()) IN ('Monday','Tuesday','Wednesday','Thursday','Friday')
+AND @EmpyreanHoiday=0
+BEGIN 
+	INSERT INTO HospiceDailyStatsTracker(BranchCode,MetricName,MetricValueDecimal,Monthint)
+	SELECT
+	Branch_code,
+	'ADC',
+	CONVERT(float,COUNT(*))/CONVERT(FLOAT,datediff(dd,@StartDate,@EndDate)) ADC,@MonthInt
+	FROM wh_patientdays
+	WHERE ServiceDate&gt;=@StartDate
+	and ServiceDate&lt;@EndDate
+	GROUP BY Branch_code
+	UNION ALL 
+	SELECT Branch_Code,'Census',COUNT(*) Census,@MonthInt
+	FROM wh_patientdays
+	WHERE serviceDate=dateadd(dd,-1,@EndDate)
+	GROUP BY Branch_Code
+	UNION ALL
+	SELECT Branch_Code,'Admit' ,COUNT(*) admits,@MonthInt
+	FROM wh_admissions
+	WHERE epi_socdate&gt;=@StartDate
+	and epi_socdate&lt;@EndDate
+	GROUP BY Branch_Code
+	UNION ALL
+	SELECT Branch_Code,'DC',COUNT(*) discharges,@MonthInt
+	FROM wh_discharges
+	WHERE epi_DischargeDate&gt;=@StartDate
+	and epi_DischargeDate&lt;@EndDate
+	GROUP By Branch_Code
+	UNION ALL
+	SELECT epi_branchCode,'PendingAdmits',COUNT(*) PendingAdmissions,@MonthInt
+	FROM HCHB_EMPYREAN.dbo.Client_episodes
+	WHERE epi_status='Pending'
+	AND epi_admitType IN('NEW ADMISSION','READMISSION')
+	GROUP BY epi_branchCode
 
 
-FROM #adc adc
-LEFT JOIN #pendingAdmits pa on adc.Branch_Code=pa.Branch_Code
-LEFT JOIN #census cen on adc.Branch_Code=cen.Branch_Code
-LEFT JOin #admissions admit on adc.Branch_Code=admit.Branch_Code
-LEFT JOIN #dc dc on adc.Branch_Code=dc.Branch_Code
-LEFT JOIN (
-	SELECT 
-		bd.BranchCode,
-		SUM(case when MetricName='ADC' THEN MetricValueDecimal ELSE 0 END) as ADC_Prior,
-		CONVERT(int,SUM(case when MetricName='Census' THEN MetricValueDecimal ELSE 0 END)) as Census_Prior,
-		CONVERT(int,SUM(case when MetricName='Admit' THEN MetricValueDecimal ELSE 0 END)) as Admit_Prior,
-		CONVERT(int,SUM(case when MetricName='DC' THEN MetricValueDecimal ELSE 0 END)) as DC_Prior,
-		CONVERT(int,SUM(case when MetricName='PendingAdmits' THEN MetricValueDecimal ELSE 0 END)) as Pending_Prior
-	FROm HospiceDailyStatsTracker track
-	LEFT JOIN Reference.dbo.BranchData bd on track.branchCode=bd.branchCode
-	WHERE trackingDate=CONVERT(date,dateadd(dd,-1,GETDATE()))
-	AND track.monthint=@monthint
-	GROUP By bd.BranchCode
-	) track on track.branchCode=adc.branch_Code
-LEFT JOIN reference.dbo.BranchData bd on bd.branchCode=COALESCE(adc.Branch_Code,pa.Branch_Code,cen.Branch_Code,admit.Branch_Code,dc.Branch_Code)
+END
+
+ELSE IF NOT EXISTS(select TOP 1 * FROM HospiceDailyStatsTracker WHERE Trackingdate=CONVERT(date,getdate()))
+AND (datename(dw,getdate()) NOT IN ('Monday','Tuesday','Wednesday','Thursday','Friday')
+OR @EmpyreanHoiday=1)
+	
+BEGIN
+
+	INSERT INTO HospiceDailyStatsTracker(BranchCode,MetricName,MetricValueDecimal,Monthint)
+	SELECT  BranchCode,MetricName,MetricValueDecimal,Monthint FROM HospiceDailyStatsTracker
+	WHERE --InsertedON=(SELECT MAX(insertedOn) FROM HospiceDailyStatsTracker)
+	TrackingDate=(SELECT MAX(TrackingDate) FROM HospiceDailyStatsTracker WHERE monthint=@MonthInt)
+
+END
+
 
 </CommandText>
       </Query>
-      <Fields>
-        <Field Name="BranchName">
-          <DataField>BranchName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="adc">
-          <DataField>adc</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
-        </Field>
-        <Field Name="PendingAdmits">
-          <DataField>PendingAdmits</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="Census">
-          <DataField>Census</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="MEDICAREHOSPICE_Admits">
-          <DataField>MEDICAREHOSPICE_Admits</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="MEDICAREPROBONO_Admits">
-          <DataField>MEDICAREPROBONO_Admits</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="OtherPayor_Admits">
-          <DataField>OtherPayor_Admits</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="Total_Admits">
-          <DataField>Total_Admits</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="LiveDc">
-          <DataField>LiveDc</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="Revocation">
-          <DataField>Revocation</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="Death">
-          <DataField>Death</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="LiveDCProBono">
-          <DataField>LiveDCProBono</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="Total_discharges">
-          <DataField>Total_discharges</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="ADC_Prior">
-          <DataField>ADC_Prior</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="Census_Prior">
-          <DataField>Census_Prior</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="Admit_Prior">
-          <DataField>Admit_Prior</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="DC_Prior">
-          <DataField>DC_Prior</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="Pending_Prior">
-          <DataField>Pending_Prior</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-      </Fields>
     </DataSet>
   </DataSets>
   <ReportSections>

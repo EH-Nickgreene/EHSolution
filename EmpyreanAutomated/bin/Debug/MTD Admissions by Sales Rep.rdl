@@ -241,7 +241,7 @@ WHERE monthint=@monthInt</CommandText>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>Hire date</Value>
+                                <Value>Hire Date</Value>
                                 <Style>
                                   <FontFamily>Arial</FontFamily>
                                   <FontSize>7pt</FontSize>

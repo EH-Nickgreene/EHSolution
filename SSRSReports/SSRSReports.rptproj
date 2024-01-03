@@ -51,7 +51,6 @@
   <ItemGroup>
     <Report Include="BCBA Case Load.rdl" />
     <Report Include="BCBA Report.rdl" />
-    <Report Include="Billing Hours by Location by Week.rdl" />
     <Report Include="Cancellation Analysis.rdl" />
     <Report Include="EH Hospice Daily Report 1.rdl" />
     <Report Include="EH Hospice Daily Report Nightly.rdl" />

@@ -5,26 +5,24 @@
   DTS:CreationName="Microsoft.Package"
   DTS:CreatorComputerName="NICKGW7"
   DTS:CreatorName="PPC\nickg"
-  DTS:DTSID="{D2AF95FC-4F2C-43B7-8449-CC37BE5D3F10}"
+  DTS:DTSID="{C75B058F-A40C-4640-9E6B-232183D0B0FB}"
   DTS:EnableConfig="True"
   DTS:ExecutableType="Microsoft.Package"
   DTS:LastModifiedProductVersion="16.0.5270.0"
   DTS:LocaleID="1033"
-  DTS:ObjectName="ADPOnboardingImport"
+  DTS:ObjectName="BreezyCandidatesImport"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="286"
-  DTS:VersionGUID="{9015034D-5A9F-469A-BFB7-F94FEB8C6368}">
+  DTS:VersionBuild="298"
+  DTS:VersionGUID="{22215EF5-0D6E-489A-B555-A3D17BF27C3F}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
     <DTS:ConnectionManager
-      DTS:refId="Package.ConnectionManagers[ADPonboardingFile]"
+      DTS:refId="Package.ConnectionManagers[CandidatesFlatFile]"
       DTS:CreationName="FLATFILE"
-      DTS:DTSID="{2ED59597-6B6C-4913-A5FC-795F6E1A1528}"
-      DTS:ObjectName="ADPonboardingFile">
-      <DTS:PropertyExpression
-        DTS:Name="ConnectionString">@[User::FullFileName]</DTS:PropertyExpression>
+      DTS:DTSID="{2D81AF54-9A5F-4695-AEDE-0D1A93FBC837}"
+      DTS:ObjectName="CandidatesFlatFile">
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:Format="Delimited"
@@ -34,7 +32,7 @@
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
-          DTS:ConnectionString="D:\SSIS\Import\ADPOnboarding\">
+          DTS:ConnectionString="D:\SSIS\Import\BreezyCandidates\ed118766-0cef-449f-9aed-12e2866997a3.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -42,8 +40,8 @@
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Employee First Name"
-              DTS:DTSID="{1205F26D-7960-49BD-A9DC-B4DD54EED37C}"
+              DTS:ObjectName="name"
+              DTS:DTSID="{EB0C12C6-F0A0-4C25-B0F9-2643920C3BB2}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -51,8 +49,8 @@
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Employee Last Name"
-              DTS:DTSID="{930261F2-7CDD-4D36-B6BA-5A7D12608708}"
+              DTS:ObjectName="score"
+              DTS:DTSID="{F4A5EC06-42C7-4D8A-BAE7-BEB68D161721}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -60,8 +58,8 @@
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Email"
-              DTS:DTSID="{70005655-8AF8-48BC-ADD6-AE0379F0BFCF}"
+              DTS:ObjectName="email_address"
+              DTS:DTSID="{74721CAD-4540-49F4-BA07-115A2DA8EF3D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -69,8 +67,8 @@
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Onboarding Status"
-              DTS:DTSID="{B918F79B-1081-44F5-93CD-7E34AD96024C}"
+              DTS:ObjectName="phone_number"
+              DTS:DTSID="{E0C086DC-0BBF-41B6-B758-FE07BCA27080}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -78,8 +76,8 @@
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Hire Date"
-              DTS:DTSID="{53D8A181-F926-415D-86D0-78ADCA663D1E}"
+              DTS:ObjectName="address"
+              DTS:DTSID="{23C9C87B-F674-4BA8-A6F4-7104DA9D906C}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -87,8 +85,8 @@
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Override Status"
-              DTS:DTSID="{629415D2-1097-45ED-9766-AE8A52B2A543}"
+              DTS:ObjectName="salary"
+              DTS:DTSID="{EE2CD267-237D-4156-AB01-732BE40F633D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -96,8 +94,8 @@
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Override Status On"
-              DTS:DTSID="{8C15C12C-4D96-4BB8-BC93-2CB47C3AC728}"
+              DTS:ObjectName="tags"
+              DTS:DTSID="{53BBB482-7396-4AAA-A498-348C5E64E556}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -105,8 +103,8 @@
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Prehire"
-              DTS:DTSID="{BFD6D1D2-B9D1-4E05-8E88-516D9EEA7AD8}"
+              DTS:ObjectName="internal_id"
+              DTS:DTSID="{4CACEE85-D200-4203-81B4-FAAF7D9CDDAE}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -114,8 +112,8 @@
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Manager"
-              DTS:DTSID="{73931CF0-1A39-472C-A88B-DBE260F4DE84}"
+              DTS:ObjectName="position"
+              DTS:DTSID="{22E12987-4E0F-41D7-A56E-0C53707B8953}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -123,8 +121,8 @@
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Experience"
-              DTS:DTSID="{30FB4543-25B3-44D7-8139-7A215DCFDA11}"
+              DTS:ObjectName="location"
+              DTS:DTSID="{152064C8-3FFF-4FF8-813D-50A8CADD7B68}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -132,8 +130,8 @@
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Override Status By"
-              DTS:DTSID="{76EC335D-2EF4-4255-BDD6-78F1612A0B55}"
+              DTS:ObjectName="stage"
+              DTS:DTSID="{FAEA7A03-5751-47AD-8B20-BDC2B9FA76C3}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -141,8 +139,8 @@
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Form I-9"
-              DTS:DTSID="{5E73AA62-FC6F-477A-9F96-031D14326FEE}"
+              DTS:ObjectName="assigned_to"
+              DTS:DTSID="{ED3FE14A-81DD-43D4-A121-25C29D8EE322}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -150,8 +148,8 @@
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Tax Withholding"
-              DTS:DTSID="{B6D41836-C7BE-4363-819D-AE7696CB6652}"
+              DTS:ObjectName="referred_by_name"
+              DTS:DTSID="{6E6FEB42-3D72-414B-B240-67AEDA22129D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -159,8 +157,8 @@
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Emergency Contacts"
-              DTS:DTSID="{D6BEEA34-7DFE-43BB-AB58-5B2CD0A2ABF5}"
+              DTS:ObjectName="referrer_email"
+              DTS:DTSID="{BF3BA401-0551-46DE-9FCD-222D49C1ABB3}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -168,8 +166,8 @@
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Company Policies"
-              DTS:DTSID="{75DD1265-CD8E-421B-B0F5-F6E02E937C14}"
+              DTS:ObjectName="source"
+              DTS:DTSID="{224B8A24-9746-4B14-AFA5-36133501CA45}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -177,8 +175,8 @@
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Payment Options"
-              DTS:DTSID="{A8F79EFA-4D79-4093-9FCF-FA5D8AA67ECF}"
+              DTS:ObjectName="sourced_by_name"
+              DTS:DTSID="{513C43EE-5523-4C15-82B4-E893069E074B}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -186,26 +184,56 @@
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Review Documents"
-              DTS:DTSID="{78A639A6-9DC8-42D1-AF49-E8F2018ADA84}"
+              DTS:ObjectName="addedDate"
+              DTS:DTSID="{F7046F30-2CB9-4C5F-86B1-1D0C19B12346}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
-              DTS:ColumnDelimiter="_x000A_"
+              DTS:ColumnDelimiter="_x002C_"
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
-              DTS:ObjectName="Upload Documents"
-              DTS:DTSID="{A64EF903-F7E5-4CD0-B510-A3EA8532231E}"
+              DTS:ObjectName="addedTime"
+              DTS:DTSID="{153B21E0-5EBF-41D5-BAAF-E5F49F512444}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="255"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="lastActivityDate"
+              DTS:DTSID="{27CEFF23-48BD-4DA8-8906-D45D08991F83}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:MaximumWidth="255"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="lastActivityTime"
+              DTS:DTSID="{2AF87987-E8EF-433E-A93B-D32C89F4129F}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[SQLVM.HumanResources]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{B5B17723-1205-40B0-A5E3-010620F8EAD5}"
+      DTS:ObjectName="SQLVM.HumanResources">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=SQLVM;Initial Catalog=HumanResources;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-BreezyOffersImport-{9C436380-3C19-4169-A4E9-FA62422ED2D1}SQLVM.HumanResources;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[SQLVM.HumanResourcesStaging]"
       DTS:CreationName="OLEDB"
-      DTS:DTSID="{D748AAE4-4C34-487D-9E36-84050A735CEB}"
+      DTS:DTSID="{ACD5C88C-32F3-48F4-AFB0-E77BB1CE36DC}"
       DTS:ObjectName="SQLVM.HumanResourcesStaging">
       <DTS:ObjectData>
         <DTS:ConnectionManager
@@ -217,7 +245,7 @@
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[SQLVM.Logging]"
       DTS:CreationName="OLEDB"
-      DTS:DTSID="{97D9DA16-8C74-420D-AAD6-A5A921A04114}"
+      DTS:DTSID="{2CE2869C-0250-4818-9514-23F688B4018A}"
       DTS:ObjectName="SQLVM.Logging">
       <DTS:ObjectData>
         <DTS:ConnectionManager
@@ -229,7 +257,7 @@
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[SQLVM.Reference]"
       DTS:CreationName="OLEDB"
-      DTS:DTSID="{C6B1C9D2-3105-4695-BD42-611143B9E110}"
+      DTS:DTSID="{6E5BCAB9-1025-44BE-8EB9-21A225F14A1C}"
       DTS:ObjectName="SQLVM.Reference">
       <DTS:ObjectData>
         <DTS:ConnectionManager
@@ -241,25 +269,25 @@
   </DTS:ConnectionManagers>
   <DTS:Configurations>
     <DTS:Configuration
-      DTS:ConfigurationString="&quot;SQLVM.Reference&quot;;&quot;[dbo].[SSIS Configurations]&quot;;&quot;ADPOnboardingImport&quot;;"
+      DTS:ConfigurationString="&quot;SQLVM.Reference&quot;;&quot;[dbo].[SSIS Configurations]&quot;;&quot;BreezyOffersImport&quot;;"
       DTS:ConfigurationType="7"
       DTS:CreationName=""
-      DTS:DTSID="{B128DAAF-0119-4850-8768-99977CF18291}"
+      DTS:DTSID="{7496CED1-AE34-4942-A7B9-67D3367CEA01}"
       DTS:ObjectName="Configuration 1" />
   </DTS:Configurations>
   <DTS:Variables>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{632B2B59-788A-4AD1-8255-FD735BBC6A18}"
+      DTS:DTSID="{ABAFFB45-D6D9-460A-802B-3120028F5F38}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="BackupDir">
       <DTS:VariableValue
-        DTS:DataType="8">D:\SSIS\Import\ADPOnboarding\archive\</DTS:VariableValue>
+        DTS:DataType="8">D:\SSIS\Import\BreezyOffers\archive\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{2606BE2F-EFCF-408B-A88B-645C62FC40B2}"
+      DTS:DTSID="{4239786C-BE70-4383-984E-699BA35844B1}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="DuplicateFile">
@@ -268,7 +296,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{14C8C43B-5358-407E-BC79-EA059B2DEA01}"
+      DTS:DTSID="{4B947950-5428-4091-8F02-8116BA8D92BD}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EtlLoadId">
@@ -277,7 +305,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{11BF7525-C225-4E36-A265-FC1CFCC133A5}"
+      DTS:DTSID="{016F6771-1073-441C-A329-B37B76D4F688}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="FileExists">
@@ -286,16 +314,16 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{D1037AB5-780A-4C4F-9C5D-169071607AF3}"
+      DTS:DTSID="{47BF431B-7576-4787-8AB2-203F78EC9D34}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="FileLocation">
       <DTS:VariableValue
-        DTS:DataType="8">D:\SSIS\Import\ADPOnboarding\</DTS:VariableValue>
+        DTS:DataType="8">D:\SSIS\Import\BreezyOffers\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{99E053A7-FA13-4254-B61B-0E16244C7AC5}"
+      DTS:DTSID="{0FA82234-8359-491F-AFAD-8C2F174370B8}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="FileName">
@@ -305,7 +333,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{278C3A0D-8CE4-42DB-A943-4261A13F950F}"
+      DTS:DTSID="{265F2B85-B3C6-4C6E-9D07-595234D7B06E}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="FileProcessedRowCount">
@@ -314,48 +342,27 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{55079CAC-17CB-4601-BA94-0EEF63AB8D3F}"
+      DTS:DTSID="{6AFEC3ED-8DF7-4632-8E12-7637CF741F70}"
       DTS:EvaluateAsExpression="True"
       DTS:Expression="@[User::FileLocation]+ @[User::FileName]"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="FullFileName">
       <DTS:VariableValue
-        DTS:DataType="8">D:\SSIS\Import\ADPOnboarding\</DTS:VariableValue>
+        DTS:DataType="8">D:\SSIS\Import\BreezyOffers\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{60203E0E-8D7C-4BEC-BCC7-F095F91F6EC8}"
-      DTS:EvaluateAsExpression="True"
-      DTS:Expression="@[User::FileLocation]+ REPLACE( @[User::FileName], &quot;.csv&quot;,@[User::today] +&quot;.csv&quot;)"
-      DTS:IncludeInDebugDump="2345"
-      DTS:Namespace="User"
-      DTS:ObjectName="NewFullFilename">
-      <DTS:VariableValue
-        DTS:DataType="8">D:\SSIS\Import\ADPOnboarding\</DTS:VariableValue>
-    </DTS:Variable>
-    <DTS:Variable
-      DTS:CreationName=""
-      DTS:DTSID="{FEFB9BC8-A5FA-4202-9604-CB04A9012441}"
+      DTS:DTSID="{4CB39EA0-1530-4426-93E2-DD6E4DF46887}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="TaskDescription">
       <DTS:VariableValue
-        DTS:DataType="8">ImportADPOnboarding</DTS:VariableValue>
+        DTS:DataType="8">ImportBreezyOffers</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{CCFBA67E-44A5-45AE-9C53-CD853542E6DD}"
-      DTS:IncludeInDebugDump="2345"
-      DTS:Namespace="User"
-      DTS:ObjectName="today">
-      <DTS:VariableValue
-        DTS:DataType="8"
-        xml:space="preserve"></DTS:VariableValue>
-    </DTS:Variable>
-    <DTS:Variable
-      DTS:CreationName=""
-      DTS:DTSID="{FBC0912F-FA3B-4AE2-A2F1-4090D22DA88D}"
+      DTS:DTSID="{799C7B82-5FE0-4FF6-9D01-86A7D10C3A2F}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="ValidationFailure">
@@ -365,105 +372,24 @@
   </DTS:Variables>
   <DTS:Executables>
     <DTS:Executable
-      DTS:refId="Package\Execute SQL Task"
-      DTS:CreationName="Microsoft.ExecuteSQLTask"
-      DTS:Description="Execute SQL Task"
-      DTS:DTSID="{B5FF925D-0570-4799-A337-161384C2DBAA}"
-      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
-      DTS:LocaleID="-1"
-      DTS:ObjectName="Execute SQL Task"
-      DTS:ThreadHint="0">
-      <DTS:Variables />
-      <DTS:ObjectData>
-        <SQLTask:SqlTaskData
-          SQLTask:Connection="{97D9DA16-8C74-420D-AAD6-A5A921A04114}"
-          SQLTask:SqlStatementSource="SELECT FORMAT(getdate(),'yyyyMMdd')"
-          SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
-          <SQLTask:ResultBinding
-            SQLTask:ResultName="0"
-            SQLTask:DtsVariableName="User::today" />
-        </SQLTask:SqlTaskData>
-      </DTS:ObjectData>
-    </DTS:Executable>
-    <DTS:Executable
-      DTS:refId="Package\Loop Through and append Date to filename"
-      DTS:CreationName="STOCK:FOREACHLOOP"
-      DTS:DelayValidation="True"
-      DTS:Description="Foreach Loop Container"
-      DTS:DTSID="{208f0612-0b96-4c26-8270-89b654dd66f1}"
-      DTS:ExecutableType="STOCK:FOREACHLOOP"
-      DTS:LocaleID="-1"
-      DTS:ObjectName="Loop Through and append Date to filename">
-      <DTS:ForEachEnumerator
-        DTS:CreationName="Microsoft.ForEachFileEnumerator"
-        DTS:DTSID="{b13a6e3d-d5fa-4389-b268-0562551401c5}"
-        DTS:ObjectName="{2021B4B8-E2B5-441F-AC09-43FFC7D31263}">
-        <DTS:PropertyExpression
-          DTS:Name="Directory">@[User::FileLocation]</DTS:PropertyExpression>
-        <DTS:ObjectData>
-          <ForEachFileEnumeratorProperties>
-            <FEFEProperty
-              Folder="D:\SSIS\Import\ADPOnboarding\" />
-            <FEFEProperty
-              FileSpec="*.csv" />
-            <FEFEProperty
-              FileNameRetrievalType="1" />
-            <FEFEProperty
-              Recurse="0" />
-          </ForEachFileEnumeratorProperties>
-        </DTS:ObjectData>
-      </DTS:ForEachEnumerator>
-      <DTS:Variables />
-      <DTS:Executables>
-        <DTS:Executable
-          DTS:refId="Package\Loop Through and append Date to filename\File System Task"
-          DTS:CreationName="Microsoft.FileSystemTask"
-          DTS:DelayValidation="True"
-          DTS:Description="File System Task"
-          DTS:DTSID="{8FC7605E-1903-48A9-9BF5-875CEBB5BB18}"
-          DTS:ExecutableType="Microsoft.FileSystemTask"
-          DTS:LocaleID="-1"
-          DTS:ObjectName="File System Task"
-          DTS:ThreadHint="0">
-          <DTS:Variables />
-          <DTS:ObjectData>
-            <FileSystemData
-              TaskOperationType="RenameFile"
-              TaskSourcePath="User::FullFileName"
-              TaskIsSourceVariable="True"
-              TaskDestinationPath="User::NewFullFilename"
-              TaskIsDestinationVariable="True" />
-          </DTS:ObjectData>
-        </DTS:Executable>
-      </DTS:Executables>
-      <DTS:ForEachVariableMappings>
-        <DTS:ForEachVariableMapping
-          DTS:CreationName=""
-          DTS:DTSID="{e91713db-7cc1-4ee3-b165-76130235a908}"
-          DTS:ObjectName="{B1455EDA-91AA-471E-860F-9C1CF4E95DA3}"
-          DTS:ValueIndex="0"
-          DTS:VariableName="User::FileName" />
-      </DTS:ForEachVariableMappings>
-    </DTS:Executable>
-    <DTS:Executable
       DTS:refId="Package\Loop Through and process Files"
       DTS:CreationName="STOCK:FOREACHLOOP"
       DTS:DelayValidation="True"
       DTS:Description="Foreach Loop Container"
-      DTS:DTSID="{D4CF4515-DD44-47D7-8E9B-868232DBEA47}"
+      DTS:DTSID="{9B03DA7C-C941-4C4E-8E96-3A207FE3CA92}"
       DTS:ExecutableType="STOCK:FOREACHLOOP"
       DTS:LocaleID="-1"
       DTS:ObjectName="Loop Through and process Files">
       <DTS:ForEachEnumerator
         DTS:CreationName="Microsoft.ForEachFileEnumerator"
-        DTS:DTSID="{2021B4B8-E2B5-441F-AC09-43FFC7D31263}"
-        DTS:ObjectName="{2021B4B8-E2B5-441F-AC09-43FFC7D31263}">
+        DTS:DTSID="{83CACC7A-E261-4A10-A4BC-69A4ECECF603}"
+        DTS:ObjectName="{83CACC7A-E261-4A10-A4BC-69A4ECECF603}">
         <DTS:PropertyExpression
           DTS:Name="Directory">@[User::FileLocation]</DTS:PropertyExpression>
         <DTS:ObjectData>
           <ForEachFileEnumeratorProperties>
             <FEFEProperty
-              Folder="D:\SSIS\Import\ADPOnboarding\" />
+              Folder="D:\SSIS\Import\BreezyOffers\" />
             <FEFEProperty
               FileSpec="*.csv" />
             <FEFEProperty
@@ -479,7 +405,7 @@
           DTS:refId="Package\Loop Through and process Files\Archive File"
           DTS:CreationName="Microsoft.FileSystemTask"
           DTS:Description="File System Task"
-          DTS:DTSID="{03F68759-5F7F-41F9-9C8A-3497FDD38583}"
+          DTS:DTSID="{55F51ED0-A689-4B37-9B58-1B232EF3F5BD}"
           DTS:ExecutableType="Microsoft.FileSystemTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Archive File"
@@ -500,7 +426,7 @@
           DTS:refId="Package\Loop Through and process Files\Import File into staging table"
           DTS:CreationName="Microsoft.Pipeline"
           DTS:Description="Data Flow Task"
-          DTS:DTSID="{36319487-6F75-4FD0-8BB1-66CB74F2F77B}"
+          DTS:DTSID="{84E1D3A1-2C37-4C41-B77E-6CE7E72A73D1}"
           DTS:ExecutableType="Microsoft.Pipeline"
           DTS:LocaleID="-1"
           DTS:ObjectName="Import File into staging table"
@@ -607,8 +533,8 @@
                   <connections>
                     <connection
                       refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Connections[FlatFileConnection]"
-                      connectionManagerID="Package.ConnectionManagers[ADPonboardingFile]"
-                      connectionManagerRefId="Package.ConnectionManagers[ADPonboardingFile]"
+                      connectionManagerID="Package.ConnectionManagers[CandidatesFlatFile]"
+                      connectionManagerRefId="Package.ConnectionManagers[CandidatesFlatFile]"
                       name="FlatFileConnection" />
                   </connections>
                   <outputs>
@@ -617,15 +543,15 @@
                       name="Flat File Source Output">
                       <outputColumns>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Employee First Name]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[name]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Employee First Name]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[name]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Employee First Name]"
-                          name="Employee First Name"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[name]"
+                          name="name"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -639,15 +565,15 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Employee Last Name]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[score]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Employee Last Name]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[score]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Employee Last Name]"
-                          name="Employee Last Name"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[score]"
+                          name="score"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -661,15 +587,15 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Email]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[email_address]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Email]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[email_address]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Email]"
-                          name="Email"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[email_address]"
+                          name="email_address"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -683,15 +609,15 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Onboarding Status]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[phone_number]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Onboarding Status]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[phone_number]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Onboarding Status]"
-                          name="Onboarding Status"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[phone_number]"
+                          name="phone_number"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -705,15 +631,15 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Hire Date]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[address]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Hire Date]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[address]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Hire Date]"
-                          name="Hire Date"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[address]"
+                          name="address"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -727,15 +653,15 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Override Status]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[salary]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Override Status]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[salary]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Override Status]"
-                          name="Override Status"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[salary]"
+                          name="salary"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -749,15 +675,15 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Override Status On]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[tags]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Override Status On]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[tags]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Override Status On]"
-                          name="Override Status On"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[tags]"
+                          name="tags"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -771,15 +697,15 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Prehire]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[internal_id]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Prehire]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[internal_id]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Prehire]"
-                          name="Prehire"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[internal_id]"
+                          name="internal_id"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -793,15 +719,15 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Manager]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[position]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Manager]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[position]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Manager]"
-                          name="Manager"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[position]"
+                          name="position"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -815,15 +741,15 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Experience]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[location]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Experience]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[location]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Experience]"
-                          name="Experience"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[location]"
+                          name="location"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -837,15 +763,15 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Override Status By]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[stage]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Override Status By]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[stage]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Override Status By]"
-                          name="Override Status By"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[stage]"
+                          name="stage"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -859,15 +785,15 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Form I-9]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[assigned_to]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Form I-9]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[assigned_to]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Form I-9]"
-                          name="Form I-9"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[assigned_to]"
+                          name="assigned_to"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -881,15 +807,15 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Tax Withholding]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[referred_by_name]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Tax Withholding]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[referred_by_name]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Tax Withholding]"
-                          name="Tax Withholding"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[referred_by_name]"
+                          name="referred_by_name"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -903,15 +829,15 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Emergency Contacts]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[referrer_email]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Emergency Contacts]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[referrer_email]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Emergency Contacts]"
-                          name="Emergency Contacts"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[referrer_email]"
+                          name="referrer_email"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -925,15 +851,15 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Company Policies]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[source]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Company Policies]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[source]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Company Policies]"
-                          name="Company Policies"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[source]"
+                          name="source"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -947,15 +873,15 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Payment Options]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[sourced_by_name]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Payment Options]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[sourced_by_name]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Payment Options]"
-                          name="Payment Options"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[sourced_by_name]"
+                          name="sourced_by_name"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -969,15 +895,15 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Review Documents]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[addedDate]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Review Documents]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[addedDate]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Review Documents]"
-                          name="Review Documents"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[addedDate]"
+                          name="addedDate"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -991,15 +917,59 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Upload Documents]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[addedTime]"
                           codePage="1252"
                           dataType="str"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Upload Documents]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[addedTime]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Upload Documents]"
-                          name="Upload Documents"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[addedTime]"
+                          name="addedTime"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[lastActivityDate]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[lastActivityDate]"
+                          length="255"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[lastActivityDate]"
+                          name="lastActivityDate"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[lastActivityTime]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[lastActivityTime]"
+                          length="255"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[lastActivityTime]"
+                          name="lastActivityTime"
                           truncationRowDisposition="FailComponent">
                           <properties>
                             <property
@@ -1016,113 +986,125 @@
                       <externalMetadataColumns
                         isUsed="True">
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Employee First Name]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[name]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Employee First Name" />
+                          name="name" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Employee Last Name]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[score]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Employee Last Name" />
+                          name="score" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Email]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[email_address]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Email" />
+                          name="email_address" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Onboarding Status]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[phone_number]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Onboarding Status" />
+                          name="phone_number" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Hire Date]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[address]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Hire Date" />
+                          name="address" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Override Status]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[salary]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Override Status" />
+                          name="salary" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Override Status On]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[tags]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Override Status On" />
+                          name="tags" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Prehire]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[internal_id]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Prehire" />
+                          name="internal_id" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Manager]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[position]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Manager" />
+                          name="position" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Experience]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[location]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Experience" />
+                          name="location" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Override Status By]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[stage]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Override Status By" />
+                          name="stage" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Form I-9]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[assigned_to]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Form I-9" />
+                          name="assigned_to" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Tax Withholding]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[referred_by_name]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Tax Withholding" />
+                          name="referred_by_name" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Emergency Contacts]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[referrer_email]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Emergency Contacts" />
+                          name="referrer_email" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Company Policies]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[source]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Company Policies" />
+                          name="source" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Payment Options]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[sourced_by_name]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Payment Options" />
+                          name="sourced_by_name" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Review Documents]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[addedDate]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Review Documents" />
+                          name="addedDate" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Upload Documents]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[addedTime]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Upload Documents" />
+                          name="addedTime" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[lastActivityDate]"
+                          codePage="1252"
+                          dataType="str"
+                          length="255"
+                          name="lastActivityDate" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[lastActivityTime]"
+                          codePage="1252"
+                          dataType="str"
+                          length="255"
+                          name="lastActivityTime" />
                       </externalMetadataColumns>
                     </output>
                     <output
@@ -1170,7 +1152,7 @@
                     <property
                       dataType="System.String"
                       description="Specifies the name of the database object used to open a rowset."
-                      name="OpenRowset">[dbo].[ADPOnboarding]</property>
+                      name="OpenRowset">[dbo].[Candidates]</property>
                     <property
                       dataType="System.String"
                       description="Specifies the variable that contains the name of the database object used to open a rowset."
@@ -1204,11 +1186,11 @@
                     <property
                       dataType="System.String"
                       description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
-                      name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS,ROWS_PER_BATCH = 2000</property>
+                      name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
                     <property
                       dataType="System.Int32"
                       description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
-                      name="FastLoadMaxInsertCommitSize">10000</property>
+                      name="FastLoadMaxInsertCommitSize">2147483647</property>
                   </properties>
                   <connections>
                     <connection
@@ -1227,270 +1209,298 @@
                       name="OLE DB Destination Input">
                       <inputColumns>
                         <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Email]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[name]"
                           cachedCodepage="1252"
                           cachedDataType="str"
                           cachedLength="255"
-                          cachedName="Email"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Email]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Email]" />
+                          cachedName="name"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[name]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[name]" />
                         <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Manager]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[score]"
                           cachedCodepage="1252"
                           cachedDataType="str"
                           cachedLength="255"
-                          cachedName="Manager"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Manager]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Manager]" />
+                          cachedName="score"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[score]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[score]" />
                         <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Experience]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[email_address]"
                           cachedCodepage="1252"
                           cachedDataType="str"
                           cachedLength="255"
-                          cachedName="Experience"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Experience]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Experience]" />
+                          cachedName="email_address"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[email_address]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[email_address]" />
+                        <inputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[phone_number]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="phone_number"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[phone_number]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[phone_number]" />
+                        <inputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[address]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="address"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[address]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[address]" />
+                        <inputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[salary]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="salary"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[salary]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[salary]" />
+                        <inputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[tags]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="tags"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[tags]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[tags]" />
+                        <inputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[internal_id]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="internal_id"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[internal_id]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[internal_id]" />
+                        <inputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[position]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="position"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[position]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[position]" />
+                        <inputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[location]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="location"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[location]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[location]" />
+                        <inputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[stage]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="stage"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[stage]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[stage]" />
+                        <inputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[assigned_to]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="assigned_to"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[assigned_to]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[assigned_to]" />
+                        <inputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[referred_by_name]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="referred_by_name"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[referred_by_name]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[referred_by_name]" />
+                        <inputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[referrer_email]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="referrer_email"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[referrer_email]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[referrer_email]" />
+                        <inputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[source]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="source"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[source]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[source]" />
+                        <inputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[sourced_by_name]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="sourced_by_name"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[sourced_by_name]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[sourced_by_name]" />
+                        <inputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[addedDate]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="addedDate"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[addedDate]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[addedDate]" />
+                        <inputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[addedTime]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="addedTime"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[addedTime]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[addedTime]" />
+                        <inputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[lastActivityDate]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="lastActivityDate"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[lastActivityDate]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[lastActivityDate]" />
+                        <inputColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[lastActivityTime]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="255"
+                          cachedName="lastActivityTime"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[lastActivityTime]"
+                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[lastActivityTime]" />
                         <inputColumn
                           refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[EtlLoadId]"
                           cachedDataType="i4"
                           cachedName="EtlLoadId"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EtlLoadID]"
+                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EtlLoadId]"
                           lineageId="Package\Loop Through and process Files\Import File into staging table\Derived Column.Outputs[Derived Column Output].Columns[EtlLoadId]" />
-                        <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Employee First Name]"
-                          cachedCodepage="1252"
-                          cachedDataType="str"
-                          cachedLength="255"
-                          cachedName="Employee First Name"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EmployeeFirstName]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Employee First Name]" />
-                        <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Employee Last Name]"
-                          cachedCodepage="1252"
-                          cachedDataType="str"
-                          cachedLength="255"
-                          cachedName="Employee Last Name"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EmployeeLastName]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Employee Last Name]" />
-                        <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Onboarding Status]"
-                          cachedCodepage="1252"
-                          cachedDataType="str"
-                          cachedLength="255"
-                          cachedName="Onboarding Status"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[OnboardingStatus]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Onboarding Status]" />
-                        <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Hire Date]"
-                          cachedCodepage="1252"
-                          cachedDataType="str"
-                          cachedLength="255"
-                          cachedName="Hire Date"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[HireDate]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Hire Date]" />
-                        <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Override Status]"
-                          cachedCodepage="1252"
-                          cachedDataType="str"
-                          cachedLength="255"
-                          cachedName="Override Status"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[OverrideStatus]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Override Status]" />
-                        <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Override Status On]"
-                          cachedCodepage="1252"
-                          cachedDataType="str"
-                          cachedLength="255"
-                          cachedName="Override Status On"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[OverrideStatusOn]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Override Status On]" />
-                        <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Prehire]"
-                          cachedCodepage="1252"
-                          cachedDataType="str"
-                          cachedLength="255"
-                          cachedName="Prehire"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Prehire]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Prehire]" />
-                        <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Override Status By]"
-                          cachedCodepage="1252"
-                          cachedDataType="str"
-                          cachedLength="255"
-                          cachedName="Override Status By"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[OverrideStatusBy]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Override Status By]" />
-                        <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Form I-9]"
-                          cachedCodepage="1252"
-                          cachedDataType="str"
-                          cachedLength="255"
-                          cachedName="Form I-9"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FormI9]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Form I-9]" />
-                        <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Tax Withholding]"
-                          cachedCodepage="1252"
-                          cachedDataType="str"
-                          cachedLength="255"
-                          cachedName="Tax Withholding"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[TaxWithholding]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Tax Withholding]" />
-                        <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Emergency Contacts]"
-                          cachedCodepage="1252"
-                          cachedDataType="str"
-                          cachedLength="255"
-                          cachedName="Emergency Contacts"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EmergencyContacts]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Emergency Contacts]" />
-                        <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Company Policies]"
-                          cachedCodepage="1252"
-                          cachedDataType="str"
-                          cachedLength="255"
-                          cachedName="Company Policies"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CompanyPolicies]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Company Policies]" />
-                        <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Payment Options]"
-                          cachedCodepage="1252"
-                          cachedDataType="str"
-                          cachedLength="255"
-                          cachedName="Payment Options"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PaymentOptions]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Payment Options]" />
-                        <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Review Documents]"
-                          cachedCodepage="1252"
-                          cachedDataType="str"
-                          cachedLength="255"
-                          cachedName="Review Documents"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ReviewDocuments]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Review Documents]" />
-                        <inputColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Upload Documents]"
-                          cachedCodepage="1252"
-                          cachedDataType="str"
-                          cachedLength="255"
-                          cachedName="Upload Documents"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[UploadDocuments]"
-                          lineageId="Package\Loop Through and process Files\Import File into staging table\Flat File Source.Outputs[Flat File Source Output].Columns[Upload Documents]" />
                       </inputColumns>
                       <externalMetadataColumns
                         isUsed="True">
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EmployeeFirstName]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[name]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="EmployeeFirstName" />
+                          name="name" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EmployeeLastName]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[score]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="EmployeeLastName" />
+                          name="score" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Email]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[email_address]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Email" />
+                          name="email_address" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[OnboardingStatus]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[phone_number]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="OnboardingStatus" />
+                          name="phone_number" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[HireDate]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[address]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="HireDate" />
+                          name="address" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[OverrideStatus]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[salary]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="OverrideStatus" />
+                          name="salary" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[OverrideStatusOn]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[tags]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="OverrideStatusOn" />
+                          name="tags" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Prehire]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[internal_id]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Prehire" />
+                          name="internal_id" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Manager]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[position]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Manager" />
+                          name="position" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Experience]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[location]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="Experience" />
+                          name="location" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[OverrideStatusBy]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[stage]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="OverrideStatusBy" />
+                          name="stage" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FormI9]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[assigned_to]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="FormI9" />
+                          name="assigned_to" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[TaxWithholding]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[referred_by_name]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="TaxWithholding" />
+                          name="referred_by_name" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EmergencyContacts]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[referrer_email]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="EmergencyContacts" />
+                          name="referrer_email" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CompanyPolicies]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[source]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="CompanyPolicies" />
+                          name="source" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PaymentOptions]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[sourced_by_name]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="PaymentOptions" />
+                          name="sourced_by_name" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ReviewDocuments]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[addedDate]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="ReviewDocuments" />
+                          name="addedDate" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[UploadDocuments]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[addedTime]"
                           codePage="1252"
                           dataType="str"
                           length="255"
-                          name="UploadDocuments" />
+                          name="addedTime" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EtlLoadID]"
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[lastActivityDate]"
+                          codePage="1252"
+                          dataType="str"
+                          length="255"
+                          name="lastActivityDate" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[lastActivityTime]"
+                          codePage="1252"
+                          dataType="str"
+                          length="255"
+                          name="lastActivityTime" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EtlLoadId]"
                           dataType="i4"
-                          name="EtlLoadID" />
+                          name="EtlLoadId" />
                       </externalMetadataColumns>
                     </input>
                   </inputs>
@@ -1574,7 +1584,7 @@
           DTS:refId="Package\Loop Through and process Files\Insert FilesProcessed Table"
           DTS:CreationName="Microsoft.ExecuteSQLTask"
           DTS:Description="Execute SQL Task"
-          DTS:DTSID="{19E6E204-2B8F-40FF-9056-80C30A91364D}"
+          DTS:DTSID="{3FA9EE2A-A3B9-44E4-BCAE-A1DF9819C411}"
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Insert FilesProcessed Table"
@@ -1583,7 +1593,7 @@
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
-              SQLTask:Connection="{97D9DA16-8C74-420D-AAD6-A5A921A04114}"
+              SQLTask:Connection="{2CE2869C-0250-4818-9514-23F688B4018A}"
               SQLTask:SqlStatementSource="DECLARE @return INT&#xA;EXEC Logging.dbo.InsetFilesProcessed @EtlLoadId=?, @TaskDescription=?, @FileName=?, @ResulsValue=@return OUTPUT&#xA;&#xA;SELECT @return "
               SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
               <SQLTask:ResultBinding
@@ -1614,7 +1624,7 @@
           DTS:refId="Package\Loop Through and process Files\Inserte into Final table and Capture Changes"
           DTS:CreationName="Microsoft.ExecuteSQLTask"
           DTS:Description="Execute SQL Task"
-          DTS:DTSID="{AC9FE666-0F70-4410-9C15-D658C3E8F0B1}"
+          DTS:DTSID="{94AFC5F6-4997-47A6-8908-B70F85693336}"
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Inserte into Final table and Capture Changes"
@@ -1623,8 +1633,8 @@
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
-              SQLTask:Connection="{D748AAE4-4C34-487D-9E36-84050A735CEB}"
-              SQLTask:SqlStatementSource="exec HumanResources.[dbo].[usp_CaptureADPOnboardingChanges]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              SQLTask:Connection="{B5B17723-1205-40B0-A5E3-010620F8EAD5}"
+              SQLTask:SqlStatementSource="exec [usp_CaptureBreezyOfferChanges]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
               <SQLTask:ParameterBinding
                 SQLTask:ParameterName="0"
                 SQLTask:DtsVariableName="User::EtlLoadId"
@@ -1638,7 +1648,7 @@
           DTS:refId="Package\Loop Through and process Files\TRUNCATE Import TABLE"
           DTS:CreationName="Microsoft.ExecuteSQLTask"
           DTS:Description="Execute SQL Task"
-          DTS:DTSID="{08A71B64-BBDC-46DD-9385-20DE01E3FAEB}"
+          DTS:DTSID="{D67E42C6-DB65-47FC-B365-0E63B5C23678}"
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="TRUNCATE Import TABLE"
@@ -1647,15 +1657,15 @@
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
-              SQLTask:Connection="{D748AAE4-4C34-487D-9E36-84050A735CEB}"
-              SQLTask:SqlStatementSource="TRUNCATE TABLE HumanResourcesStaging.dbo.ADPOnboarding" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+              SQLTask:Connection="{ACD5C88C-32F3-48F4-AFB0-E77BB1CE36DC}"
+              SQLTask:SqlStatementSource="TRUNCATE TABLE HumanResourcesStaging.dbo.Candidates" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
           </DTS:ObjectData>
         </DTS:Executable>
         <DTS:Executable
           DTS:refId="Package\Loop Through and process Files\Update Row Count FilesProcessed Table"
           DTS:CreationName="Microsoft.ExecuteSQLTask"
           DTS:Description="Execute SQL Task"
-          DTS:DTSID="{FADB7737-7259-4045-A024-3A6941CD45E2}"
+          DTS:DTSID="{3FFDEF75-5C7B-4E39-8F04-F6B5DE5864B9}"
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Row Count FilesProcessed Table"
@@ -1664,7 +1674,7 @@
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
-              SQLTask:Connection="{97D9DA16-8C74-420D-AAD6-A5A921A04114}"
+              SQLTask:Connection="{2CE2869C-0250-4818-9514-23F688B4018A}"
               SQLTask:SqlStatementSource="EXEC Logging.dbo.UpdateFilesProcessed @EtlLoadId=?, @TaskDescription=?, @FileName=?, @RowCount=?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
               <SQLTask:ParameterBinding
                 SQLTask:ParameterName="0"
@@ -1698,7 +1708,7 @@
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Loop Through and process Files.PrecedenceConstraints[Constraint]"
           DTS:CreationName=""
-          DTS:DTSID="{A63C1E55-0CB0-4341-891A-A3D8E0B14394}"
+          DTS:DTSID="{AA2A538B-3FAE-484B-A56C-F8DBF7513FBA}"
           DTS:From="Package\Loop Through and process Files\Insert FilesProcessed Table"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint"
@@ -1706,7 +1716,7 @@
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 1]"
           DTS:CreationName=""
-          DTS:DTSID="{47F332C0-E616-4F54-A51D-55DE5F56EE18}"
+          DTS:DTSID="{38D38C2D-E076-421B-93B4-FD7D5BD08D31}"
           DTS:From="Package\Loop Through and process Files\Import File into staging table"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 1"
@@ -1714,7 +1724,7 @@
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 10]"
           DTS:CreationName=""
-          DTS:DTSID="{E64B7453-0291-49B2-8B36-085F5F24629C}"
+          DTS:DTSID="{0629FF3B-D17D-4B5E-980F-40BADD4BA1DE}"
           DTS:From="Package\Loop Through and process Files\Update Row Count FilesProcessed Table"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 10"
@@ -1722,7 +1732,7 @@
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 2]"
           DTS:CreationName=""
-          DTS:DTSID="{1338F5EF-5C37-44D6-BF50-B0ECBBE53515}"
+          DTS:DTSID="{6FECDF9C-9FA0-4FA5-9EC4-EF59047CAD0A}"
           DTS:From="Package\Loop Through and process Files\Inserte into Final table and Capture Changes"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 2"
@@ -1730,7 +1740,7 @@
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 4]"
           DTS:CreationName=""
-          DTS:DTSID="{DD870080-371E-4C6E-8CEF-873062C56F9C}"
+          DTS:DTSID="{5DEF4391-E44F-4BD5-977D-4B2DB4FE5DB1}"
           DTS:From="Package\Loop Through and process Files\TRUNCATE Import TABLE"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 4"
@@ -1739,8 +1749,8 @@
       <DTS:ForEachVariableMappings>
         <DTS:ForEachVariableMapping
           DTS:CreationName=""
-          DTS:DTSID="{B1455EDA-91AA-471E-860F-9C1CF4E95DA3}"
-          DTS:ObjectName="{B1455EDA-91AA-471E-860F-9C1CF4E95DA3}"
+          DTS:DTSID="{F0A26089-157B-4146-BEC4-16CCF671E199}"
+          DTS:ObjectName="{F0A26089-157B-4146-BEC4-16CCF671E199}"
           DTS:ValueIndex="0"
           DTS:VariableName="User::FileName" />
       </DTS:ForEachVariableMappings>
@@ -1749,7 +1759,7 @@
       DTS:refId="Package\PostExecute"
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
-      DTS:DTSID="{5A954DA3-FFAF-425F-8BEA-2433C2BB8F0E}"
+      DTS:DTSID="{51BC10A1-EEB0-4786-8182-96590E120CA8}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="PostExecute"
@@ -1760,7 +1770,7 @@
         DTS:FilterKind="0" />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{97D9DA16-8C74-420D-AAD6-A5A921A04114}"
+          SQLTask:Connection="{2CE2869C-0250-4818-9514-23F688B4018A}"
           SQLTask:SqlStatementSource="DECLARE @NextEtlLoadId varchar(20)&#xA;EXEC Logging.dbo.SSISPostExecute @EtlLoadId=?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ParameterBinding
             SQLTask:ParameterName="0"
@@ -1776,7 +1786,7 @@
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:DelayValidation="True"
       DTS:Description="Execute SQL Task"
-      DTS:DTSID="{D4235184-42DF-4513-9D57-151460DD8912}"
+      DTS:DTSID="{BAC747FC-2BB9-4CB5-8107-DCB0A89FF861}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="PreExecute"
@@ -1787,7 +1797,7 @@
         DTS:FilterKind="0" />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{97D9DA16-8C74-420D-AAD6-A5A921A04114}"
+          SQLTask:Connection="{2CE2869C-0250-4818-9514-23F688B4018A}"
           SQLTask:SqlStatementSource="DECLARE @NextEtlLoadId INT&#xA;EXEC Logging.dbo.SSISPreExecute @PackageName=?,@Servername=?,@EtlLoadId = @NextEtlLoadId"
           SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ResultBinding
@@ -1813,35 +1823,19 @@
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint]"
       DTS:CreationName=""
-      DTS:DTSID="{BBB16DA7-419A-4F96-BFD6-DFE155661DB8}"
+      DTS:DTSID="{4C16DCF5-5E67-4EFA-A439-AE861DE8A095}"
       DTS:From="Package\PreExecute"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint"
-      DTS:To="Package\Execute SQL Task" />
+      DTS:To="Package\Loop Through and process Files" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
       DTS:CreationName=""
-      DTS:DTSID="{D1DAE207-6A78-43FF-95E7-EABF89FEB082}"
+      DTS:DTSID="{AA2A6937-60E0-4A73-B46A-7D674C5AA162}"
       DTS:From="Package\Loop Through and process Files"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 1"
       DTS:To="Package\PostExecute" />
-    <DTS:PrecedenceConstraint
-      DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
-      DTS:CreationName=""
-      DTS:DTSID="{B02F4C77-5D34-4AAA-BA4F-572E5CBD5219}"
-      DTS:From="Package\Loop Through and append Date to filename"
-      DTS:LogicalAnd="True"
-      DTS:ObjectName="Constraint 2"
-      DTS:To="Package\Loop Through and process Files" />
-    <DTS:PrecedenceConstraint
-      DTS:refId="Package.PrecedenceConstraints[Constraint 3]"
-      DTS:CreationName=""
-      DTS:DTSID="{0745B885-6CF8-4CA8-A4B7-711C50DA6F70}"
-      DTS:From="Package\Execute SQL Task"
-      DTS:LogicalAnd="True"
-      DTS:ObjectName="Constraint 3"
-      DTS:To="Package\Loop Through and append Date to filename" />
   </DTS:PrecedenceConstraints>
   <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
 <!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
@@ -1854,7 +1848,7 @@
     design-time-name="Package">
     <LayoutInfo>
       <GraphLayout
-        Capacity="32" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="169,51"
           Id="Package\Loop Through and process Files\Archive File"
@@ -2019,100 +2013,29 @@
           PanelSize="467,693"
           Size="467,737"
           Id="Package\Loop Through and process Files"
-          TopLeft="39.5000000000001,863.833333333333" />
+          TopLeft="38.5000000000001,107.5" />
         <NodeLayout
           Size="141,42"
           Id="Package\PostExecute"
-          TopLeft="200.75,1652.08333333333" />
+          TopLeft="195.75,898.75" />
         <NodeLayout
           Size="157,42"
           Id="Package\PreExecute"
-          TopLeft="185.5,445.833333333333" />
-        <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 1]"
-          TopLeft="272.125,1600.83333333333">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,51.25"
-              Start="0,0"
-              End="0,43.75">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,43.75" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <NodeLayout
-          Size="163,42"
-          Id="Package\Loop Through and append Date to filename\File System Task"
-          TopLeft="149,37" />
-        <ContainerLayout
-          HeaderHeight="43.924528301886795"
-          IsExpanded="True"
-          PanelSize="467,134"
-          Size="467,178"
-          Id="Package\Loop Through and append Date to filename"
-          TopLeft="40.2777777777779,617.166666666667" />
-        <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 2]"
-          TopLeft="273.388888888889,795.166666666667">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,68.6666666666667"
-              Start="0,0"
-              End="0,61.1666666666667">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,61.1666666666667" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <NodeLayout
-          Size="170,42"
-          Id="Package\Execute SQL Task"
-          TopLeft="194,537" />
+          TopLeft="193.5,5.5" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
-          TopLeft="264,487.833333333333">
+          TopLeft="272,47.5">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="15,49.1666666666665"
+              EndConnector="0,60"
               Start="0,0"
-              End="15,41.6666666666665">
+              End="0,52.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,20.5833333333333" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,20.5833333333333"
-                    Point2="0,24.5833333333333"
-                    Point3="4,24.5833333333333" />
-                  <mssgle:LineSegment
-                    End="11,24.5833333333333" />
-                  <mssgle:CubicBezierSegment
-                    Point1="11,24.5833333333333"
-                    Point2="15,24.5833333333333"
-                    Point3="15,28.5833333333333" />
-                  <mssgle:LineSegment
-                    End="15,41.6666666666665" />
+                    End="0,52.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -2122,19 +2045,19 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 3]"
-          TopLeft="276.388888888889,579">
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="269.125,844.5">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,38.1666666666667"
+              EndConnector="0,54.25"
               Start="0,0"
-              End="0,30.6666666666667">
+              End="0,46.75">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,30.6666666666667" />
+                    End="0,46.75" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -2152,21 +2075,13 @@
       <GraphLayout
         Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="156,42"
-          Id="Package\Loop Through and process Files\Import File into staging table\Flat File Source"
-          TopLeft="14,9" />
+          Size="133,42"
+          Id="Package\Loop Through and process Files\Import File into staging table\Row Count"
+          TopLeft="27.5,107.5" />
         <NodeLayout
           Size="158,42"
           Id="Package\Loop Through and process Files\Import File into staging table\Derived Column"
           TopLeft="15,209.5" />
-        <NodeLayout
-          Size="177,42"
-          Id="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination"
-          TopLeft="26,284" />
-        <NodeLayout
-          Size="133,42"
-          Id="Package\Loop Through and process Files\Import File into staging table\Row Count"
-          TopLeft="27.5,107.5" />
         <EdgeLayout
           Id="Package\Loop Through and process Files\Import File into staging table.Paths[Row Count Output 1]"
           TopLeft="94,149.5">
@@ -2189,20 +2104,40 @@
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
+        <NodeLayout
+          Size="156,42"
+          Id="Package\Loop Through and process Files\Import File into staging table\Flat File Source"
+          TopLeft="20,21" />
+        <NodeLayout
+          Size="177,42"
+          Id="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination"
+          TopLeft="67,299" />
         <EdgeLayout
-          Id="Package\Loop Through and process Files\Import File into staging table.Paths[Flat File Source Output]"
-          TopLeft="93,51">
+          Id="Package\Loop Through and process Files\Import File into staging table.Paths[Derived Column Output]"
+          TopLeft="94,251.5">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,56.5"
+              EndConnector="61.5,47.5"
               Start="0,0"
-              End="0,49">
+              End="61.5,40">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,49" />
+                    End="0,19.75" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,19.75"
+                    Point2="0,23.75"
+                    Point3="4,23.75" />
+                  <mssgle:LineSegment
+                    End="57.5,23.75" />
+                  <mssgle:CubicBezierSegment
+                    Point1="57.5,23.75"
+                    Point2="61.5,23.75"
+                    Point3="61.5,27.75" />
+                  <mssgle:LineSegment
+                    End="61.5,40" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -2212,31 +2147,19 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Loop Through and process Files\Import File into staging table.Paths[Derived Column Output]"
-          TopLeft="94,251.5">
+          Id="Package\Loop Through and process Files\Import File into staging table.Paths[Flat File Source Output]"
+          TopLeft="96,63">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="20.5,32.5"
+              EndConnector="0,44.5"
               Start="0,0"
-              End="20.5,25">
+              End="0,37">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,12.25" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,12.25"
-                    Point2="0,16.25"
-                    Point3="4,16.25" />
-                  <mssgle:LineSegment
-                    End="16.5,16.25" />
-                  <mssgle:CubicBezierSegment
-                    Point1="16.5,16.25"
-                    Point2="20.5,16.25"
-                    Point3="20.5,20.25" />
-                  <mssgle:LineSegment
-                    End="20.5,25" />
+                    End="0,37" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
