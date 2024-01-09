@@ -13,8 +13,8 @@
   DTS:ObjectName="BreezyCandidatesImport"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="298"
-  DTS:VersionGUID="{22215EF5-0D6E-489A-B555-A3D17BF27C3F}">
+  DTS:VersionBuild="311"
+  DTS:VersionGUID="{563120BF-89A9-4ADE-B333-C32C7637E4A3}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -23,6 +23,8 @@
       DTS:CreationName="FLATFILE"
       DTS:DTSID="{2D81AF54-9A5F-4695-AEDE-0D1A93FBC837}"
       DTS:ObjectName="CandidatesFlatFile">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">@[User::FullFileName]</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:Format="Delimited"
@@ -32,7 +34,7 @@
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x0022_"
           DTS:CodePage="1252"
-          DTS:ConnectionString="D:\SSIS\Import\BreezyCandidates\ed118766-0cef-449f-9aed-12e2866997a3.csv">
+          DTS:ConnectionString="D:\SSIS\Import\BreezyCandidates\">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -41,7 +43,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="name"
-              DTS:DTSID="{EB0C12C6-F0A0-4C25-B0F9-2643920C3BB2}"
+              DTS:DTSID="{EF65FD07-2BE2-4F4F-B89D-FBA710D2F2B4}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -50,7 +52,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="score"
-              DTS:DTSID="{F4A5EC06-42C7-4D8A-BAE7-BEB68D161721}"
+              DTS:DTSID="{A4562CC3-9752-4121-AE19-3545BA08B770}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -59,7 +61,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="email_address"
-              DTS:DTSID="{74721CAD-4540-49F4-BA07-115A2DA8EF3D}"
+              DTS:DTSID="{D0F637A5-2530-4591-80F6-9390DD372818}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -68,7 +70,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="phone_number"
-              DTS:DTSID="{E0C086DC-0BBF-41B6-B758-FE07BCA27080}"
+              DTS:DTSID="{26311F4D-AD43-47B8-A2FA-6E9C48BAC9CF}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -77,7 +79,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="address"
-              DTS:DTSID="{23C9C87B-F674-4BA8-A6F4-7104DA9D906C}"
+              DTS:DTSID="{55AC11CC-8A74-4500-B1F5-D0BE218E75B4}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -86,7 +88,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="salary"
-              DTS:DTSID="{EE2CD267-237D-4156-AB01-732BE40F633D}"
+              DTS:DTSID="{FA40CCB6-CDDC-481E-B2B9-BE5084799B02}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -95,7 +97,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="tags"
-              DTS:DTSID="{53BBB482-7396-4AAA-A498-348C5E64E556}"
+              DTS:DTSID="{9D77FCED-23D3-4605-8D1B-7BFF2B51B4EA}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -104,7 +106,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="internal_id"
-              DTS:DTSID="{4CACEE85-D200-4203-81B4-FAAF7D9CDDAE}"
+              DTS:DTSID="{E9405F1C-3E1C-4009-BE90-3E5FB29BFDFC}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -113,7 +115,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="position"
-              DTS:DTSID="{22E12987-4E0F-41D7-A56E-0C53707B8953}"
+              DTS:DTSID="{AA6A8CE3-378F-448E-A75F-74ED2AC3AD0F}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -122,7 +124,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="location"
-              DTS:DTSID="{152064C8-3FFF-4FF8-813D-50A8CADD7B68}"
+              DTS:DTSID="{2A493D39-F36A-479C-A712-65E669C146BE}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -131,7 +133,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="stage"
-              DTS:DTSID="{FAEA7A03-5751-47AD-8B20-BDC2B9FA76C3}"
+              DTS:DTSID="{79143328-1CA6-4D31-9AC0-ED51FAD30675}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -140,7 +142,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="assigned_to"
-              DTS:DTSID="{ED3FE14A-81DD-43D4-A121-25C29D8EE322}"
+              DTS:DTSID="{F0D88E29-DB17-4523-B58E-2A13DF734CA9}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -149,7 +151,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="referred_by_name"
-              DTS:DTSID="{6E6FEB42-3D72-414B-B240-67AEDA22129D}"
+              DTS:DTSID="{9CAB8E05-1304-4DBA-AB8E-0952B7D15739}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -158,7 +160,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="referrer_email"
-              DTS:DTSID="{BF3BA401-0551-46DE-9FCD-222D49C1ABB3}"
+              DTS:DTSID="{D2D4662D-937A-4306-AB89-1A2B0B2CE649}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -167,7 +169,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="source"
-              DTS:DTSID="{224B8A24-9746-4B14-AFA5-36133501CA45}"
+              DTS:DTSID="{6D5C535A-2462-4FFF-98E7-67315C1A98A9}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -176,7 +178,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="sourced_by_name"
-              DTS:DTSID="{513C43EE-5523-4C15-82B4-E893069E074B}"
+              DTS:DTSID="{FE30E726-F77D-4319-9E04-707053F2079A}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -185,7 +187,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="addedDate"
-              DTS:DTSID="{F7046F30-2CB9-4C5F-86B1-1D0C19B12346}"
+              DTS:DTSID="{5643BF56-7E72-44C2-8D90-60CBCCE552B3}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -194,7 +196,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="addedTime"
-              DTS:DTSID="{153B21E0-5EBF-41D5-BAAF-E5F49F512444}"
+              DTS:DTSID="{2886C370-2D12-4BBD-84FF-AB8F14A53F89}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -203,16 +205,16 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="lastActivityDate"
-              DTS:DTSID="{27CEFF23-48BD-4DA8-8906-D45D08991F83}"
+              DTS:DTSID="{7E8429FD-45AC-41F7-8FB9-082F7A8E8B80}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
-              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:ColumnDelimiter="_x000A_"
               DTS:MaximumWidth="255"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="lastActivityTime"
-              DTS:DTSID="{2AF87987-E8EF-433E-A93B-D32C89F4129F}"
+              DTS:DTSID="{C5315E85-1F4C-4DA7-83F4-A53EE16C7BC6}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -269,7 +271,7 @@
   </DTS:ConnectionManagers>
   <DTS:Configurations>
     <DTS:Configuration
-      DTS:ConfigurationString="&quot;SQLVM.Reference&quot;;&quot;[dbo].[SSIS Configurations]&quot;;&quot;BreezyOffersImport&quot;;"
+      DTS:ConfigurationString="&quot;SQLVM.Reference&quot;;&quot;[dbo].[SSIS Configurations]&quot;;&quot;BreezyCandidatesImport&quot;;"
       DTS:ConfigurationType="7"
       DTS:CreationName=""
       DTS:DTSID="{7496CED1-AE34-4942-A7B9-67D3367CEA01}"
@@ -283,7 +285,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="BackupDir">
       <DTS:VariableValue
-        DTS:DataType="8">D:\SSIS\Import\BreezyOffers\archive\</DTS:VariableValue>
+        DTS:DataType="8">D:\SSIS\Import\BreezyCandidates\archive\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -319,7 +321,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="FileLocation">
       <DTS:VariableValue
-        DTS:DataType="8">D:\SSIS\Import\BreezyOffers\</DTS:VariableValue>
+        DTS:DataType="8">D:\SSIS\Import\BreezyCandidates\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -349,7 +351,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="FullFileName">
       <DTS:VariableValue
-        DTS:DataType="8">D:\SSIS\Import\BreezyOffers\</DTS:VariableValue>
+        DTS:DataType="8">D:\SSIS\Import\BreezyCandidates\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -358,7 +360,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="TaskDescription">
       <DTS:VariableValue
-        DTS:DataType="8">ImportBreezyOffers</DTS:VariableValue>
+        DTS:DataType="8">ImportBreezyCandidates</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -389,7 +391,7 @@
         <DTS:ObjectData>
           <ForEachFileEnumeratorProperties>
             <FEFEProperty
-              Folder="D:\SSIS\Import\BreezyOffers\" />
+              Folder="D:\SSIS\Import\BreezyCandidates\" />
             <FEFEProperty
               FileSpec="*.csv" />
             <FEFEProperty
@@ -1634,7 +1636,7 @@
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
               SQLTask:Connection="{B5B17723-1205-40B0-A5E3-010620F8EAD5}"
-              SQLTask:SqlStatementSource="exec [usp_CaptureBreezyOfferChanges]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              SQLTask:SqlStatementSource="exec [usp_CaptureBreezyCandidateChanges]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
               <SQLTask:ParameterBinding
                 SQLTask:ParameterName="0"
                 SQLTask:DtsVariableName="User::EtlLoadId"
@@ -2077,14 +2079,14 @@
         <NodeLayout
           Size="133,42"
           Id="Package\Loop Through and process Files\Import File into staging table\Row Count"
-          TopLeft="27.5,107.5" />
+          TopLeft="29.5,107.5" />
         <NodeLayout
           Size="158,42"
           Id="Package\Loop Through and process Files\Import File into staging table\Derived Column"
-          TopLeft="15,209.5" />
+          TopLeft="17,209.5" />
         <EdgeLayout
           Id="Package\Loop Through and process Files\Import File into staging table.Paths[Row Count Output 1]"
-          TopLeft="94,149.5">
+          TopLeft="96,149.5">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
@@ -2107,37 +2109,25 @@
         <NodeLayout
           Size="156,42"
           Id="Package\Loop Through and process Files\Import File into staging table\Flat File Source"
-          TopLeft="20,21" />
+          TopLeft="22,21" />
         <NodeLayout
           Size="177,42"
           Id="Package\Loop Through and process Files\Import File into staging table\OLE DB Destination"
-          TopLeft="67,299" />
+          TopLeft="0,301" />
         <EdgeLayout
           Id="Package\Loop Through and process Files\Import File into staging table.Paths[Derived Column Output]"
-          TopLeft="94,251.5">
+          TopLeft="92.25,251.5">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="61.5,47.5"
+              EndConnector="0,49.5"
               Start="0,0"
-              End="61.5,40">
+              End="0,42">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,19.75" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,19.75"
-                    Point2="0,23.75"
-                    Point3="4,23.75" />
-                  <mssgle:LineSegment
-                    End="57.5,23.75" />
-                  <mssgle:CubicBezierSegment
-                    Point1="57.5,23.75"
-                    Point2="61.5,23.75"
-                    Point3="61.5,27.75" />
-                  <mssgle:LineSegment
-                    End="61.5,40" />
+                    End="0,42" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -2148,7 +2138,7 @@
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Loop Through and process Files\Import File into staging table.Paths[Flat File Source Output]"
-          TopLeft="96,63">
+          TopLeft="98,63">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"

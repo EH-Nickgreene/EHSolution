@@ -29,8 +29,8 @@
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="0">
-          <Name>BreezyOffersImport 1.dtsx</Name>
-          <FullPath>BreezyOffersImport 1.dtsx</FullPath>
+          <Name>BreezyOffersImport.dtsx</Name>
+          <FullPath>BreezyOffersImport.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">

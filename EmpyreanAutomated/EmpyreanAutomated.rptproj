@@ -53,10 +53,13 @@
     <DataSource Include="HumanResources.rds" />
   </ItemGroup>
   <ItemGroup>
+    <Report Include="Copy of MTD Admissions by Sales Rep.rdl" />
     <Report Include="Hospice Leadership Report - Clinical.rdl" />
     <Report Include="Hospice Leadership Report - HR.rdl" />
     <Report Include="MTD Admissions by Sales Rep.rdl" />
     <Report Include="NewHiresReport.rdl" />
+    <Report Include="Nursing Productivity.rdl" />
+    <Report Include="OpsMetrics_UnverifiedVisits.rdl" />
     <Report Include="SSRSWakeUp.rdl" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Reporting Services\Microsoft.ReportingServices.MSBuilder.targets" />

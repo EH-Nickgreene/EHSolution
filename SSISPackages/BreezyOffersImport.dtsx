@@ -1,11 +1,11 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
   DTS:refId="Package"
   DTS:CreationDate="8/23/2012 2:08:19 PM"
   DTS:CreationName="Microsoft.Package"
   DTS:CreatorComputerName="NICKGW7"
   DTS:CreatorName="PPC\nickg"
-  DTS:DTSID="{00950A87-BB52-4F5A-8377-3613342200DA}"
+  DTS:DTSID="{144ABF8A-EC31-448E-98C5-3F119D3E04D6}"
   DTS:EnableConfig="True"
   DTS:ExecutableType="Microsoft.Package"
   DTS:LastModifiedProductVersion="16.0.5270.0"
@@ -13,8 +13,8 @@
   DTS:ObjectName="BreezyOffersImport"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="295"
-  DTS:VersionGUID="{9402C068-19A1-4906-B153-D11A678AFF5C}">
+  DTS:VersionBuild="296"
+  DTS:VersionGUID="{832E8726-DC4C-4D86-B5BC-24C11B040570}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -157,7 +157,7 @@
         <DTS:ConnectionManager
           DTS:ConnectRetryCount="1"
           DTS:ConnectRetryInterval="5"
-          DTS:ConnectionString="Data Source=SQLVM;Initial Catalog=HumanResources;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-BreezyOffersImport-{78EE7EB4-E917-4488-81B5-A60909FFE7C7}SQLVM.HumanResources;Auto Translate=False;" />
+          DTS:ConnectionString="Data Source=SQLVM;Initial Catalog=HumanResources;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-BreezyOffersImport-{9C436380-3C19-4169-A4E9-FA62422ED2D1}SQLVM.HumanResources;Auto Translate=False;" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager

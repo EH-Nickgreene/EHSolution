@@ -3280,7 +3280,7 @@ Conversion ABADx</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!ProableABADx.Value) * .5</Value>
+                                  <Value>=Sum(Fields!ProableABADx.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>7pt</FontSize>
@@ -3305,6 +3305,7 @@ Conversion ABADx</Value>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -14484,20 +14485,10 @@ Conversion ABADx</Value>
   <ReportParameters>
     <ReportParameter Name="StartDate">
       <DataType>DateTime</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>12/10/2023 00:00:00</Value>
-        </Values>
-      </DefaultValue>
       <Prompt>Start Date</Prompt>
     </ReportParameter>
     <ReportParameter Name="EndDate">
       <DataType>DateTime</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>12/16/2023 00:00:00</Value>
-        </Values>
-      </DefaultValue>
       <Prompt>End Date</Prompt>
     </ReportParameter>
   </ReportParameters>
