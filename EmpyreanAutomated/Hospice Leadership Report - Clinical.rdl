@@ -82,7 +82,7 @@ and Verified='Y'
 GROUP BY Branch_code
 
 
-;With NurseHeadCount as (
+IF OBJECT_ID('tempdb..#NurseHeadCount') IS NOT NULL DROP TABLE #NurseHeadCount
 SELECT  
 	CASE
 		WHEN WorkerCategoryDescription='PRN- Scheduled as Needed' THEN 'PRN'
@@ -94,6 +94,7 @@ SELECT
 		WHEN  WorkerCategoryDescription='PRN- Scheduled as Needed'  THEN 0
 		ELSE jc.productivityPoints
 	END) as productivityPoints
+INTO #NurseHeadCount
 FROM HumanResources.dbo.Employee e
 INNER JOIN HumanResources.dbo.PayrollCompany pc on pc.PayrollCompanyCode=e.PayrollCompanyCode
 LEFT JOIN HumanResources.dbo.JobCodes jc on e.jobtitleCode=jc.jobCode
@@ -109,11 +110,11 @@ GROUP BY bd.BranchCode,
 		WHEN WorkerCategoryDescription='PRN- Scheduled as Needed' THEN 'PRN'
 		ELSE WorkerCategoryDescription
 	END
-)
 
 
 
-,  Nursebaseline as (
+
+IF OBJECT_ID('tempdb..#Nursebaseline') IS NOT NULL DROP TABLE #Nursebaseline
 SELECT  
 	CASE
 		WHEN e.WorkerCategoryDescription='PRN- Scheduled as Needed' THEN 'PRN'
@@ -127,6 +128,7 @@ SELECT
 	bd.BranchCode,
 	jc.Jobcategory,
 	e.jobTitleDescription
+INTO #Nursebaseline
 FROM HumanResources.dbo.Employee e
 INNER JOIN HumanResources.dbo.PayrollCompany pc on pc.PayrollCompanyCode=e.PayrollCompanyCode
 LEFT JOIN HumanResources.dbo.JobCodes jc on e.jobtitleCode=jc.jobCode
@@ -138,23 +140,148 @@ AND e.HireDate&lt;=@edate
 AND ISNULL(e.TerminationDate,'12/31/9999')&gt;=@sdate
 and IsDeleted=0
 
-)
-
+IF OBJECT_ID('tempdb..#results') IS NOT NULL DROP TABLE #results
 SELECT 
 	--base.WorkerCategoryDescription,
 	CASE
 		WHEN base.WorkerCategoryDescription='PRN' then 300
-		WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN 200
-		ELSE 100
+		WHEN jc.jobCategory IN ('Nurse','LPN/LVN') THEN 100
+		WHEN jc.jobCategory = 'DOO' THEN 200
+		ELSE 400
+	END OrderBy,
+	CASE
+		WHEN bd.BranchCode&lt;&gt;bdc.BranchCode THEN bd.BranchName+' Staff'
+		WHEN base.WorkerCategoryDescription='PRN' then 'PRN Staff'
+		ELSE ISNULL(AgentName,base.WorkerName) 
+	END AgentName,
+	CASE
+		WHEN bd.BranchCode&lt;&gt;bdc.BranchCode THEN ''
+		WHEN base.WorkerCategoryDescription='PRN' then ''
+		ELSE base.EmployeeNumber
+	END EmployeeNumber,
+	ISNULL(bdc.Branchname,bd.Branchname) Branchname,
+	CASE
+		WHEN bd.BranchCode&lt;&gt;bdc.BranchCode THEN ''
+		WHEN base.WorkerCategoryDescription='PRN' then ''
+		ELSE base.jobTitleDescription
+	END jobTitleDescription,
+	CASE
+		WHEN bd.BranchCode&lt;&gt;bdc.BranchCode THEN ''
+		WHEN base.WorkerCategoryDescription='PRN' then ''
+		ELSE base.jobTitleCode
+	END jobTitleCode,
+	Sum(ISNULL([In Home Time],0))  [In Home Time],
+	SUM(ISNULL([Total Time],0)) [Total Time],
+	SUM(ISNULL(Mileage,0)) Mileage,
+	SUM(ISNULL([Doc Time],0)) [Doc Time], 
+	SUM(ISNULL(Points,0)) Points,
+	(SUM(ISNULL(Points,0))/@days)*7 AvgWeeklyPoints,
+	CASE
+		WHEN bd.BranchCode&lt;&gt;bdc.BranchCode THEN 0
+		WHEN base.WorkerCategoryDescription='PRN' THEN 0
+		WHEN jc.jobCategory = 'DOO' THEN 0
+		WHEN jc.jobcategory IN ('Social Worker','Chaplain') and wjt.wjt_desc LIKE '%COORDINATOR%'
+		THEN jc.ProductivityPoints /2
+		ELSE ISNULL(jc.ProductivityPoints ,0)
+	END ExpectedWeeklyPoint,
+	--CASE
+	--	WHEN bd.BranchCode&lt;&gt;bdc.BranchCode THEN 0
+	--	WHEN base.WorkerCategoryDescription='PRN' then 0
+	--	WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN 0
+	--	ELSE nhc.Nurses 
+	--END as TotalNurseHeadCount,
+	CASE
+		WHEN bd.BranchCode&lt;&gt;bdc.BranchCode THEN 0
+		WHEN base.WorkerCategoryDescription='PRN' then 0
+		WHEN jc.jobCategory = 'DOO' THEN 0
+		ELSE nhc.productivityPoints 
+	END ExpectedProductivityPoints,
+	MAX(tpp.PossibleProductivityPoints) PossibleProductivityPoints
+
+INTO #results
+
+FROM #Nursebaseline base
+LEFT JOIN HCHB_EMPYREAN.dbo.WORKERS wkr on  base.EmployeeNumber=wkr.wkr_payrollno and base.PayrollCompanyCode=wkr.wkr_payrolldept
+LEFT JOIN #Productivity p on p.wkr_id=wkr.wkr_id and PayrollBranch&lt;&gt;'COR'
+LEFT JOIN Reference.dbo.branchData bd on bd.BranchCode=base.BranchCode
+LEFT JOIN Reference.dbo.branchData bdc on bdc.BranchCode=p.Branch--Client Branch
+LEFT JOIN HCHB_EMPYREAN.dbo.WORKER_JOB_TITLES wjt on wkr.wkr_wjtid=wjt.wjt_id
+LEFT JOIN HCHB_EMPYREAN.dbo.WORKER_STATUSES ws on wkr_wsid=ws.ws_id and ws.ws_desc='Active'
+--LEFT JOIN HumanResources.dbo.Employee e on e.EmployeeNumber=wkr.wkr_payrollno and e.PayrollCompanyCode=wkr.wkr_payrolldept
+LEFT JOIN HumanResources.dbo.JobCodes jc on base.jobtitleCode=jc.jobCode
+LEFT JOIn #NurseHeadCount nhc on nhc.BranchCode=bd.BranchCode and nhc.WorkerCategoryDescription=base.WorkerCategoryDescription
+LEFT JOIN #TotalPossiblePoints tpp on tpp.Branch_Code=bd.BranchCode
+WHERE 
+base.jobCategory IN ('Nurse','LPN/LVN','DOO')
+AND base.jobTitleDescription &lt;&gt;'Registered Nurse On Call /HSP'
+GROUP BY 
+	CASE
+		WHEN base.WorkerCategoryDescription='PRN' then 300
+		WHEN jc.jobCategory IN ('Nurse','LPN/LVN') THEN 100
+		WHEN jc.jobCategory = 'DOO' THEN 200
+		ELSE 400
+	END,
+	CASE
+		WHEN bd.BranchCode&lt;&gt;bdc.BranchCode THEN bd.BranchName+' Staff'
+		WHEN base.WorkerCategoryDescription='PRN' then 'PRN Staff'
+		ELSE ISNULL(AgentName,base.WorkerName) 
+	END,
+	CASE
+		WHEN bd.BranchCode&lt;&gt;bdc.BranchCode THEN ''
+		WHEN base.WorkerCategoryDescription='PRN' then ''
+		ELSE base.EmployeeNumber
+	END,
+	ISNULL(bdc.Branchname,bd.Branchname),
+	CASE
+		WHEN bd.BranchCode&lt;&gt;bdc.BranchCode THEN ''
+		WHEN base.WorkerCategoryDescription='PRN' then ''
+		ELSE base.jobTitleDescription
+	END,
+	CASE
+		WHEN bd.BranchCode&lt;&gt;bdc.BranchCode THEN ''
+		WHEN base.WorkerCategoryDescription='PRN' then ''
+		ELSE base.jobTitleCode
+	END,
+	CASE
+		WHEN bd.BranchCode&lt;&gt;bdc.BranchCode THEN 0
+		WHEN base.WorkerCategoryDescription='PRN' THEN 0
+		WHEN jc.jobCategory = 'DOO' THEN 0
+		WHEN jc.jobcategory IN ('Social Worker','Chaplain') and wjt.wjt_desc LIKE '%COORDINATOR%'
+		THEN jc.ProductivityPoints /2
+		ELSE ISNULL(jc.ProductivityPoints ,0)
+	END ,
+	CASE
+		WHEN bd.BranchCode&lt;&gt;bdc.BranchCode THEN 0
+		WHEN base.WorkerCategoryDescription='PRN' then 0
+		WHEN jc.jobCategory = 'DOO' THEN 0
+		ELSE nhc.productivityPoints 
+	END 
+
+ORDER BY 4,1,2
+
+
+
+
+--THE BELOW QUERY IS TO CAPTUR NURSES WHO ARE ON STAFF AT A LOCATION, BUT ONLY DID VISITS AT A DIFFERENT BRANCH BECAUSE
+--THERE IS NO ACTIVITY AT THEIR LOCATION
+--IF WE DIDNT HAVE THIS, THE LOCATION WOULD NOT SHOW IN THE RESULTS
+--THIS QUERY IS DUPLICATIVE, BUT NECESSARY
+
+INSERT INTO #results
+SELECT 
+	--base.WorkerCategoryDescription,
+	CASE
+		WHEN base.WorkerCategoryDescription='PRN' then 300
+		WHEN jc.jobCategory IN ('Nurse','LPN/LVN') THEN 100
+		WHEN jc.jobCategory = 'DOO' THEN 200
+		ELSE 400
 	END OrderBy,
 	CASE
 		WHEN base.WorkerCategoryDescription='PRN' then 'PRN Staff'
-		WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN 'ED/On Call Staff'
 		ELSE ISNULL(AgentName,base.WorkerName) 
 	END AgentName,
 	CASE
 		WHEN base.WorkerCategoryDescription='PRN' then ''
-		WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN ''
 		ELSE base.EmployeeNumber
 	END EmployeeNumber,
 	bd.Branchname,
@@ -168,91 +295,96 @@ SELECT
 		WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN ''
 		ELSE base.jobTitleCode
 	END jobTitleCode,
-	Sum(ISNULL([In Home Time],0))  [In Home Time],
-	SUM(ISNULL([Total Time],0)) [Total Time],
-	SUM(ISNULL(Mileage,0)) Mileage,
-	SUM(ISNULL([Doc Time],0)) [Doc Time], 
-	SUM(ISNULL(Points,0)) Points,
-	(SUM(ISNULL(Points,0))/@days)*7 AvgWeeklyPoints,
+	0  [In Home Time],
+	0 [Total Time],
+	0 Mileage,
+	0 [Doc Time], 
+	0 Points,
+	0 AvgWeeklyPoints,
 	CASE
 		WHEN base.WorkerCategoryDescription='PRN' THEN 0
-		WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN 0
+		WHEN jc.jobCategory = 'DOO' THEN 0
 		WHEN jc.jobcategory IN ('Social Worker','Chaplain') and wjt.wjt_desc LIKE '%COORDINATOR%'
 		THEN jc.ProductivityPoints /2
 		ELSE ISNULL(jc.ProductivityPoints ,0)
 	END ExpectedWeeklyPoint,
+	--CASE
+	--	WHEN base.WorkerCategoryDescription='PRN' then 0
+	--	WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN 0
+	--	ELSE nhc.Nurses 
+	--END as TotalNurseHeadCount,
 	CASE
 		WHEN base.WorkerCategoryDescription='PRN' then 0
-		WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN 0
-		ELSE nhc.Nurses 
-	END as TotalNurseHeadCount,
-	CASE
-		WHEN base.WorkerCategoryDescription='PRN' then 0
-		WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN 0
+		WHEN jc.jobCategory = 'DOO' THEN 0
 		ELSE nhc.productivityPoints 
 	END ExpectedProductivityPoints,
 	MAX(tpp.PossibleProductivityPoints) PossibleProductivityPoints
 
 
-FROM Nursebaseline base
+FROM #Nursebaseline base
+LEFT JOIN #results r on r.EmployeeNumber=base.EmployeeNumber
 LEFT JOIN HCHB_EMPYREAN.dbo.WORKERS wkr on  base.EmployeeNumber=wkr.wkr_payrollno and base.PayrollCompanyCode=wkr.wkr_payrolldept
-LEFT JOIN #Productivity p on p.wkr_id=wkr.wkr_id and PayrollBranch&lt;&gt;'COR'
 LEFT JOIN Reference.dbo.branchData bd on bd.BranchCode=base.BranchCode
 LEFT JOIN HCHB_EMPYREAN.dbo.WORKER_JOB_TITLES wjt on wkr.wkr_wjtid=wjt.wjt_id
 LEFT JOIN HCHB_EMPYREAN.dbo.WORKER_STATUSES ws on wkr_wsid=ws.ws_id and ws.ws_desc='Active'
---LEFT JOIN HumanResources.dbo.Employee e on e.EmployeeNumber=wkr.wkr_payrollno and e.PayrollCompanyCode=wkr.wkr_payrolldept
 LEFT JOIN HumanResources.dbo.JobCodes jc on base.jobtitleCode=jc.jobCode
-LEFT JOIn NurseHeadCount nhc on nhc.BranchCode=bd.BranchCode and nhc.WorkerCategoryDescription=base.WorkerCategoryDescription
+LEFT JOIn #NurseHeadCount nhc on nhc.BranchCode=bd.BranchCode and nhc.WorkerCategoryDescription=base.WorkerCategoryDescription
 LEFT JOIN #TotalPossiblePoints tpp on tpp.Branch_Code=bd.BranchCode
 WHERE 
-base.jobCategory IN ('Nurse','LPN/LVN','DOO')
+r.EmployeeNumber IS NULL
+and 
+CASE
+	WHEN base.WorkerCategoryDescription='PRN' then 1
+	WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN 1
+	ELSE 0 
+end=0
 GROUP BY 
 	CASE
 		WHEN base.WorkerCategoryDescription='PRN' then 300
-		WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN 200
-		ELSE 100
+		WHEN jc.jobCategory IN ('Nurse','LPN/LVN') THEN 100
+		WHEN jc.jobCategory = 'DOO' THEN 200
+		ELSE 400
 	END,
 	CASE
 		WHEN base.WorkerCategoryDescription='PRN' then 'PRN Staff'
-		WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN 'ED/On Call Staff'
 		ELSE ISNULL(AgentName,base.WorkerName) 
-	END ,
+	END,
 	CASE
 		WHEN base.WorkerCategoryDescription='PRN' then ''
-		WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN ''
 		ELSE base.EmployeeNumber
-	END ,
-	bd.Branchname ,
+	END,
+	bd.Branchname,
 	CASE
 		WHEN base.WorkerCategoryDescription='PRN' then ''
 		WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN ''
 		ELSE base.jobTitleDescription
-	END ,
+	END,
 	CASE
 		WHEN base.WorkerCategoryDescription='PRN' then ''
 		WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN ''
 		ELSE base.jobTitleCode
-	END ,
-	CASE
-		WHEN base.WorkerCategoryDescription='PRN' then 0
-		WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN 0
-		ELSE nhc.Nurses 
-	END ,
-	CASE
-		WHEN base.WorkerCategoryDescription='PRN' then 0
-		WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN 0
-		ELSE nhc.productivityPoints 
 	END,
-CASE
+	CASE
 		WHEN base.WorkerCategoryDescription='PRN' THEN 0
-		WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN 0
+		WHEN jc.jobCategory = 'DOO' THEN 0
 		WHEN jc.jobcategory IN ('Social Worker','Chaplain') and wjt.wjt_desc LIKE '%COORDINATOR%'
 		THEN jc.ProductivityPoints /2
 		ELSE ISNULL(jc.ProductivityPoints ,0)
-	END
+	END ,
+	--CASE
+	--	WHEN base.WorkerCategoryDescription='PRN' then 0
+	--	WHEN jc.jobCategory = 'DOO' OR base.jobTitleDescription ='Registered Nurse On Call /HSP' THEN 0
+	--	ELSE nhc.Nurses 
+	--END ,
+	CASE
+		WHEN base.WorkerCategoryDescription='PRN' then 0
+		WHEN jc.jobCategory = 'DOO' THEN 0
+		ELSE nhc.productivityPoints 
+	END 
 
-ORDER BY 4,1,2
---ORDER BY 2
+
+SELECT * FROM #results
+
 </CommandText>
       </Query>
       <Fields>
@@ -307,10 +439,6 @@ ORDER BY 4,1,2
         <Field Name="ExpectedWeeklyPoint">
           <DataField>ExpectedWeeklyPoint</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="TotalNurseHeadCount">
-          <DataField>TotalNurseHeadCount</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="ExpectedProductivityPoints">
           <DataField>ExpectedProductivityPoints</DataField>
@@ -3155,7 +3283,7 @@ LEFT JOIN (
             </TablixRowHierarchy>
             <DataSetName>Productivity</DataSetName>
             <PageBreak>
-              <BreakLocation>End</BreakLocation>
+              <BreakLocation>StartAndEnd</BreakLocation>
             </PageBreak>
             <Top>1.95888in</Top>
             <Height>1.22917in</Height>

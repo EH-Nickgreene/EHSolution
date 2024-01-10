@@ -23,19 +23,14 @@
           <FullPath>AzureADUserImport.dtsx</FullPath>
           <References />
         </DtsPackage>
-        <DtsPackage FormatVersion="0">
+        <DtsPackage FormatVersion="8">
           <Name>BreezyCandidatesImport.dtsx</Name>
           <FullPath>BreezyCandidatesImport.dtsx</FullPath>
           <References />
         </DtsPackage>
-        <DtsPackage FormatVersion="0">
+        <DtsPackage FormatVersion="8">
           <Name>BreezyOffersImport.dtsx</Name>
           <FullPath>BreezyOffersImport.dtsx</FullPath>
-          <References />
-        </DtsPackage>
-        <DtsPackage FormatVersion="8">
-          <Name>EHLeadTrackingImport.dtsx</Name>
-          <FullPath>EHLeadTrackingImport.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">
@@ -46,6 +41,11 @@
         <DtsPackage FormatVersion="8">
           <Name>CentralReachReplicateAsync.dtsx</Name>
           <FullPath>CentralReachReplicateAsync.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="8">
+          <Name>EHLeadTrackingImport.dtsx</Name>
+          <FullPath>EHLeadTrackingImport.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">
@@ -133,7 +133,7 @@
           <FullPath>ReportSenderEHHospiceDailyReportNightly.dtsx</FullPath>
           <References />
         </DtsPackage>
-        <DtsPackage FormatVersion="0">
+        <DtsPackage FormatVersion="8">
           <Name>ReportSenderEHMTDAdmissionsBySalesRep.dtsx</Name>
           <FullPath>ReportSenderEHMTDAdmissionsBySalesRep.dtsx</FullPath>
           <References />

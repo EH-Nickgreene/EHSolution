@@ -28,8 +28,6 @@
         <CommandText>
 		IF OBJECT_ID('tempdb..#Dates') IS NOT NULL DROP TABLE #Dates
 				SELECT 
-					WeekOfYear,
-					Year,
 					MIN(Date) WeekStartDate,
 					MAX(Date) WeekEndDate,
 					MIN(CONVERT(varchar(4),Year)+' Q'+CONVERT(varchar(4),QuarterOfYear)) QuarterOfYear,
@@ -42,10 +40,10 @@
 				FROM Reference.dbo.dimdate
 				WHERE date&gt;=@startDate
 				and Date&lt;@EndDate
-				GROUP BY WeekOfYear,Year,WeekOfYearDisplay
-				ORDER BY Year,WeekOfYear
+				GROUP BY WeekOfYearDisplay
+				
 
-SELECT bdp.Branchname,COUNT(DISTINCT ClientID) UniqueLearners,WeekOfYearDisplay,SUM(DurationHours)  BillingHours
+SELECT bdp.Branchname,COUNT(DISTINCT ClientID) UniqueLearners,WeekOfYearDisplay,SUM(DurationHours)  BillingHours,d.WeekStartDate
 --SELECT COUNT(*) 
 FROM v_TimeBilling tb
 LEFT JOIN Reference.dbo.BranchData bd on bd.branchCode=tb.branchcode
@@ -54,7 +52,7 @@ LEFT JOIN #Dates d on tb.serviceDate&gt;=d.WeekStartDate and tb.serviceDate&lt;=
 WHERE serviceDate&gt;=@startDate
 and serviceDate&lt;@EndDate
 and tb.ServiceCode IN('97153','97154')
-GROUP By bdp.Branchname,WeekOfYearDisplay</CommandText>
+GROUP By bdp.Branchname,WeekOfYearDisplay,d.WeekStartDate</CommandText>
       </Query>
       <Fields>
         <Field Name="Branchname">
@@ -72,6 +70,10 @@ GROUP By bdp.Branchname,WeekOfYearDisplay</CommandText>
         <Field Name="BillingHours">
           <DataField>BillingHours</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="WeekStartDate">
+          <DataField>WeekStartDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>

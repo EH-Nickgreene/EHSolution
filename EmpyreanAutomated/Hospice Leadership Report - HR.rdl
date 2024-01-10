@@ -97,7 +97,49 @@ GROUP BY
             <Value>=Parameters!EndDate.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>
+        <CommandText>--GET HISTORICAL RECORDS FOR ANYONE WHO WAS ACTIVE DURING TIMEPERIOD
+--ROW NUMBER FUNCTION WILL REMOVE DUPLICATES
+	IF OBJECT_ID('tempdb..#EmployeeHistory') IS NOT NULL DROP TABLE #EmployeeHistory
+	SELECT 
+	ROW_NUMBER() OVER(PARTITION BY eh.EmployeeNumber,eh.PayrollCompanyCode ORDER BY eh.InsertedOn desc) rowid,
+	eh.* 
+	INTO #EmployeeHistory
+	FROM EmployeeHistory EH
+	INNER JOIN v_employee ea on eh.AssociateID=ea.AssociateID --INNER JOIN TO TABLE TO ENSUER NOT HISTORICAL RECORDS ARE PULLED FOR DELETE EMPLOYEES
+	WHERE 
+	--EffectiveFrom&lt;@EndDate and 
+	--EffectiveTo&gt;=@sdate and 
+	eh.PositionEffectiveDate&lt;=@EndDate AND 
+	eh.StatusEffectiveDate&lt;=@EndDate  
+	--employeenumber='000055' and 
+	--payrollCompanyCode='TPK'
+	ORDER BY eh.InsertedOn desc
+
+--GET ACTIVE RECORDS FOR EMPLOYEES WHOSE CURRENT RECORD WAS ACTIVE FOR TIME PERIOD
+	IF OBJECT_ID('tempdb..#EmployeeActiveRecords') IS NOT NULL DROP TABLE #EmployeeActiveRecords
+	SELECT * 
+	INTO #EmployeeActiveRecords
+	FROM v_employee
+	WHERE 
+	PositionEffectiveDate&lt;=@EndDate AND 
+	StatusEffectiveDate&lt;=@EndDate 
+
+	IF OBJECT_ID('tempdb..#final') IS NOT NULL DROP TABLE #final
+--BUILD TAB OF EMPLOYEE TABLE AS IF IT WERE LAST DAY OF MONTH
+	SELECT eh.EmployeeNumber,eh.legalLastname,eh.legalFirstname,eh.PayrollCompanyCode,eh.HomeDepartmentCode,eh.Hiredate,eh.TerminationDate,eh.WorkerCategoryDescription,eh.JobTitleCode
+	INTO #final
+	FROM #EmployeeHistory eh
+	LEFT JOIN #EmployeeActiveRecords ea on eh.AssociateID=ea.AssociateID --and eh.PayrollCompanyCode=ea.PayrollCompanyCode
+	WHERE Rowid=1
+	and ea.EmployeeNumber IS NULL
+	UNION ALL 
+	SELECT EmployeeNumber,legalLastname,legalFirstname,PayrollCompanyCode,HomeDepartmentCode,Hiredate,TerminationDate,WorkerCategoryDescription,JobTitleCode 
+	FROM v_employee
+	WHERE 
+	PositionEffectiveDate&lt;=@EndDate AND 
+	StatusEffectiveDate&lt;=@EndDate 
+
+
 
 --END OF MONTH HEAD COUNT
 SELECT	
@@ -109,7 +151,7 @@ SELECT
 	END as WorkerCategoryDescription,
 	tjc.TurnoverJobCategoryOrder jobCategoryOrder,
 	COUNT(*) HeadCount
-FROM Employee e
+FROM #final e
 LEFT JOIN JobCodes jc on e.JobTitleCode=jc.JobCode
 LEFT JOIN [dbo].[PayrollCompany] pc on pc.PayrollCompanyCode=e.PayrollCompanyCode
 LEFT JOIN TurnoverJobCategory tjc on tjc.TurnoverJobCategoryName=jc.TurnoverJobCategory
@@ -118,7 +160,7 @@ WHERE
 e.Hiredate&lt;=@EndDate
 and ISNULL(e.TerminationDate,'12/31/9999')&gt;=@EndDate
 AND pc.LOB&lt;&gt;'Highlights'
-and IsDeleted=0
+--and IsDeleted=0
 GROUP BY 
 	bd.BranchName,	
 	jc.TurnoverjobCategory,

@@ -303,6 +303,7 @@ SET @EndDate=dateadd(dd,42,@StartDate)
 				ORDER BY Year,WeekOfYear
 
 SELECT bdp.Branchname,COUNT(DISTINCT ClientID) UniqueLearners,WeekOfYearDisplay,SUM(DurationHours)  BillingHours
+,CONVERT(date,LEFT(d.WeekOfYearDisplay,10)) WeekStartDate
 --SELECT COUNT(*) 
 FROM v_TimeBilling tb
 LEFT JOIN Reference.dbo.BranchData bd on bd.branchCode=tb.branchcode
@@ -329,6 +330,10 @@ GROUP By bdp.Branchname,WeekOfYearDisplay</CommandText>
         <Field Name="BillingHours">
           <DataField>BillingHours</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="WeekStartDate">
+          <DataField>WeekStartDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -432,14 +437,12 @@ GROUP BY bdp.BranchName
 
 			IF OBJECT_ID('tempdb..#Dates') IS NOT NULL DROP TABLE #Dates
 				SELECT 
-					WeekOfYear,
-					Year,
 					MIN(Date) WeekStartDate,
 					MAX(Date) WeekEndDate,
-					MIN(CONVERT(varchar(4),Year)+' Q'+CONVERT(varchar(4),QuarterOfYear)) QuarterOfYear,
+					--MIN(CONVERT(varchar(4),Year)+' Q'+CONVERT(varchar(4),QuarterOfYear)) QuarterOfYear,
 					Dateadd(dd,1,MIN(Date)) as WeekdayStartDate,
 					Dateadd(dd,-1,MAX(Date)) as WeekDayEndDate,
-					CASE WHEN CONVERT(varchar(4),Year)+CONVERT(varchar(2),WeekOfYear)=@PriorWeekYear THEN 1 ELSE 0 END as IsPriorWeek,
+					--CASE WHEN CONVERT(varchar(4),Year)+CONVERT(varchar(2),WeekOfYear)=@PriorWeekYear THEN 1 ELSE 0 END as IsPriorWeek,
 					SUM(CASE WHEN IsEmpyreanHoliday=0 and IsWeekDay=1 THEN 1 ELSE 0 END) BusinessDays,
 					ROW_NUMBER() OVER(ORDER BY MIN(Date) desc) as WeeksBack,
 					WeekOfYearDisplay
@@ -447,8 +450,8 @@ GROUP BY bdp.BranchName
 				FROM Reference.dbo.dimdate
 				WHERE date&gt;=@startDate
 				and Date&lt;dateadd(dd,1,@EndDate)
-				GROUP BY WeekOfYear,Year,WeekOfYearDisplay
-				ORDER BY Year,WeekOfYear
+				GROUP BY WeekOfYearDisplay
+				--ORDER BY WeekOfYear
 
 				--SELECT * FROM #Dates
 
@@ -702,8 +705,8 @@ ORDER BY
 		,WeeksBack
 		,CASE WHEN WeeksBack&lt;=4 THEN 1 ELSE 0 END as Is4WeeksBack
 		,SUM(isPTO) isPTO
-		,
-		CONVERT(DECIMAL(9,2),SUM(CASE WHEN isPTO=0 THEN DurationHours ELSE 0 END)) ActualHours
+		,CONVERT(DECIMAL(9,2),SUM(CASE WHEN isPTO=0 THEN DurationHours ELSE 0 END)) ActualHours
+		,CONVERT(date,LEFT(WeekOfYear,10)) WeekStartDate
 		--CASE
 		--	WHEN ExpectedDays=0 THEN 0
 		--	ELSE CONVERT(DECIMAL(9,2),SUM(CASE WHEN isPTO=0 THEN DurationHours ELSE 0 END))
@@ -727,6 +730,7 @@ ORDER BY
 		,CASE WHEN WeeksBack&lt;=4 THEN 1 ELSE 0 END
 		,ExpectedDays
 		,CASE WHEN ExpectedDays=0 THEN 0 ELSE (ScheduledHours/5)*ExpectedDays END  
+		,CONVERT(date,LEFT(WeekOfYear,10))
 		--ORDER BY EmployeeName,WeekOfYear
 	UNION ALL
 	SELECT 
@@ -750,8 +754,8 @@ ORDER BY
 		b.WeeksBack	,
 		CASE WHEN b.WeeksBack&lt;=4 THEN 1 ELSE 0 END as Is4WeeksBack,
 		0 IsPTO,
-		b.DurationHours ActualHours
-
+		b.DurationHours ActualHours,
+		CONVERT(date,LEFT(b.WeekOfYear,10)) WeekStartDate
 	FROM #base b
 	LEFT JOIN #Final f on b.EmployeeName=f.EmployeeName and b.BranchNameGroup=f.BranchNameGroup and b.WeekOfYear=f.WeekOfYear and b.HireDate=f.HireDate
 	WHERE f.EmployeeName IS NULL
@@ -826,20 +830,26 @@ ORDER BY
           <DataField>ActualHours</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
+        <Field Name="WeekStartDate">
+          <DataField>WeekStartDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="UpNext">
       <Query>
         <DataSourceName>CentralReach</DataSourceName>
         <CommandText>
+
 IF OBJECT_ID('tempdb..#dates') IS NOT NULL DROP TABLE #dates
 SELECT DISTINCT 
-[Planned Start Week ],0 RowID
+ISNULL([Planned Start Week ],'12/31/9999') [Planned Start Week ],0 RowID
 INTO #dates
 FROM ClientMasterSheet ms
 LEFT JOIN insights.Client c on ms.ClientID=c.ClientId
 WHERE [Reason Code] IN ('Up Next')
 and [Current Service] IN ('ABA','ABA (Dx)')
+
 
 UPDATE d
 SET RowID=d1.Rowid
@@ -848,7 +858,6 @@ LEFT JOIN (
 	SELECT [Planned Start Week ],ROW_NUMBER() OVER(ORDER BY [Planned Start Week ]) Rowid
 	FROM #dates
 	) d1 on d.[Planned Start Week ]=d1.[Planned Start Week ]
-
 
 	
 SELECT 
@@ -877,7 +886,7 @@ UNION ALL
 
 
 SELECT 
-	999 ColumnOrder,
+	998 ColumnOrder,
 	ms.ServiceLocation ,
 	(SELECT CONVERT(varchar(10),MIN([Planned Start Week ]),101) FROM #dates WHERE Rowid&gt;=5)+' - '+ 
 	(SELECT CONVERT(varchar(10),MAX([Planned Start Week ]),101) FROM #dates WHERE Rowid&gt;=5),
@@ -895,15 +904,34 @@ LEFT JOIN #dates d on d.[Planned Start Week ]=ms.[Planned Start Week ]
 WHERE ms.[Reason Code] IN ('Up Next')
 and ms.[Current Service] IN ('ABA','ABA (Dx)')
 and d.Rowid&gt;=5
+GROUP BY ms.ServiceLocation 
+
+UNION ALL
+
+
+SELECT 
+	999 ColumnOrder,
+	ms.ServiceLocation ,
+	'No Start Date',
+	COUNT(*) Learners,
+	SUM(CASE
+			WHEN [Tech Assigned AM] LIKE '%need%' OR [Tech Assigned PM] LIKE '%need%' OR [Tech Assigned Other] LIKE '%need%'
+			THEN 1
+			ELSE 0
+		END) as StaffNeed
+
+--SELECT *
+FROM ClientMasterSheet ms
+LEFT JOIN insights.Client c on ms.ClientID=c.ClientId
+LEFT JOIN #dates d on d.[Planned Start Week ]=ISNULL(ms.[Planned Start Week ],'12/31/9999')
+WHERE ms.[Reason Code] IN ('Up Next')
+and ms.[Current Service] IN ('ABA','ABA (Dx)')
+and d.Rowid&gt;=5
 GROUP BY ms.ServiceLocation </CommandText>
       </Query>
       <Fields>
         <Field Name="ColumnOrder">
           <DataField>ColumnOrder</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="Learners">
-          <DataField>Learners</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="ServiceLocation">
@@ -913,6 +941,10 @@ GROUP BY ms.ServiceLocation </CommandText>
         <Field Name="Projected_Start_Week">
           <DataField>Projected Start Week</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Learners">
+          <DataField>Learners</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="StaffNeed">
           <DataField>StaffNeed</DataField>
@@ -1428,8 +1460,7 @@ ORDER BY e.TerminationDate </CommandText>
             <Value>=Parameters!StartDate.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>
-DECLARE @CurrentWeekStart date,@CurrentWeekEnd date
+        <CommandText>DECLARE @CurrentWeekStart date,@CurrentWeekEnd date
 
 SET @CurrentWeekStart =(
 			SELECT MAX(date) 
@@ -1468,6 +1499,13 @@ and (LegalFirstName+' ' + Legallastname&lt;&gt;'Rodney Pringle' OR EmployeeNumbe
 UNION 
 SELECT 'Robert Cuevas'
 
+IF OBJECT_ID('tempdb..#CR_Employee') IS NOT NULL DROP TABLE #CR_Employee
+SELECT e.*,cc.fieldvalue MetaPayrollNumber
+INTO #CR_Employee
+FROM Centralreach.insights.employee e
+LEFT JOIN [CentralReach].[insights].[ContactCustomField] cc on e.EmployeeId=cc.contactID AND Fieldname='Payroll Number'
+
+
 
 ;With CteHires as (
 SELECT 
@@ -1487,7 +1525,7 @@ COUNT(*) HIres,
 FROM v_employee e
 LEFT JOIN Reference.dbo.branchdata bd ON e.HomeDepartmentCode=bd.ADPHomeDepartmentCode
 LEFT JOIN Reference.dbo.branchdata bdp ON bd.ParentBranchCode=bdp.BranchCode
-LEFT JOIN Centralreach.insights.employee ei on e.EmployeeNumber=ei.EmployeePayrollReference
+LEFT JOIN #CR_Employee ei on e.EmployeeNumber=CASE WHEN ISNULL(ei.EmployeePayrollReference,'')='' THEN MetaPayrollNumber ELSE ei.EmployeePayrollReference END
 LEFT JOIN Centralreach.insights.ContactCustomField md on md.ContactId=ei.employeeid and md.fieldname = 'recruiter'
 WHERE e.hiredate&gt;=@CurrentWeekStart
 and e.hireDate&lt;dateadd(dd,1,@CurrentWeekEnd)
@@ -1556,7 +1594,6 @@ SELECT
 	0,
 	0
 FROm #recruiters
-
 
 </CommandText>
       </Query>
@@ -1704,7 +1741,9 @@ SELECT
 	a.* ,
 	minb2.BillingHours MinBillingHours,
 	maxb2.BillingHours MaxBillingHours,
-	(maxb2.BillingHours -minb2.BillingHours)/minb2.BillingHours PercentGrowth
+	(maxb2.BillingHours -minb2.BillingHours)/minb2.BillingHours PercentGrowth,
+	ROW_NUMBER() OVER(Partition by a.BranchName ORDER BY CONVERT(date,LEFT(a.WeekOfYearDisplay,10)) desc) WeeksBack,
+	CONVERT(date,LEFT(a.WeekOfYearDisplay,10)) WeekStartDate
 
 
 FROM #BillingHours a
@@ -1751,6 +1790,14 @@ ORDER BY a.BranchName,a.WeekOfYearDisplay</CommandText>
         <Field Name="PercentGrowth">
           <DataField>PercentGrowth</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="WeeksBack">
+          <DataField>WeeksBack</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="WeekStartDate">
+          <DataField>WeekStartDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -3305,7 +3352,6 @@ Conversion ABADx</Value>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -5066,7 +5112,7 @@ Conversion ABADx</Value>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!WeekOfYearDisplay.Value</Value>
+                      <Value>=Fields!WeekStartDate.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
@@ -6729,7 +6775,7 @@ Conversion ABADx</Value>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!WeekOfYear.Value</Value>
+                      <Value>=Fields!WeekStartDate.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                 </TablixMember>
@@ -13497,7 +13543,7 @@ Conversion ABADx</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=(SUM(Fields!MaxBillingHours.Value)-SUM(Fields!MinBillingHours.Value)) / SUM(Fields!MinBillingHours.Value)</Value>
+                                  <Value>= SUM(IIF(Fields!WeeksBack.Value=1,Fields!BillingHours.Value,CDec(0))) / AVG(Fields!BillingHours.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -13641,7 +13687,7 @@ Conversion ABADx</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=(SUM(Fields!MaxBillingHours.Value)-SUM(Fields!MinBillingHours.Value)) / SUM(Fields!MinBillingHours.Value)</Value>
+                                  <Value>= SUM(IIF(Fields!WeeksBack.Value=1,Fields!BillingHours.Value,CDec(0))) / (SUM(Fields!BillingHours.Value)/6)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -13681,7 +13727,7 @@ Conversion ABADx</Value>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!WeekOfYearDisplay.Value</Value>
+                      <Value>=Fields!WeekStartDate.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
@@ -13819,7 +13865,7 @@ Conversion ABADx</Value>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>6 Week Impact Hours Growth</Value>
+                                <Value>6 Week Impact Hour Growth</Value>
                                 <Style>
                                   <FontFamily>Arial</FontFamily>
                                   <FontSize>8pt</FontSize>
@@ -13862,7 +13908,7 @@ Conversion ABADx</Value>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=(SUM(Fields!MaxBillingHours.Value)-SUM(Fields!MinBillingHours.Value)) / SUM(Fields!MinBillingHours.Value)</Value>
+                      <Value>= SUM(IIF(Fields!WeeksBack.Value=1,Fields!BillingHours.Value,CDec(0))) / AVG(Fields!BillingHours.Value)</Value>
                       <Direction>Descending</Direction>
                     </SortExpression>
                   </SortExpressions>
@@ -14065,7 +14111,7 @@ Conversion ABADx</Value>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!WeekOfYear.Value</Value>
+                      <Value>=Fields!WeekStartDate.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <Label>=Fields!WeekOfYear.Value</Label>
