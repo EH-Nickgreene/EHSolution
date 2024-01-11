@@ -133,6 +133,11 @@
           <FullPath>ReportSenderEHHospiceDailyReportNightly.dtsx</FullPath>
           <References />
         </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>ReportSenderEHNursingProductivity.dtsx</Name>
+          <FullPath>ReportSenderEHNursingProductivity.dtsx</FullPath>
+          <References />
+        </DtsPackage>
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderEHMTDAdmissionsBySalesRep.dtsx</Name>
           <FullPath>ReportSenderEHMTDAdmissionsBySalesRep.dtsx</FullPath>

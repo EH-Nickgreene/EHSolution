@@ -24,6 +24,8 @@
         <CommandText>DECLARE @days INT
 SET @days=datediff(dd,@sdate,@edate)+1
 
+DECLARE @ProductivityPointsPerHourForPTO decimal(9,3)=.525
+
 
 
 IF OBJECT_ID('tempdb..#Productivity') IS NOT NULL DROP TABLE #Productivity
@@ -67,8 +69,95 @@ CREATE TABLE #Productivity(
 	wkr_id INT
 )
 
+
+
+IF OBJECT_ID('tempdb..#Nursebaseline') IS NOT NULL DROP TABLE #Nursebaseline
+SELECT  
+	CASE
+		WHEN e.WorkerCategoryDescription='PRN- Scheduled as Needed' THEN 'PRN'
+		ELSE e.WorkerCategoryDescription
+	END as WorkerCategoryDescription,
+	e.LegalLastName+', '+e.LegalFirstName as WorkerName,
+	e.PayrollCompanyCode,
+	e.EmployeeNumber,
+	e.JobTitleCode,
+	jc.ProductivityPoints,
+	bd.BranchCode,
+	jc.Jobcategory,
+	e.jobTitleDescription
+INTO #Nursebaseline
+FROM HumanResources.dbo.Employee e
+INNER JOIN HumanResources.dbo.PayrollCompany pc on pc.PayrollCompanyCode=e.PayrollCompanyCode
+LEFT JOIN HumanResources.dbo.JobCodes jc on e.jobtitleCode=jc.jobCode
+LEFT JOIN Reference.dbo.BranchData bd on bd.ADPHomeDepartmentCode=e.HomeDepartmentCode
+WHERE jc.jobCategory IN ('Nurse','LPN/LVN','DOO')
+and pc.lob='Empyrean'
+--AND WorkerCategoryDescription='FullTime'
+AND e.HireDate&lt;=@edate
+AND ISNULL(e.TerminationDate,'12/31/9999')&gt;=@sdate
+and IsDeleted=0
+
 INSERT INTO #Productivity
 EXEC [usp_AgentProductivityReportByWorker] @sdate,@edate
+
+
+
+
+INSERT INTO #Productivity
+SELECT 
+NULL Company
+,NULL Agency
+,NULL ServiceLine
+,wpb.PayrollBranchCode Branch
+,wpb.PayrollBranchCode PayrollBranch
+,NULL Team
+,NULL Location
+,wkr_lastname+', '+wkr_firstname AgentName
+,NULL AgentSort
+,NULL DateHired
+,NULL WorkerCategory
+,wpb.PayrollCode PayrollDepartment
+,NULL PaymentMethod
+,NonVisitTimeType Servicecode
+,ServiceDate VisitDate
+,NULL BegTime
+,NULL WeekdayVisit
+,NULL [Visit Type]
+,NULL SOCVisit
+,NULL RecertVisit
+,NULL AddOnVisit
+,NULL ResumpVisit
+,NULL FollowUpVisit
+,NULL OtherVisit
+,NULL Discipline
+,SUM(ts_nonvisitTime) [Total Time]
+,NULL [In Home Time]
+,NULL [Doc Time]
+,NULL Mileage
+,NULL [Drive Time]
+,NULL [Grand Total Time]
+,SUM(ts_nonvisitTime)*@ProductivityPointsPerHourForPTO  Points
+,NULL WeekdayPoints
+,NULL [Job Description]
+,NULL DistinctVisitDates
+,NULL DistinctWeekdayVisitDates
+,nva.wkr_id wkr_id
+
+FROM wh_nva nva
+LEFT JOIN v_WorkerPayrollBranchCode wpb on wpb.wkr_id=nva.wkr_id
+LEFT JOIN HCHB_EMPYREAN.dbo.workers wkr on wkr.wkr_id=nva.wkr_id
+WHERE NonVisitTimeType LIKE '%PTO%'
+and ServiceDate&gt;=@sdate
+and ServiceDate&lt;dateadd(dd,1,@edate)
+GROUP BY 
+wpb.PayrollBranchCode,
+wkr_lastname+', '+wkr_firstname,
+NonVisitTimeType,
+ServiceDate,
+nva.wkr_id,
+wpb.PayrollCode
+--,wkr.wkr_payrollno
+
 
 IF OBJECT_ID('tempdb..#TotalPossiblePoints') IS NOT NULL DROP TABLE #TotalPossiblePoints
 --CALC maximum points possible by branch
@@ -114,31 +203,6 @@ GROUP BY bd.BranchCode,
 
 
 
-IF OBJECT_ID('tempdb..#Nursebaseline') IS NOT NULL DROP TABLE #Nursebaseline
-SELECT  
-	CASE
-		WHEN e.WorkerCategoryDescription='PRN- Scheduled as Needed' THEN 'PRN'
-		ELSE e.WorkerCategoryDescription
-	END as WorkerCategoryDescription,
-	e.LegalLastName+', '+e.LegalFirstName as WorkerName,
-	e.PayrollCompanyCode,
-	e.EmployeeNumber,
-	e.JobTitleCode,
-	jc.ProductivityPoints,
-	bd.BranchCode,
-	jc.Jobcategory,
-	e.jobTitleDescription
-INTO #Nursebaseline
-FROM HumanResources.dbo.Employee e
-INNER JOIN HumanResources.dbo.PayrollCompany pc on pc.PayrollCompanyCode=e.PayrollCompanyCode
-LEFT JOIN HumanResources.dbo.JobCodes jc on e.jobtitleCode=jc.jobCode
-LEFT JOIN Reference.dbo.BranchData bd on bd.ADPHomeDepartmentCode=e.HomeDepartmentCode
-WHERE jc.jobCategory IN ('Nurse','LPN/LVN','DOO')
-and pc.lob='Empyrean'
---AND WorkerCategoryDescription='FullTime'
-AND e.HireDate&lt;=@edate
-AND ISNULL(e.TerminationDate,'12/31/9999')&gt;=@sdate
-and IsDeleted=0
 
 IF OBJECT_ID('tempdb..#results') IS NOT NULL DROP TABLE #results
 SELECT 
@@ -383,7 +447,8 @@ GROUP BY
 	END 
 
 
-SELECT * FROM #results</CommandText>
+SELECT * FROM #results
+</CommandText>
       </Query>
       <Fields>
         <Field Name="OrderBy">
@@ -462,10 +527,12 @@ SELECT * FROM #results</CommandText>
         <CommandText>DECLARE @days INT
 SET @days=datediff(dd,@sdate,@edate)+1
 
+DECLARE @ProductivityPointsPerHourForPTO decimal(9,3)=.525
 
 
-IF OBJECT_ID('tempdb..#Productivity1') IS NOT NULL DROP TABLE #Productivity1
-CREATE TABLE #Productivity1(
+
+IF OBJECT_ID('tempdb..#Productivity') IS NOT NULL DROP TABLE #Productivity
+CREATE TABLE #Productivity(
 	[Company] [varchar](100) NULL,
 	[Agency] [varchar](50) NULL,
 	[ServiceLine] [varchar](25) NULL,
@@ -505,10 +572,94 @@ CREATE TABLE #Productivity1(
 	wkr_id INT
 )
 
-INSERT INTO #Productivity1
+
+
+IF OBJECT_ID('tempdb..#Nursebaseline') IS NOT NULL DROP TABLE #Nursebaseline
+SELECT  
+	CASE
+		WHEN e.WorkerCategoryDescription='PRN- Scheduled as Needed' THEN 'PRN'
+		ELSE e.WorkerCategoryDescription
+	END as WorkerCategoryDescription,
+	e.LegalLastName+', '+e.LegalFirstName as WorkerName,
+	e.PayrollCompanyCode,
+	e.EmployeeNumber,
+	e.JobTitleCode,
+	jc.ProductivityPoints,
+	bd.BranchCode,
+	jc.Jobcategory,
+	e.jobTitleDescription
+INTO #Nursebaseline
+FROM HumanResources.dbo.Employee e
+INNER JOIN HumanResources.dbo.PayrollCompany pc on pc.PayrollCompanyCode=e.PayrollCompanyCode
+LEFT JOIN HumanResources.dbo.JobCodes jc on e.jobtitleCode=jc.jobCode
+LEFT JOIN Reference.dbo.BranchData bd on bd.ADPHomeDepartmentCode=e.HomeDepartmentCode
+WHERE jc.jobCategory IN ('Nurse','LPN/LVN','DOO')
+and pc.lob='Empyrean'
+--AND WorkerCategoryDescription='FullTime'
+AND e.HireDate&lt;=@edate
+AND ISNULL(e.TerminationDate,'12/31/9999')&gt;=@sdate
+and IsDeleted=0
+
+INSERT INTO #Productivity
 EXEC [usp_AgentProductivityReportByWorker] @sdate,@edate
 
-SELECT * FROM #Productivity1</CommandText>
+
+INSERT INTO #Productivity
+SELECT 
+NULL Company
+,NULL Agency
+,NULL ServiceLine
+,wpb.PayrollBranchCode Branch
+,wpb.PayrollBranchCode PayrollBranch
+,NULL Team
+,NULL Location
+,wkr_lastname+', '+wkr_firstname AgentName
+,NULL AgentSort
+,NULL DateHired
+,NULL WorkerCategory
+,wpb.PayrollCode PayrollDepartment
+,NULL PaymentMethod
+,NonVisitTimeType Servicecode
+,ServiceDate VisitDate
+,NULL BegTime
+,NULL WeekdayVisit
+,NULL [Visit Type]
+,NULL SOCVisit
+,NULL RecertVisit
+,NULL AddOnVisit
+,NULL ResumpVisit
+,NULL FollowUpVisit
+,NULL OtherVisit
+,NULL Discipline
+,SUM(ts_nonvisitTime) [Total Time]
+,NULL [In Home Time]
+,NULL [Doc Time]
+,NULL Mileage
+,NULL [Drive Time]
+,NULL [Grand Total Time]
+,SUM(ts_nonvisitTime)*@ProductivityPointsPerHourForPTO  Points
+,NULL WeekdayPoints
+,NULL [Job Description]
+,NULL DistinctVisitDates
+,NULL DistinctWeekdayVisitDates
+,nva.wkr_id wkr_id
+
+FROM wh_nva nva
+LEFT JOIN v_WorkerPayrollBranchCode wpb on wpb.wkr_id=nva.wkr_id
+LEFT JOIN HCHB_EMPYREAN.dbo.workers wkr on wkr.wkr_id=nva.wkr_id
+WHERE NonVisitTimeType LIKE '%PTO%'
+and ServiceDate&gt;=@sdate
+and ServiceDate&lt;dateadd(dd,1,@edate)
+GROUP BY 
+wpb.PayrollBranchCode,
+wkr_lastname+', '+wkr_firstname,
+NonVisitTimeType,
+ServiceDate,
+nva.wkr_id,
+wpb.PayrollCode
+--,wkr.wkr_payrollno
+
+SELECT * FROM #Productivity</CommandText>
       </Query>
       <Fields>
         <Field Name="Company">
