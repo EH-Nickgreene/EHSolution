@@ -43,7 +43,7 @@ CREATE TABLE #Productivity(
 	[WorkerCategory] [varchar](50) NULL,
 	[PayrollDepartment] [varchar](20) NULL,
 	[PaymentMethod] [varchar](50) NULL,
-	[Servicecode] [varchar](15) NULL,
+	[Servicecode] [varchar](50) NULL,
 	[VisitDate] [datetime] NULL,
 	[BegTime] [datetime] NULL,
 	[WeekdayVisit] [int] NULL,
@@ -146,7 +146,7 @@ NULL Company
 FROM wh_nva nva
 LEFT JOIN v_WorkerPayrollBranchCode wpb on wpb.wkr_id=nva.wkr_id
 LEFT JOIN HCHB_EMPYREAN.dbo.workers wkr on wkr.wkr_id=nva.wkr_id
-WHERE NonVisitTimeType LIKE '%PTO%'
+WHERE NonVisitTimeType IN ('NON-PAID TIME OFF','PTO','HOLIDAY OFF')
 and ServiceDate&gt;=@sdate
 and ServiceDate&lt;dateadd(dd,1,@edate)
 GROUP BY 
@@ -157,6 +157,7 @@ ServiceDate,
 nva.wkr_id,
 wpb.PayrollCode
 --,wkr.wkr_payrollno
+
 
 
 IF OBJECT_ID('tempdb..#TotalPossiblePoints') IS NOT NULL DROP TABLE #TotalPossiblePoints
@@ -447,8 +448,7 @@ GROUP BY
 	END 
 
 
-SELECT * FROM #results
-</CommandText>
+SELECT * FROM #results</CommandText>
       </Query>
       <Fields>
         <Field Name="OrderBy">
@@ -524,7 +524,8 @@ SELECT * FROM #results
             <Value>=Parameters!edate.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>DECLARE @days INT
+        <CommandText>
+DECLARE @days INT
 SET @days=datediff(dd,@sdate,@edate)+1
 
 DECLARE @ProductivityPointsPerHourForPTO decimal(9,3)=.525
@@ -546,7 +547,7 @@ CREATE TABLE #Productivity(
 	[WorkerCategory] [varchar](50) NULL,
 	[PayrollDepartment] [varchar](20) NULL,
 	[PaymentMethod] [varchar](50) NULL,
-	[Servicecode] [varchar](15) NULL,
+	[Servicecode] [varchar](50) NULL,
 	[VisitDate] [datetime] NULL,
 	[BegTime] [datetime] NULL,
 	[WeekdayVisit] [int] NULL,
@@ -647,7 +648,7 @@ NULL Company
 FROM wh_nva nva
 LEFT JOIN v_WorkerPayrollBranchCode wpb on wpb.wkr_id=nva.wkr_id
 LEFT JOIN HCHB_EMPYREAN.dbo.workers wkr on wkr.wkr_id=nva.wkr_id
-WHERE NonVisitTimeType LIKE '%PTO%'
+WHERE NonVisitTimeType IN ('NON-PAID TIME OFF','PTO','HOLIDAY OFF')
 and ServiceDate&gt;=@sdate
 and ServiceDate&lt;dateadd(dd,1,@edate)
 GROUP BY 
@@ -659,59 +660,40 @@ nva.wkr_id,
 wpb.PayrollCode
 --,wkr.wkr_payrollno
 
-SELECT * FROM #Productivity</CommandText>
+SELECT bdc.BranchCode ClientBranch,bd.branchCode as PayrollBranch,base.WorkerName, base.WorkerCategoryDescription,
+p.Servicecode,p.VisitDate,p.[Visit Type],p.SOCVisit,p.RecertVisit,p.AddOnVisit,p.ResumpVisit,p.FollowUpVisit,p.OtherVisit,
+p.Discipline,p.[Total Time],p.[In Home Time],p.[Doc Time],p.Mileage,p.[Drive Time],p.[Grand Total Time],p.Points,base.jobTitleDescription 
+FROM #Nursebaseline base
+LEFT JOIN HCHB_EMPYREAN.dbo.WORKERS wkr on  base.EmployeeNumber=wkr.wkr_payrollno and base.PayrollCompanyCode=wkr.wkr_payrolldept
+LEFT JOIN #Productivity p on p.wkr_id=wkr.wkr_id and PayrollBranch&lt;&gt;'COR'
+LEFT JOIN Reference.dbo.branchData bd on bd.BranchCode=base.BranchCode
+LEFT JOIN Reference.dbo.branchData bdc on bdc.BranchCode=p.Branch--Client Branch
+LEFT JOIN HCHB_EMPYREAN.dbo.WORKER_JOB_TITLES wjt on wkr.wkr_wjtid=wjt.wjt_id
+LEFT JOIN HCHB_EMPYREAN.dbo.WORKER_STATUSES ws on wkr_wsid=ws.ws_id and ws.ws_desc='Active'
+--LEFT JOIN HumanResources.dbo.Employee e on e.EmployeeNumber=wkr.wkr_payrollno and e.PayrollCompanyCode=wkr.wkr_payrolldept
+LEFT JOIN HumanResources.dbo.JobCodes jc on base.jobtitleCode=jc.jobCode
+--LEFT JOIn #NurseHeadCount nhc on nhc.BranchCode=bd.BranchCode and nhc.WorkerCategoryDescription=base.WorkerCategoryDescription
+--LEFT JOIN #TotalPossiblePoints tpp on tpp.Branch_Code=bd.BranchCode
+WHERE 
+base.jobCategory IN ('Nurse','LPN/LVN','DOO')
+AND base.jobTitleDescription &lt;&gt;'Registered Nurse On Call /HSP'
+</CommandText>
       </Query>
       <Fields>
-        <Field Name="Company">
-          <DataField>Company</DataField>
+        <Field Name="ClientBranch">
+          <DataField>ClientBranch</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Agency">
-          <DataField>Agency</DataField>
+        <Field Name="WorkerName">
+          <DataField>WorkerName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="ServiceLine">
-          <DataField>ServiceLine</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Branch">
-          <DataField>Branch</DataField>
+        <Field Name="WorkerCategoryDescription">
+          <DataField>WorkerCategoryDescription</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="PayrollBranch">
           <DataField>PayrollBranch</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Team">
-          <DataField>Team</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Location">
-          <DataField>Location</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="AgentName">
-          <DataField>AgentName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="AgentSort">
-          <DataField>AgentSort</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DateHired">
-          <DataField>DateHired</DataField>
-          <rd:TypeName>System.DateTime</rd:TypeName>
-        </Field>
-        <Field Name="WorkerCategory">
-          <DataField>WorkerCategory</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="PayrollDepartment">
-          <DataField>PayrollDepartment</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="PaymentMethod">
-          <DataField>PaymentMethod</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Servicecode">
@@ -721,14 +703,6 @@ SELECT * FROM #Productivity</CommandText>
         <Field Name="VisitDate">
           <DataField>VisitDate</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
-        </Field>
-        <Field Name="BegTime">
-          <DataField>BegTime</DataField>
-          <rd:TypeName>System.DateTime</rd:TypeName>
-        </Field>
-        <Field Name="WeekdayVisit">
-          <DataField>WeekdayVisit</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="Visit_Type">
           <DataField>Visit Type</DataField>
@@ -790,25 +764,9 @@ SELECT * FROM #Productivity</CommandText>
           <DataField>Points</DataField>
           <rd:TypeName>System.Double</rd:TypeName>
         </Field>
-        <Field Name="WeekdayPoints">
-          <DataField>WeekdayPoints</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
-        </Field>
-        <Field Name="Job_Description">
-          <DataField>Job Description</DataField>
+        <Field Name="jobTitleDescription">
+          <DataField>jobTitleDescription</DataField>
           <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DistinctVisitDates">
-          <DataField>DistinctVisitDates</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="DistinctWeekdayVisitDates">
-          <DataField>DistinctWeekdayVisitDates</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="wkr_id">
-          <DataField>wkr_id</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -1630,7 +1588,7 @@ SELECT * FROM #Productivity</CommandText>
                   <Width>1.69792in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>2in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
@@ -1685,9 +1643,6 @@ SELECT * FROM #Productivity</CommandText>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.625in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>1.33333in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1769,13 +1724,14 @@ SELECT * FROM #Productivity</CommandText>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox35">
+                        <Textbox Name="Textbox1">
+                          <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Agent Name</Value>
+                                  <Value>Worker Name</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -1789,7 +1745,45 @@ SELECT * FROM #Productivity</CommandText>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox35</rd:DefaultName>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Teal</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox5">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Job Title</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox5</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1827,43 +1821,6 @@ SELECT * FROM #Productivity</CommandText>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox37</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <BackgroundColor>Teal</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox41">
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>Payment Method</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                    <Color>White</Color>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox41</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -2505,43 +2462,6 @@ SELECT * FROM #Productivity</CommandText>
                         </Textbox>
                       </CellContents>
                     </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox54">
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>Job Description</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                    <Color>White</Color>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox54</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <BackgroundColor>Teal</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
@@ -2549,14 +2469,14 @@ SELECT * FROM #Productivity</CommandText>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Branch">
+                        <Textbox Name="ClientBranch">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Branch.Value</Value>
+                                  <Value>=Fields!ClientBranch.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                   </Style>
@@ -2565,7 +2485,7 @@ SELECT * FROM #Productivity</CommandText>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Branch</rd:DefaultName>
+                          <rd:DefaultName>ClientBranch</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -2614,14 +2534,14 @@ SELECT * FROM #Productivity</CommandText>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="AgentName">
+                        <Textbox Name="WorkerName">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!AgentName.Value</Value>
+                                  <Value>=Fields!WorkerName.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2631,7 +2551,7 @@ SELECT * FROM #Productivity</CommandText>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>AgentName</rd:DefaultName>
+                          <rd:DefaultName>WorkerName</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -2647,14 +2567,14 @@ SELECT * FROM #Productivity</CommandText>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="WorkerCategory">
+                        <Textbox Name="jobTitleDescription">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!WorkerCategory.Value</Value>
+                                  <Value>=Fields!jobTitleDescription.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2664,7 +2584,7 @@ SELECT * FROM #Productivity</CommandText>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>WorkerCategory</rd:DefaultName>
+                          <rd:DefaultName>jobTitleDescription</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -2680,14 +2600,14 @@ SELECT * FROM #Productivity</CommandText>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="PaymentMethod">
+                        <Textbox Name="WorkerCategoryDescription">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!PaymentMethod.Value</Value>
+                                  <Value>=Fields!WorkerCategoryDescription.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -2697,7 +2617,7 @@ SELECT * FROM #Productivity</CommandText>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>PaymentMethod</rd:DefaultName>
+                          <rd:DefaultName>WorkerCategoryDescription</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -3271,46 +3191,12 @@ SELECT * FROM #Productivity</CommandText>
                         </Textbox>
                       </CellContents>
                     </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Job_Description">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!Job_Description.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Job_Description</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
               </TablixRows>
             </TablixBody>
             <TablixColumnHierarchy>
               <TablixMembers>
-                <TablixMember />
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
@@ -3349,7 +3235,7 @@ SELECT * FROM #Productivity</CommandText>
             <PageName>Detail</PageName>
             <Top>1.45708in</Top>
             <Height>0.65625in</Height>
-            <Width>19.22917in</Width>
+            <Width>18.89584in</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>

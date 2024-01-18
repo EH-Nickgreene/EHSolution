@@ -13543,7 +13543,7 @@ Conversion ABADx</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>= SUM(IIF(Fields!WeeksBack.Value=1,Fields!BillingHours.Value,CDec(0))) / AVG(Fields!BillingHours.Value)</Value>
+                                  <Value>=( SUM(IIF(Fields!WeeksBack.Value=1,Fields!BillingHours.Value,CDec(0))) / AVG(Fields!BillingHours.Value))-1</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -13687,7 +13687,7 @@ Conversion ABADx</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>= SUM(IIF(Fields!WeeksBack.Value=1,Fields!BillingHours.Value,CDec(0))) / (SUM(Fields!BillingHours.Value)/6)</Value>
+                                  <Value>= (SUM(IIF(Fields!WeeksBack.Value=1,Fields!BillingHours.Value,CDec(0))) / (SUM(Fields!BillingHours.Value)/6))-1</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>

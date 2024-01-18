@@ -68,7 +68,7 @@ FROM
 	FROM reference.dbo.dimdate
 	WHERE monthint=@monthInt
 ) dd
-CROSS JOIN HCHB_EMPYREAN.dbo.ADMISSION_COORDINATORS ac
+CROSS JOIN HCHB_EMPYREAN.dbo.ADMISSION_COORDINATORS ac 
 INNER JOIN SalesTargets st on st.AdmissionCoordinatorID=ac.ac_id AND st.effectiveStartDate&lt;=getdate() and st.effectiveEndDate&gt;=getdate()
 LEFT JOIN HCHB_EMPYREAN.dbo.workers wkr on wkr.wkr_id=ac.ac_wkrid
 LEFT JOIN HCHB_EMPYREAN.dbo.worker_homeBranch whb on whb.wh_wkrid=wkr.wkr_id
@@ -80,13 +80,12 @@ LEFT JOIN (
 	LEFT JOIN HCHB_EMPYREAN.dbo.PAYROLL_GL_CODE_MAPPING_PAYROLL_BRANCHES pgcmpb ON pgcm.pgm_id=pgcmpb.pgmpb_pgmid
 	) pb on pgmpb_branchcode=whb.wh_homebranch
 LEFT JOIN HumanResources.dbo.employee e on e.Employeenumber=wkr.wkr_payrollno and e.PayrollCompanyCode=pb.pgm_payrollCode
-
+WHERE AC.ac_active='Y'
 
 SELECT 
 	*,
 	ROW_NUMBER() OVER(PARTITION BY AdmissionCoordinator ORDER BY WeekOfyearDisplay) RowID
-FROM #temp
-</CommandText>
+FROM #temp</CommandText>
       </Query>
       <Fields>
         <Field Name="WeekOfYearDisplay">
@@ -1069,7 +1068,7 @@ WHERE monthint=@monthInt</CommandText>
             <DataSetName>MTDdata</DataSetName>
             <Top>0.98833in</Top>
             <Height>0.84375in</Height>
-            <Width>5.20833in</Width>
+            <Width>5.20835in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1175,7 +1174,7 @@ WHERE monthint=@monthInt</CommandText>
         <Height>1.83208in</Height>
         <Style />
       </Body>
-      <Width>5.20833in</Width>
+      <Width>5.20835in</Width>
       <Page>
         <PageHeight>8.5in</PageHeight>
         <PageWidth>11in</PageWidth>

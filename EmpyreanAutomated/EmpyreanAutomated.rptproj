@@ -59,6 +59,11 @@
     <Report Include="MTD Admissions by Sales Rep.rdl" />
     <Report Include="NewHiresReport.rdl" />
     <Report Include="Nursing Productivity.rdl" />
+    <Report Include="OpsMetrics.rdl" />
+    <Report Include="OpsMetrics_LateVisits.rdl" />
+    <Report Include="OpsMetrics_OutstandingCoordinationNotes.rdl" />
+    <Report Include="OpsMetrics_OutstandingPatientRelatedTasks.rdl" />
+    <Report Include="OpsMetrics_Summary.rdl" />
     <Report Include="OpsMetrics_UnverifiedVisits.rdl" />
     <Report Include="SSRSWakeUp.rdl" />
   </ItemGroup>

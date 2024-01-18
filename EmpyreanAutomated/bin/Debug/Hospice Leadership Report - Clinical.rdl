@@ -43,7 +43,7 @@ CREATE TABLE #Productivity(
 	[WorkerCategory] [varchar](50) NULL,
 	[PayrollDepartment] [varchar](20) NULL,
 	[PaymentMethod] [varchar](50) NULL,
-	[Servicecode] [varchar](15) NULL,
+	[Servicecode] [varchar](50) NULL,
 	[VisitDate] [datetime] NULL,
 	[BegTime] [datetime] NULL,
 	[WeekdayVisit] [int] NULL,
@@ -146,7 +146,7 @@ NULL Company
 FROM wh_nva nva
 LEFT JOIN v_WorkerPayrollBranchCode wpb on wpb.wkr_id=nva.wkr_id
 LEFT JOIN HCHB_EMPYREAN.dbo.workers wkr on wkr.wkr_id=nva.wkr_id
-WHERE NonVisitTimeType LIKE '%PTO%'
+WHERE NonVisitTimeType IN ('NON-PAID TIME OFF','PTO','HOLIDAY OFF')
 and ServiceDate&gt;=@sdate
 and ServiceDate&lt;dateadd(dd,1,@edate)
 GROUP BY 
@@ -157,6 +157,7 @@ ServiceDate,
 nva.wkr_id,
 wpb.PayrollCode
 --,wkr.wkr_payrollno
+
 
 
 IF OBJECT_ID('tempdb..#TotalPossiblePoints') IS NOT NULL DROP TABLE #TotalPossiblePoints
@@ -447,8 +448,7 @@ GROUP BY
 	END 
 
 
-SELECT * FROM #results
-</CommandText>
+SELECT * FROM #results</CommandText>
       </Query>
       <Fields>
         <Field Name="OrderBy">
@@ -763,8 +763,7 @@ LEFT JOIN (
 	SELECT DISTINCT BranchCode
 	FROM #Nurses 
 	WHERE jobCategory='LPN/LVN'
-	) lp on lp.branchCode=adc.branch_Code
-</CommandText>
+	) lp on lp.branchCode=adc.branch_Code</CommandText>
       </Query>
       <Fields>
         <Field Name="MonthInt">
