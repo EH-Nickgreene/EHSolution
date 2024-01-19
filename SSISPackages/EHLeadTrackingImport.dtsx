@@ -13,23 +13,11 @@
   DTS:ObjectName="EHLeadTrackingImport"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="346"
-  DTS:VersionGUID="{E236BA09-4254-4B98-B0E9-3976D233A303}">
+  DTS:VersionBuild="358"
+  DTS:VersionGUID="{EA3C2FF7-55A5-464E-98B6-56FB5DFD926F}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
-    <DTS:ConnectionManager
-      DTS:refId="Package.ConnectionManagers[Excel Connection Manager]"
-      DTS:CreationName="EXCEL"
-      DTS:DTSID="{A63A21BF-0322-4F82-A4B2-D0D3867736EC}"
-      DTS:ObjectName="Excel Connection Manager">
-      <DTS:ObjectData>
-        <DTS:ConnectionManager
-          DTS:ConnectRetryCount="0"
-          DTS:ConnectRetryInterval="0"
-          DTS:ConnectionString="Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\SSIS\Import\LeadTracker\;Extended Properties=&quot;EXCEL 12.0 XML;HDR=YES&quot;;" />
-      </DTS:ObjectData>
-    </DTS:ConnectionManager>
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[Excel Connection Manager 1]"
       DTS:CreationName="EXCEL"
@@ -342,7 +330,14 @@
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
               SQLTask:Connection="{E342B3F8-1883-4797-97DD-6D9CCA2CF6D3}"
-              SQLTask:SqlStatementSource="DELETE FROM EHClinicalStaging.dbo.SalesLeadTracking&#xA;WHERE activityDate IS NULL&#xA;OR ISDATE(activityDate )=0" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+              SQLTask:SqlStatementSource="DECLARE @filename varchar(1000)&#xA;SET @filename =?--'file.csv'&#xA;&#xA;IF EXISTS(&#xA;&#x9;SELECT * FROM EHClinicalStaging.dbo.SalesLeadTracking&#xA;&#x9;WHERE activityDate IS NOT NULL&#xA;&#x9;AND ISDATE(activityDate )=0&#xA;)&#xA;BEGIN &#xA;&#x9;RAISERROR (N'Deleting records that are likely good records with a bad activityDate.  Review file &quot;%s&quot;', -- Message text.&#xA;           18, -- Severity,&#xA;           1,--stage&#xA;&#x9;&#x9;   @filename)&#xA;END&#xA;ELSE&#xA;BEGIN&#xA;&#x9;DELETE FROM EHClinicalStaging.dbo.SalesLeadTracking&#xA;&#x9;WHERE activityDate IS NULL&#xA;&#x9;OR ISDATE(activityDate )=0&#xA;END" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="User::FullFileName"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
           </DTS:ObjectData>
         </DTS:Executable>
         <DTS:Executable
@@ -592,23 +587,12 @@
                           lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F8]"
                           name="F8"
                           truncationRowDisposition="FailComponent" />
-                        <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F9]"
-                          dataType="wstr"
-                          errorOrTruncationOperation="Conversion"
-                          errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F9]"
-                          length="255"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F9]"
-                          name="F9"
-                          truncationRowDisposition="FailComponent" />
                       </outputColumns>
                       <externalMetadataColumns
                         isUsed="True">
                         <externalMetadataColumn
                           refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F1]"
-                          dataType="wstr"
-                          length="255"
+                          dataType="date"
                           name="F1" />
                         <externalMetadataColumn
                           refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F2]"
@@ -637,8 +621,7 @@
                           name="FA = Facility_PH = Physician" />
                         <externalMetadataColumn
                           refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F7]"
-                          dataType="wstr"
-                          length="255"
+                          dataType="date"
                           name="F7" />
                         <externalMetadataColumn
                           refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F8]"
@@ -647,8 +630,7 @@
                           name="F8" />
                         <externalMetadataColumn
                           refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F9]"
-                          dataType="wstr"
-                          length="255"
+                          dataType="nText"
                           name="F9" />
                       </externalMetadataColumns>
                     </output>
@@ -659,8 +641,7 @@
                       <outputColumns>
                         <outputColumn
                           refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F1]"
-                          dataType="wstr"
-                          length="255"
+                          dataType="date"
                           lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F1]"
                           name="F1" />
                         <outputColumn
@@ -695,8 +676,7 @@
                           name="FA = Facility_PH = Physician" />
                         <outputColumn
                           refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F7]"
-                          dataType="wstr"
-                          length="255"
+                          dataType="date"
                           lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F7]"
                           name="F7" />
                         <outputColumn
@@ -705,12 +685,6 @@
                           length="255"
                           lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F8]"
                           name="F8" />
-                        <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F9]"
-                          dataType="wstr"
-                          length="255"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F9]"
-                          name="F9" />
                         <outputColumn
                           refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[ErrorCode]"
                           dataType="i4"
@@ -863,13 +837,6 @@
                           externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Status]"
                           lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F8]" />
                         <inputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F9]"
-                          cachedDataType="wstr"
-                          cachedLength="255"
-                          cachedName="F9"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Notes]"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F9]" />
-                        <inputColumn
                           refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[SheetName]"
                           cachedDataType="wstr"
                           cachedLength="255"
@@ -921,8 +888,7 @@
                           name="Status" />
                         <externalMetadataColumn
                           refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Notes]"
-                          dataType="wstr"
-                          length="4000"
+                          dataType="nText"
                           name="Notes" />
                         <externalMetadataColumn
                           refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EtlLoadId]"
@@ -1520,14 +1486,14 @@
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,60.5833333333301"
+              EndConnector="0,60.58333333333"
               Start="0,0"
-              End="0,53.0833333333301">
+              End="0,53.08333333333">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,53.0833333333301" />
+                    End="0,53.08333333333" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -1561,8 +1527,8 @@
         <ContainerLayout
           HeaderHeight="43.924528301886795"
           IsExpanded="True"
-          PanelSize="478,666"
-          Size="478,710"
+          PanelSize="478,673"
+          Size="478,717"
           Id="Package\Loop Through and process Files"
           TopLeft="201.388888888889,489.238095238095" />
         <NodeLayout
@@ -1577,6 +1543,10 @@
           Size="172,42"
           Id="Package\Set Today Variable"
           TopLeft="360.055555555556,75.750000000003" />
+        <NodeLayout
+          Size="179,44"
+          Id="Package\TRUNCATE Import TABLE"
+          TopLeft="348,150" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
           TopLeft="446.76443001443,42.7575757575758">
@@ -1622,32 +1592,6 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 3]"
-          TopLeft="440.138888888889,408.91666666667">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,80.3214285714249"
-              Start="0,0"
-              End="0,72.8214285714249">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,72.8214285714249" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <NodeLayout
-          Size="179,44"
-          Id="Package\TRUNCATE Import TABLE"
-          TopLeft="348,150" />
-        <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 2]"
           TopLeft="438.694444444445,194">
           <EdgeLayout.Curve>
@@ -1661,6 +1605,28 @@
                   Capacity="5">
                   <mssgle:LineSegment
                     End="0,29.41666666667" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 3]"
+          TopLeft="440.138888888889,408.91666666667">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,80.3214285714249"
+              Start="0,0"
+              End="0,72.8214285714249">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,72.8214285714249" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
