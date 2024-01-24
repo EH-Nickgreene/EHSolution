@@ -290,7 +290,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 		SELECT 
 		ISNULL(bdp.branchCode,'EZZ'),
 		dd.weekofyearDisplay,
-		'Referrals' MetricType,
+		cmd.[Initial Service Request]+' Referrals' MetricType,
 		COUNT(*) MetricValue,
 		0 Completed,
 		0 ScheduledHours,
@@ -304,7 +304,8 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 		and dd.date&lt;=@WeekEndDate
 		GROUP BY 
 		ISNULL(bdp.branchCode,'EZZ'),
-		dd.weekofyearDisplay
+		dd.weekofyearDisplay,
+		cmd.[Initial Service Request]
 
 		UNION ALL
 
@@ -331,7 +332,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 
 		SELECT 
 			CASE
-				WHEN COALESCE(c.MetricType,st.metricType)='Referrals' THEN 1
+				WHEN COALESCE(c.MetricType,st.metricType) LIKE '%Referrals' THEN 1
 				WHEN COALESCE(c.MetricType,st.metricType)='PreScreens' THEN 2
 				WHEN COALESCE(c.MetricType,st.metricType)='Diagnosis' THEN 3
 				WHEN COALESCE(c.MetricType,st.metricType)='Assessments' THEN 4
@@ -343,7 +344,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 			COALESCE(c.Week,st.ReportingPeriod) ReportingWeek,
 			COALESCE(c.MetricType,st.metricType) MetricType,
 			CASE
-				WHEN COALESCE(c.MetricType,st.metricType)='Referrals' THEN CONVERT(varchar(10),(ISNULL(CONVERT(INT,c.MetricValue),0)))
+				WHEN COALESCE(c.MetricType,st.metricType) LIKE '%Referrals' THEN CONVERT(varchar(10),(ISNULL(CONVERT(INT,c.MetricValue),0)))
 				WHEN ISNULL(CONVERT(INT,c.MetricValue),0)&gt;ISNULL(CONVERT(INT,st.MetricValue),0)
 				THEN '(+'+CONVERT(varchar(10),(ISNULL(CONVERT(INT,c.MetricValue),0)-ISNULL(CONVERT(INT,st.MetricValue),0)))+') '+CONVERT(varchar(10),ISNULL(c.MetricValue,0)) 
 				ELSE '('+CONVERT(varchar(10),(ISNULL(CONVERT(INT,c.MetricValue),0)-ISNULL(CONVERT(INT,st.MetricValue),0)))+') '+CONVERT(varchar(10),ISNULL(c.MetricValue,0)) 
@@ -358,6 +359,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 			SELECT *
 			FROM CentralReach.dbo.StatsTracker 
 			WHERE ReportingPeriod=@WeekDisplay 
+			and MetricType&lt;&gt;'Referrals'
 			) st on 
 						c.branchCode=st.branchCode and 
 						c.Week=st.ReportingPeriod and
@@ -367,7 +369,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 		UNION ALL 
 		SELECT 
 			CASE
-				WHEN COALESCE(c.MetricType,st.metricType)='Referrals' THEN 1
+				WHEN COALESCE(c.MetricType,st.metricType) LIKE '%Referrals' THEN 1
 				WHEN COALESCE(c.MetricType,st.metricType)='PreScreens' THEN 2
 				WHEN COALESCE(c.MetricType,st.metricType)='Diagnosis' THEN 3
 				WHEN COALESCE(c.MetricType,st.metricType)='Assessments' THEN 4
@@ -379,7 +381,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 			COALESCE(c.Week,st.ReportingPeriod),
 			COALESCE(c.MetricType,st.metricType),
 			CASE
-				WHEN COALESCE(c.MetricType,st.metricType)='Referrals' THEN CONVERT(varchar(10),(SUM(ISNULL(CONVERT(INT,c.MetricValue),0))))
+				WHEN COALESCE(c.MetricType,st.metricType) LIKE '%Referrals' THEN CONVERT(varchar(10),(SUM(ISNULL(CONVERT(INT,c.MetricValue),0))))
 				WHEN SUM(ISNULL(CONVERT(INT,c.MetricValue),0))&gt;SUM(ISNULL(CONVERT(INT,st.MetricValue),0))
 				THEN '(+'+CONVERT(varchar(10),(SUM(ISNULL(CONVERT(INT,c.MetricValue),0))-SUM(ISNULL(CONVERT(INT,st.MetricValue),0))))+') '+CONVERT(varchar(10),SUM(ISNULL(CONVERT(INT,c.MetricValue),0)))
 				ELSE '('+CONVERT(varchar(10),(SUM(ISNULL(CONVERT(INT,c.MetricValue),0))-SUM(ISNULL(CONVERT(INT,st.MetricValue),0))))+') '+CONVERT(varchar(10),SUM(ISNULL(CONVERT(INT,c.MetricValue),0)))
@@ -394,6 +396,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 			SELECT *
 			FROM CentralReach.dbo.StatsTracker 
 			WHERE ReportingPeriod=@WeekDisplay 
+			and MetricType&lt;&gt;'Referrals'
 			) st on 
 						c.branchCode=st.branchCode and 
 						c.Week=st.ReportingPeriod and
@@ -402,9 +405,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 		
 		GROUP BY 
 			COALESCE(c.Week,st.ReportingPeriod),
-			COALESCE(c.MetricType,st.metricType)
-
-			</CommandText>
+			COALESCE(c.MetricType,st.metricType)</CommandText>
       </Query>
       <Fields>
         <Field Name="ColumnOrder">
@@ -1276,7 +1277,7 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>0.90625in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1767,7 +1768,7 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
             </PageBreak>
             <Top>1.78125in</Top>
             <Height>1.66667in</Height>
-            <Width>3.5in</Width>
+            <Width>3.40625in</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -4016,7 +4017,7 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
               </Filter>
             </Filters>
             <Top>0.29514in</Top>
-            <Height>1.06249in</Height>
+            <Height>1.0625in</Height>
             <Width>3.3125in</Width>
             <ZIndex>9</ZIndex>
             <Style>

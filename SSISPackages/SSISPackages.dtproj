@@ -134,6 +134,11 @@
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">
+          <Name>ReportSenderEHCensusForecast.dtsx</Name>
+          <FullPath>ReportSenderEHCensusForecast.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="8">
           <Name>ReportSenderEHHospiceDailyReport.dtsx</Name>
           <FullPath>ReportSenderEHHospiceDailyReport.dtsx</FullPath>
           <References />

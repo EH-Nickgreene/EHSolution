@@ -13,8 +13,8 @@
   DTS:ObjectName="Package1"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="84"
-  DTS:VersionGUID="{BDFAEC2A-0EE4-444F-84B7-598982043689}">
+  DTS:VersionBuild="86"
+  DTS:VersionGUID="{5A2E2292-3DF7-423D-BF67-1BDE88A91A20}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -12287,6 +12287,557 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           </DTS:ObjectData>
         </DTS:Executable>
         <DTS:Executable
+          DTS:refId="Package\Sequence Container\ProviderAvailability"
+          DTS:CreationName="Microsoft.Pipeline"
+          DTS:Description="Data Flow Task"
+          DTS:DTSID="{18427f49-5b3b-4af3-b6ef-c1fd80d5e8e8}"
+          DTS:ExecutableType="Microsoft.Pipeline"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="ProviderAvailability"
+          DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <pipeline
+              version="1">
+              <components>
+                <component
+                  refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination"
+                  componentClassID="Microsoft.OLEDBDestination"
+                  contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+                  description="OLE DB Destination"
+                  name="OLE DB Destination"
+                  usesDispositions="true"
+                  version="4">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset">[insights].[ProviderAvailability]</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the column code page to use when code page information is unavailable from the data source."
+                      name="DefaultCodePage">1252</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Forces the use of the DefaultCodePage property value when describing character data."
+                      name="AlwaysUseDefaultCodePage">false</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">3</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepIdentity">false</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepNulls">false</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                      name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS,ROWS_PER_BATCH = 2000</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                      name="FastLoadMaxInsertCommitSize">10000</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Connections[OleDbConnection]"
+                      connectionManagerID="Package.ConnectionManagers[SQLVM.CentralReachStaging]"
+                      connectionManagerRefId="Package.ConnectionManagers[SQLVM.CentralReachStaging]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <inputs>
+                    <input
+                      refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                      errorOrTruncationOperation="Insert"
+                      errorRowDisposition="FailComponent"
+                      hasSideEffects="true"
+                      name="OLE DB Destination Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[RowModifiedAt]"
+                          cachedDataType="dbTimeStamp2"
+                          cachedName="RowModifiedAt"
+                          cachedScale="6"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RowModifiedAt]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[RowModifiedAt]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ProviderAvailability]"
+                          cachedDataType="i4"
+                          cachedName="ProviderAvailability"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailability]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailability]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ProviderAvailabilityProviderId]"
+                          cachedDataType="i4"
+                          cachedName="ProviderAvailabilityProviderId"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityProviderId]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityProviderId]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ProviderAvailabilityName]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="100"
+                          cachedName="ProviderAvailabilityName"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityName]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityName]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ProviderAvailabilityStartDate]"
+                          cachedDataType="dbDate"
+                          cachedName="ProviderAvailabilityStartDate"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityStartDate]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityStartDate]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ProviderAvailabilityEndDate]"
+                          cachedDataType="dbDate"
+                          cachedName="ProviderAvailabilityEndDate"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityEndDate]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityEndDate]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ProviderAvailabilityStartTime]"
+                          cachedDataType="dbTime2"
+                          cachedName="ProviderAvailabilityStartTime"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityStartTime]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityStartTime]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ProviderAvailabilityEndTime]"
+                          cachedDataType="dbTime2"
+                          cachedName="ProviderAvailabilityEndTime"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityEndTime]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityEndTime]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ProviderAvailabilityDayOfWeek]"
+                          cachedDataType="i4"
+                          cachedName="ProviderAvailabilityDayOfWeek"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityDayOfWeek]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityDayOfWeek]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ProviderAvailabilityAddressId]"
+                          cachedDataType="i4"
+                          cachedName="ProviderAvailabilityAddressId"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityAddressId]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityAddressId]" />
+                        <inputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ProviderAvailabilityOrganizationId]"
+                          cachedDataType="i4"
+                          cachedName="ProviderAvailabilityOrganizationId"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityOrganizationId]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityOrganizationId]" />
+                      </inputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailability]"
+                          dataType="i4"
+                          name="ProviderAvailability" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityProviderId]"
+                          dataType="i4"
+                          name="ProviderAvailabilityProviderId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="100"
+                          name="ProviderAvailabilityName" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityStartDate]"
+                          dataType="dbDate"
+                          name="ProviderAvailabilityStartDate" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityEndDate]"
+                          dataType="dbDate"
+                          name="ProviderAvailabilityEndDate" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityStartTime]"
+                          dataType="dbTime2"
+                          name="ProviderAvailabilityStartTime" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityEndTime]"
+                          dataType="dbTime2"
+                          name="ProviderAvailabilityEndTime" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityDayOfWeek]"
+                          dataType="i4"
+                          name="ProviderAvailabilityDayOfWeek" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityAddressId]"
+                          dataType="i4"
+                          name="ProviderAvailabilityAddressId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ProviderAvailabilityOrganizationId]"
+                          dataType="i4"
+                          name="ProviderAvailabilityOrganizationId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[RowModifiedAt]"
+                          dataType="dbTimeStamp2"
+                          name="RowModifiedAt"
+                          scale="6" />
+                      </externalMetadataColumns>
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Outputs[OLE DB Destination Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="OLE DB Destination Error Output"
+                      synchronousInputId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Sequence Container\ProviderAvailability\OLE DB Source"
+                  componentClassID="Microsoft.OLEDBSource"
+                  contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+                  description="OLE DB Source"
+                  name="OLE DB Source"
+                  usesDispositions="true"
+                  version="7">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset"></property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">SELECT 
+	   [ProviderAvailability]
+      ,[ProviderAvailabilityProviderId]
+      ,[ProviderAvailabilityName]
+      ,[ProviderAvailabilityStartDate]
+      ,[ProviderAvailabilityEndDate]
+      ,[ProviderAvailabilityStartTime]
+      ,[ProviderAvailabilityEndTime]
+      ,[ProviderAvailabilityDayOfWeek]
+      ,[ProviderAvailabilityAddressId]
+      ,[ProviderAvailabilityOrganizationId]
+      ,[RowModifiedAt]
+  FROM [insights].[ProviderAvailability]</property>
+                    <property
+                      dataType="System.String"
+                      description="The variable that contains the SQL command to be executed."
+                      name="SqlCommandVariable"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the column code page to use when code page information is unavailable from the data source."
+                      name="DefaultCodePage">1252</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Forces the use of the DefaultCodePage property value when describing character data."
+                      name="AlwaysUseDefaultCodePage">false</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">2</property>
+                    <property
+                      dataType="System.String"
+                      description="The mappings between the parameters in the SQL command and variables."
+                      name="ParameterMapping">"Parameter0:Input",{FEF3E0F9-6C60-438A-A0E4-9CBF6561F75C};</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Connections[OleDbConnection]"
+                      connectionManagerID="Package.ConnectionManagers[insights1customers.centralreach.com.insights.org_1548170]"
+                      connectionManagerRefId="Package.ConnectionManagers[insights1customers.centralreach.com.insights.org_1548170]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <outputs>
+                    <output
+                      refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output]"
+                      name="OLE DB Source Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[RowModifiedAt]"
+                          dataType="dbTimeStamp2"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[RowModifiedAt]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[RowModifiedAt]"
+                          name="RowModifiedAt"
+                          scale="6"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailability]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailability]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailability]"
+                          name="ProviderAvailability"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityProviderId]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityProviderId]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityProviderId]"
+                          name="ProviderAvailabilityProviderId"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityName]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityName]"
+                          length="100"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityName]"
+                          name="ProviderAvailabilityName"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityStartDate]"
+                          dataType="dbDate"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityStartDate]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityStartDate]"
+                          name="ProviderAvailabilityStartDate"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityEndDate]"
+                          dataType="dbDate"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityEndDate]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityEndDate]"
+                          name="ProviderAvailabilityEndDate"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityStartTime]"
+                          dataType="dbTime2"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityStartTime]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityStartTime]"
+                          name="ProviderAvailabilityStartTime"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityEndTime]"
+                          dataType="dbTime2"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityEndTime]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityEndTime]"
+                          name="ProviderAvailabilityEndTime"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityDayOfWeek]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityDayOfWeek]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityDayOfWeek]"
+                          name="ProviderAvailabilityDayOfWeek"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityAddressId]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityAddressId]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityAddressId]"
+                          name="ProviderAvailabilityAddressId"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityOrganizationId]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityOrganizationId]"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].Columns[ProviderAvailabilityOrganizationId]"
+                          name="ProviderAvailabilityOrganizationId"
+                          truncationRowDisposition="FailComponent" />
+                      </outputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[RowModifiedAt]"
+                          dataType="dbTimeStamp2"
+                          name="RowModifiedAt"
+                          scale="6" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailability]"
+                          dataType="i4"
+                          name="ProviderAvailability" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityProviderId]"
+                          dataType="i4"
+                          name="ProviderAvailabilityProviderId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="100"
+                          name="ProviderAvailabilityName" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityStartDate]"
+                          dataType="dbDate"
+                          name="ProviderAvailabilityStartDate" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityEndDate]"
+                          dataType="dbDate"
+                          name="ProviderAvailabilityEndDate" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityStartTime]"
+                          dataType="dbTime2"
+                          name="ProviderAvailabilityStartTime" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityEndTime]"
+                          dataType="dbTime2"
+                          name="ProviderAvailabilityEndTime" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityDayOfWeek]"
+                          dataType="i4"
+                          name="ProviderAvailabilityDayOfWeek" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityAddressId]"
+                          dataType="i4"
+                          name="ProviderAvailabilityAddressId" />
+                        <externalMetadataColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[ProviderAvailabilityOrganizationId]"
+                          dataType="i4"
+                          name="ProviderAvailabilityOrganizationId" />
+                      </externalMetadataColumns>
+                    </output>
+                    <output
+                      refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output]"
+                      isErrorOut="true"
+                      name="OLE DB Source Error Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailability]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailability]"
+                          name="ProviderAvailability" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityProviderId]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityProviderId]"
+                          name="ProviderAvailabilityProviderId" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityName]"
+                          codePage="1252"
+                          dataType="str"
+                          length="100"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityName]"
+                          name="ProviderAvailabilityName" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityStartDate]"
+                          dataType="dbDate"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityStartDate]"
+                          name="ProviderAvailabilityStartDate" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityEndDate]"
+                          dataType="dbDate"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityEndDate]"
+                          name="ProviderAvailabilityEndDate" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityStartTime]"
+                          dataType="dbTime2"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityStartTime]"
+                          name="ProviderAvailabilityStartTime" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityEndTime]"
+                          dataType="dbTime2"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityEndTime]"
+                          name="ProviderAvailabilityEndTime" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityDayOfWeek]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityDayOfWeek]"
+                          name="ProviderAvailabilityDayOfWeek" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityAddressId]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityAddressId]"
+                          name="ProviderAvailabilityAddressId" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityOrganizationId]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ProviderAvailabilityOrganizationId]"
+                          name="ProviderAvailabilityOrganizationId" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[RowModifiedAt]"
+                          dataType="dbTimeStamp2"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[RowModifiedAt]"
+                          name="RowModifiedAt"
+                          scale="6" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+              </components>
+              <paths>
+                <path
+                  refId="Package\Sequence Container\ProviderAvailability.Paths[OLE DB Source Output]"
+                  endId="Package\Sequence Container\ProviderAvailability\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                  name="OLE DB Source Output"
+                  startId="Package\Sequence Container\ProviderAvailability\OLE DB Source.Outputs[OLE DB Source Output]" />
+              </paths>
+            </pipeline>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
           DTS:refId="Package\Sequence Container\Scheduling"
           DTS:CreationName="Microsoft.Pipeline"
           DTS:Description="Data Flow Task"
@@ -18453,7 +19004,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ClientAvailability"
-          DTS:ThreadHint="13">
+          DTS:ThreadHint="12">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -18469,7 +19020,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Clients Data"
-          DTS:ThreadHint="12">
+          DTS:ThreadHint="6">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -18549,7 +19100,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Employee Data"
-          DTS:ThreadHint="4">
+          DTS:ThreadHint="0">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -18565,7 +19116,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update PayorAuthorization Data"
-          DTS:ThreadHint="5">
+          DTS:ThreadHint="1">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -18581,7 +19132,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update PayorPlan Data"
-          DTS:ThreadHint="6">
+          DTS:ThreadHint="2">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -18597,12 +19148,28 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Provider Data"
-          DTS:ThreadHint="0">
+          DTS:ThreadHint="3">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
               SQLTask:Connection="{7D13508A-2F85-48EE-9F9F-95F7C59A8E33}"
               SQLTask:SqlStatementSource="EXEC usp_CR_Refresh_Provider" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\Update ProviderAvailability"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{b88b3742-c9e0-46b3-b60a-75a3128453cb}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update ProviderAvailability"
+          DTS:ThreadHint="14">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{7D13508A-2F85-48EE-9F9F-95F7C59A8E33}"
+              SQLTask:SqlStatementSource="EXEC [usp_CR_Refresh_ProviderAvailability]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
           </DTS:ObjectData>
         </DTS:Executable>
         <DTS:Executable
@@ -18613,7 +19180,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Scheduling Data"
-          DTS:ThreadHint="1">
+          DTS:ThreadHint="4">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -18629,7 +19196,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update ServiceCode Data"
-          DTS:ThreadHint="2">
+          DTS:ThreadHint="5">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -18645,7 +19212,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:ExecutableType="Microsoft.ExecuteSQLTask"
           DTS:LocaleID="-1"
           DTS:ObjectName="Update TimeBilling Data"
-          DTS:ThreadHint="3">
+          DTS:ThreadHint="13">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -18703,6 +19270,14 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 13"
           DTS:To="Package\Sequence Container\Update ClientAvailability" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Sequence Container.PrecedenceConstraints[Constraint 14]"
+          DTS:CreationName=""
+          DTS:DTSID="{3C315772-9380-4D2C-A0B0-E8DA09587164}"
+          DTS:From="Package\Sequence Container\ProviderAvailability"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 14"
+          DTS:To="Package\Sequence Container\Update ProviderAvailability" />
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Sequence Container.PrecedenceConstraints[Constraint 2]"
           DTS:CreationName=""
@@ -18782,7 +19357,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{7D13508A-2F85-48EE-9F9F-95F7C59A8E33}"
-          SQLTask:SqlStatementSource="TRUNCATE TABLE [CentralReachStaging].[insights].[Client]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Provider]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ServiceCode]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[TimeBilling]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ContactEntityLabel]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ContactLabel]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[PayorAuthorization]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Employee] &#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Scheduling]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[PayorPlan]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ClinicalGoal]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ContactCustomField]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Activity]&#xA;TRUNCATE TABLE CentralReachStaging.[insights].[ClientAvailability]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:SqlStatementSource="TRUNCATE TABLE [CentralReachStaging].[insights].[Client]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Provider]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ServiceCode]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[TimeBilling]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ContactEntityLabel]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ContactLabel]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[PayorAuthorization]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Employee] &#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Scheduling]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[PayorPlan]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ClinicalGoal]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ContactCustomField]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[Activity]&#xA;TRUNCATE TABLE CentralReachStaging.[insights].[ClientAvailability]&#xA;TRUNCATE TABLE [CentralReachStaging].[insights].[ProviderAvailability]" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
   </DTS:Executables>
@@ -18824,6 +19399,10 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           Size="114,42"
           Id="Package\Sequence Container\Activity"
           TopLeft="545,335" />
+        <NodeLayout
+          Size="160,42"
+          Id="Package\Sequence Container\ClientAvailability"
+          TopLeft="731,335" />
         <NodeLayout
           Size="113,42"
           Id="Package\Sequence Container\Clients"
@@ -18876,6 +19455,10 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           Size="152,42"
           Id="Package\Sequence Container\Update Activity"
           TopLeft="528,405" />
+        <NodeLayout
+          Size="198,42"
+          Id="Package\Sequence Container\Update ClientAvailability"
+          TopLeft="712,416" />
         <NodeLayout
           Size="177,42"
           Id="Package\Sequence Container\Update Clients Data"
@@ -19026,6 +19609,28 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
                   Capacity="5">
                   <mssgle:LineSegment
                     End="0,20.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Sequence Container.PrecedenceConstraints[Constraint 13]"
+          TopLeft="811,377">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,39"
+              Start="0,0"
+              End="0,31.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,31.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -19235,27 +19840,27 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
           </EdgeLayout.Labels>
         </EdgeLayout>
         <NodeLayout
-          Size="160,42"
-          Id="Package\Sequence Container\ClientAvailability"
-          TopLeft="731,335" />
+          Size="172,42"
+          Id="Package\Sequence Container\ProviderAvailability"
+          TopLeft="969,338" />
         <NodeLayout
-          Size="198,42"
-          Id="Package\Sequence Container\Update ClientAvailability"
-          TopLeft="712,416" />
+          Size="211,42"
+          Id="Package\Sequence Container\Update ProviderAvailability"
+          TopLeft="948,421" />
         <EdgeLayout
-          Id="Package\Sequence Container.PrecedenceConstraints[Constraint 13]"
-          TopLeft="811,377">
+          Id="Package\Sequence Container.PrecedenceConstraints[Constraint 14]"
+          TopLeft="1054.25,380">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,39"
+              EndConnector="0,41"
               Start="0,0"
-              End="0,31.5">
+              End="0,33.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,31.5" />
+                    End="0,33.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -19387,6 +19992,77 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
   </PipelineComponentMetadata>
   <PipelineComponentMetadata
     design-time-name="Package\Sequence Container\Activity\OLE DB Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\Sequence Container\ClientAvailability">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="157,42"
+          Id="Package\Sequence Container\ClientAvailability\OLE DB Source"
+          TopLeft="543,137" />
+        <NodeLayout
+          Size="177,42"
+          Id="Package\Sequence Container\ClientAvailability\OLE DB Destination"
+          TopLeft="549,259" />
+        <EdgeLayout
+          Id="Package\Sequence Container\ClientAvailability.Paths[OLE DB Source Output]"
+          TopLeft="621.5,179">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="16,80"
+              Start="0,0"
+              End="16,72.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,36" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,36"
+                    Point2="0,40"
+                    Point3="4,40" />
+                  <mssgle:LineSegment
+                    End="12,40" />
+                  <mssgle:CubicBezierSegment
+                    Point1="12,40"
+                    Point2="16,40"
+                    Point3="16,44" />
+                  <mssgle:LineSegment
+                    End="16,72.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\ClientAvailability\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sequence Container\ClientAvailability\OLE DB Source">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
@@ -20191,44 +20867,44 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
     </Properties>
   </PipelineComponentMetadata>
   <TaskHost
-    design-time-name="Package\Sequence Container\ClientAvailability">
+    design-time-name="Package\Sequence Container\ProviderAvailability">
     <LayoutInfo>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="157,42"
-          Id="Package\Sequence Container\ClientAvailability\OLE DB Source"
+          Id="Package\Sequence Container\ProviderAvailability\OLE DB Source"
           TopLeft="543,137" />
         <NodeLayout
           Size="177,42"
-          Id="Package\Sequence Container\ClientAvailability\OLE DB Destination"
-          TopLeft="549,259" />
+          Id="Package\Sequence Container\ProviderAvailability\OLE DB Destination"
+          TopLeft="548,240" />
         <EdgeLayout
-          Id="Package\Sequence Container\ClientAvailability.Paths[OLE DB Source Output]"
+          Id="Package\Sequence Container\ProviderAvailability.Paths[OLE DB Source Output]"
           TopLeft="621.5,179">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="16,80"
+              EndConnector="15,61"
               Start="0,0"
-              End="16,72.5">
+              End="15,53.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,36" />
+                    End="0,26.5" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,36"
-                    Point2="0,40"
-                    Point3="4,40" />
+                    Point1="0,26.5"
+                    Point2="0,30.5"
+                    Point3="4,30.5" />
                   <mssgle:LineSegment
-                    End="12,40" />
+                    End="11,30.5" />
                   <mssgle:CubicBezierSegment
-                    Point1="12,40"
-                    Point2="16,40"
-                    Point3="16,44" />
+                    Point1="11,30.5"
+                    Point2="15,30.5"
+                    Point3="15,34.5" />
                   <mssgle:LineSegment
-                    End="16,72.5" />
+                    End="15,53.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -20241,7 +20917,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
     </LayoutInfo>
   </TaskHost>
   <PipelineComponentMetadata
-    design-time-name="Package\Sequence Container\ClientAvailability\OLE DB Source">
+    design-time-name="Package\Sequence Container\ProviderAvailability\OLE DB Source">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
@@ -20249,7 +20925,7 @@ WHERE [RowModifiedAt]&gt;=CONVERT(date,Dateadd(dd,-?,GETDATE()))</property>
     </Properties>
   </PipelineComponentMetadata>
   <PipelineComponentMetadata
-    design-time-name="Package\Sequence Container\ClientAvailability\OLE DB Destination">
+    design-time-name="Package\Sequence Container\ProviderAvailability\OLE DB Destination">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>

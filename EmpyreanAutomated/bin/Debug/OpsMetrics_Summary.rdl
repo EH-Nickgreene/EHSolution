@@ -40,14 +40,26 @@ FROM EHClinicalStaging.dbo.Temp_SSRS_OutstandingPatientRelatedTasks
 GROUP BY branch_name
 UNION ALL 
 SELECT  
-	2 VerticalOrder,
-	'Total', 
+	1 VerticalOrder,
+	branch_name, 
 	'Outstanding Notes' MetricName,
 	CONVERT(varchar(10),COUNT(MRNum)) 
 FROM EHClinicalStaging.dbo.Temp_SSRS_CoordinationNotes
 GROUP BY branch_name
+UNION ALL 
+SELECT  
+	1 VerticalOrder,
+	branch_name, 
+	'IDG' MetricName,
+	CONVERT(varchar(10),COUNT(MRNum)) 
+FROM EHClinicalStaging.dbo.Temp_SSRS_IDGMeeting
+GROUP BY branch_name
 
 UNION ALL 
+
+--THESE ARE THE TOTALS
+--HAS TO BE CALCULATED THIS WAY SINCE SOME OF THE METRICS ARE INTEGERS AND SOME ARE PERCENTAGES
+--SSRS CANNOT AGGREGATE 1 FIELD IF IT HAS SEVERAL DATA TYPES
 SELECT  
 	2 VerticalOrder,
 	'Total',
@@ -61,6 +73,7 @@ SELECT
 	'% Late Visits' MetricName,
 	CONVERT(varchar(10),ROUND((SUM(CASE WHEN IsLate=1 THEN 1 ELSE 0 END) /CONVERT(FLOAT,COUNT(IsLate)))*100,1))+'%'
 FROM EHClinicalStaging.dbo.Temp_SSRS_VisitSyncTime
+HAVING COUNT(IsLate)&gt;0
 UNION ALL 
 SELECT   
 	2 VerticalOrder,
@@ -75,6 +88,13 @@ SELECT
 	'Outstanding Notes' MetricName,
 	CONVERT(varchar(10),COUNT(MRNum)) 
 FROM EHClinicalStaging.dbo.Temp_SSRS_CoordinationNotes
+UNION ALL 
+SELECT  
+	2 VerticalOrder,
+	'Total', 
+	'IDG' MetricName,
+	CONVERT(varchar(10),COUNT(MRNum)) 
+FROM EHClinicalStaging.dbo.Temp_SSRS_IDGMeeting
 </CommandText>
       </Query>
       <Fields>

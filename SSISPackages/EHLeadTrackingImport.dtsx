@@ -13,16 +13,30 @@
   DTS:ObjectName="EHLeadTrackingImport"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="358"
-  DTS:VersionGUID="{EA3C2FF7-55A5-464E-98B6-56FB5DFD926F}">
+  DTS:VersionBuild="366"
+  DTS:VersionGUID="{312E0E28-91ED-4215-8540-6953AAB54F68}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
     <DTS:ConnectionManager
-      DTS:refId="Package.ConnectionManagers[Excel Connection Manager 1]"
+      DTS:refId="Package.ConnectionManagers[CallTracking]"
+      DTS:CreationName="EXCEL"
+      DTS:DTSID="{B9B12FF8-27D4-457D-8AD0-7FF99794D8CC}"
+      DTS:ObjectName="CallTracking">
+      <DTS:PropertyExpression
+        DTS:Name="ExcelFilePath">@[User::FullFileName]</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="0"
+          DTS:ConnectRetryInterval="0"
+          DTS:ConnectionString="Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\SSIS\Import\LeadTracker\;Extended Properties=&quot;EXCEL 12.0 XML;HDR=YES&quot;;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[LeadTracking]"
       DTS:CreationName="EXCEL"
       DTS:DTSID="{8B744765-D969-4309-BDE2-7ED04F6DBCC3}"
-      DTS:ObjectName="Excel Connection Manager 1">
+      DTS:ObjectName="LeadTracking">
       <DTS:PropertyExpression
         DTS:Name="ExcelFilePath">@[User::FullFileName]</DTS:PropertyExpression>
       <DTS:ObjectData>
@@ -207,6 +221,30 @@
   </DTS:Variables>
   <DTS:Executables>
     <DTS:Executable
+      DTS:refId="Package\Insert Call Tracking Final table"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{2ecff3c6-d6ca-4592-9105-f787b2543026}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Insert Call Tracking Final table"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{B3830954-247A-458F-AC73-0515AF859C47}"
+          SQLTask:SqlStatementSource="EXEC usp_InsertSalesCallTracking" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="User::EtlLoadId"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="129"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
       DTS:refId="Package\Loop Through and append Date to filename"
       DTS:CreationName="STOCK:FOREACHLOOP"
       DTS:DelayValidation="True"
@@ -267,14 +305,809 @@
       </DTS:ForEachVariableMappings>
     </DTS:Executable>
     <DTS:Executable
-      DTS:refId="Package\Loop Through and process Files"
+      DTS:refId="Package\Loop Through and import Call tracking tab"
+      DTS:CreationName="STOCK:FOREACHLOOP"
+      DTS:DelayValidation="True"
+      DTS:Description="Foreach Loop Container"
+      DTS:DTSID="{61627d09-e124-44e0-9873-f239d5f61411}"
+      DTS:ExecutableType="STOCK:FOREACHLOOP"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Loop Through and import Call tracking tab">
+      <DTS:ForEachEnumerator
+        DTS:CreationName="Microsoft.ForEachFileEnumerator"
+        DTS:DTSID="{fd11dd17-423b-449e-9791-e237b53946eb}"
+        DTS:ObjectName="{6E69D015-4EA6-4DDE-A015-1B6DF53EEBEF}">
+        <DTS:PropertyExpression
+          DTS:Name="Directory">@[User::FileLocation]</DTS:PropertyExpression>
+        <DTS:ObjectData>
+          <ForEachFileEnumeratorProperties>
+            <FEFEProperty
+              Folder="D:\SSIS\Import\LeadTracker\" />
+            <FEFEProperty
+              FileSpec="*.xlsx" />
+            <FEFEProperty
+              FileNameRetrievalType="1" />
+            <FEFEProperty
+              Recurse="0" />
+          </ForEachFileEnumeratorProperties>
+        </DTS:ObjectData>
+      </DTS:ForEachEnumerator>
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Loop Through and import Call tracking tab\Archive File"
+          DTS:CreationName="Microsoft.FileSystemTask"
+          DTS:Description="File System Task"
+          DTS:DTSID="{0494a4dd-d060-4482-94de-199ef9ca6bac}"
+          DTS:ExecutableType="Microsoft.FileSystemTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Archive File"
+          DTS:TaskContact="File System Task;Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <FileSystemData
+              TaskOperationType="MoveFile"
+              TaskOverwriteDestFile="True"
+              TaskSourcePath="User::FullFileName"
+              TaskIsSourceVariable="True"
+              TaskDestinationPath="User::BackupDir"
+              TaskIsDestinationVariable="True" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Loop Through and import Call tracking tab\Delete Junk Rows from excel file"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{7655c0ba-56ab-410a-93d7-a5af714de01c}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Delete Junk Rows from excel file"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E342B3F8-1883-4797-97DD-6D9CCA2CF6D3}"
+              SQLTask:SqlStatementSource="DELETE FROM EHClinicalStaging.dbo.SalesCallTracking&#xA;WHERE location='location'" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="User::FullFileName"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Loop Through and import Call tracking tab\Import excel sheet"
+          DTS:CreationName="Microsoft.Pipeline"
+          DTS:DelayValidation="True"
+          DTS:Description="Data Flow Task"
+          DTS:DTSID="{4725a4f1-6d26-4c94-9f2d-eb7201f68720}"
+          DTS:ExecutableType="Microsoft.Pipeline"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Import excel sheet"
+          DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server v10; (C) 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <pipeline
+              BLOBTempStoragePath=""
+              bufferTempStoragePath=""
+              version="1">
+              <components>
+                <component
+                  refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column"
+                  componentClassID="Microsoft.DerivedColumn"
+                  contactInfo="Derived Column;Microsoft Corporation; Microsoft SqlServer v10; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+                  description="Updates column values using expressions"
+                  name="Derived Column"
+                  usesDispositions="true">
+                  <inputs>
+                    <input
+                      refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Inputs[Derived Column Input]"
+                      description="Input to the Derived Column Transformation"
+                      name="Derived Column Input">
+                      <externalMetadataColumns />
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Outputs[Derived Column Output]"
+                      description="Default Output of the Derived Column Transformation"
+                      exclusionGroup="1"
+                      name="Derived Column Output"
+                      synchronousInputId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Inputs[Derived Column Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[EtlLoadId]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Computation"
+                          errorRowDisposition="FailComponent"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[EtlLoadId]"
+                          name="EtlLoadId"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Expression"
+                              name="Expression">(DT_I4)@[User::EtlLoadId]</property>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Friendly Expression"
+                              expressionType="Notify"
+                              name="FriendlyExpression">(DT_I4)@[User::EtlLoadId]</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[SheetName]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Computation"
+                          errorRowDisposition="FailComponent"
+                          length="255"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[SheetName]"
+                          name="SheetName"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Expression"
+                              name="Expression">(DT_WSTR,255)@[User::FileName]</property>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Friendly Expression"
+                              expressionType="Notify"
+                              name="FriendlyExpression">(DT_WSTR,255)@[User::FileName]</property>
+                          </properties>
+                        </outputColumn>
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                    <output
+                      refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Outputs[Derived Column Error Output]"
+                      description="Error Output of the Derived Column Transformation"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="Derived Column Error Output"
+                      synchronousInputId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Inputs[Derived Column Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source"
+                  componentClassID="Microsoft.ExcelSource"
+                  contactInfo="Excel Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+                  description="Excel Source"
+                  name="Excel Source"
+                  usesDispositions="true"
+                  version="1">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset">CallTracking$</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                    <property
+                      dataType="System.String"
+                      description="The variable that contains the SQL command to be executed."
+                      name="SqlCommandVariable"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">0</property>
+                    <property
+                      dataType="System.String"
+                      description="The mapping from parameters in the SQL command to variables."
+                      name="ParameterMapping"></property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Connections[OleDbConnection]"
+                      connectionManagerID="Package.ConnectionManagers[CallTracking]"
+                      connectionManagerRefId="Package.ConnectionManagers[CallTracking]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <outputs>
+                    <output
+                      refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output]"
+                      name="Excel Source Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F1]"
+                          dataType="date"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F1]"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F1]"
+                          name="F1"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F2]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F2]"
+                          length="255"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F2]"
+                          name="F2"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[FA = Facility_PH = Physician]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[FA = Facility_PH = Physician]"
+                          length="255"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[FA = Facility_PH = Physician]"
+                          name="FA = Facility_PH = Physician"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F4]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F4]"
+                          length="255"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F4]"
+                          name="F4"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F5]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F5]"
+                          length="255"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F5]"
+                          name="F5"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[Job Role of person contacted]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[Job Role of person contacted]"
+                          length="255"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[Job Role of person contacted]"
+                          name="Job Role of person contacted"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F7]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F7]"
+                          length="255"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F7]"
+                          name="F7"
+                          truncationRowDisposition="FailComponent" />
+                      </outputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F1]"
+                          dataType="date"
+                          name="F1" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F2]"
+                          dataType="wstr"
+                          length="255"
+                          name="F2" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[FA = Facility_PH = Physician]"
+                          dataType="wstr"
+                          length="255"
+                          name="FA = Facility_PH = Physician" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F4]"
+                          dataType="wstr"
+                          length="255"
+                          name="F4" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F5]"
+                          dataType="wstr"
+                          length="255"
+                          name="F5" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[Job Role of person contacted]"
+                          dataType="wstr"
+                          length="255"
+                          name="Job Role of person contacted" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F7]"
+                          dataType="wstr"
+                          length="255"
+                          name="F7" />
+                      </externalMetadataColumns>
+                    </output>
+                    <output
+                      refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output]"
+                      isErrorOut="true"
+                      name="Excel Source Error Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F1]"
+                          dataType="date"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F1]"
+                          name="F1" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F2]"
+                          dataType="wstr"
+                          length="255"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F2]"
+                          name="F2" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[FA = Facility_PH = Physician]"
+                          dataType="wstr"
+                          length="255"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[FA = Facility_PH = Physician]"
+                          name="FA = Facility_PH = Physician" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F4]"
+                          dataType="wstr"
+                          length="255"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F4]"
+                          name="F4" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F5]"
+                          dataType="wstr"
+                          length="255"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F5]"
+                          name="F5" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[Job Role of person contacted]"
+                          dataType="wstr"
+                          length="255"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[Job Role of person contacted]"
+                          name="Job Role of person contacted" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F7]"
+                          dataType="wstr"
+                          length="255"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F7]"
+                          name="F7" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination"
+                  componentClassID="Microsoft.OLEDBDestination"
+                  contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+                  description="OLE DB Destination"
+                  name="OLE DB Destination"
+                  usesDispositions="true"
+                  version="4">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset">[dbo].[SalesCallTracking]</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the column code page to use when code page information is unavailable from the data source."
+                      name="DefaultCodePage">1252</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Forces the use of the DefaultCodePage property value when describing character data."
+                      name="AlwaysUseDefaultCodePage">false</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">3</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepIdentity">false</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepNulls">false</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                      name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS,ROWS_PER_BATCH = 2000</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                      name="FastLoadMaxInsertCommitSize">10000</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Connections[OleDbConnection]"
+                      connectionManagerID="Package.ConnectionManagers[SQLVM.EHClinicalStaging]"
+                      connectionManagerRefId="Package.ConnectionManagers[SQLVM.EHClinicalStaging]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <inputs>
+                    <input
+                      refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                      errorOrTruncationOperation="Insert"
+                      errorRowDisposition="FailComponent"
+                      hasSideEffects="true"
+                      name="OLE DB Destination Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[EtlLoadId]"
+                          cachedDataType="i4"
+                          cachedName="EtlLoadId"
+                          externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EtlLoadId]"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[EtlLoadId]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F1]"
+                          cachedDataType="date"
+                          cachedName="F1"
+                          externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityDate]"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F1]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F2]"
+                          cachedDataType="wstr"
+                          cachedLength="255"
+                          cachedName="F2"
+                          externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Location]"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F2]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[FA = Facility_PH = Physician]"
+                          cachedDataType="wstr"
+                          cachedLength="255"
+                          cachedName="FA = Facility_PH = Physician"
+                          externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ReferralSource]"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[FA = Facility_PH = Physician]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F4]"
+                          cachedDataType="wstr"
+                          cachedLength="255"
+                          cachedName="F4"
+                          externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ContactType]"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F4]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F5]"
+                          cachedDataType="wstr"
+                          cachedLength="255"
+                          cachedName="F5"
+                          externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ContactName]"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F5]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Job Role of person contacted]"
+                          cachedDataType="wstr"
+                          cachedLength="255"
+                          cachedName="Job Role of person contacted"
+                          externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ContactRole]"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[Job Role of person contacted]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F7]"
+                          cachedDataType="wstr"
+                          cachedLength="255"
+                          cachedName="F7"
+                          externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Notes]"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F7]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[SheetName]"
+                          cachedDataType="wstr"
+                          cachedLength="255"
+                          cachedName="SheetName"
+                          externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[SheetName]"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[SheetName]" />
+                      </inputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityDate]"
+                          dataType="wstr"
+                          length="255"
+                          name="ActivityDate" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Location]"
+                          dataType="wstr"
+                          length="255"
+                          name="Location" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ReferralSource]"
+                          dataType="wstr"
+                          length="255"
+                          name="ReferralSource" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ContactType]"
+                          dataType="wstr"
+                          length="255"
+                          name="ContactType" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ContactName]"
+                          dataType="wstr"
+                          length="255"
+                          name="ContactName" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ContactRole]"
+                          dataType="wstr"
+                          length="255"
+                          name="ContactRole" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Notes]"
+                          dataType="nText"
+                          name="Notes" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EtlLoadId]"
+                          dataType="i4"
+                          name="EtlLoadId" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[SheetName]"
+                          dataType="wstr"
+                          length="255"
+                          name="SheetName" />
+                      </externalMetadataColumns>
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Outputs[OLE DB Destination Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="OLE DB Destination Error Output"
+                      synchronousInputId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Row Count"
+                  componentClassID="Microsoft.RowCount"
+                  contactInfo="Row Count;Microsoft Corporation; Microsoft SqlServer v10; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+                  description="Counts the rows in a dataset."
+                  localeId="1033"
+                  name="Row Count">
+                  <properties>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable to hold the row count."
+                      name="VariableName">User::FileProcessedRowCount</property>
+                  </properties>
+                  <inputs>
+                    <input
+                      refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Row Count.Inputs[Row Count Input 1]"
+                      hasSideEffects="true"
+                      name="Row Count Input 1">
+                      <externalMetadataColumns />
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Row Count.Outputs[Row Count Output 1]"
+                      name="Row Count Output 1"
+                      synchronousInputId="Package\Loop Through and import Call tracking tab\Import excel sheet\Row Count.Inputs[Row Count Input 1]">
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+              </components>
+              <paths>
+                <path
+                  refId="Package\Loop Through and import Call tracking tab\Import excel sheet.Paths[Derived Column Output]"
+                  endId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                  name="Derived Column Output"
+                  startId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Outputs[Derived Column Output]" />
+                <path
+                  refId="Package\Loop Through and import Call tracking tab\Import excel sheet.Paths[Excel Source Output]"
+                  endId="Package\Loop Through and import Call tracking tab\Import excel sheet\Row Count.Inputs[Row Count Input 1]"
+                  name="Excel Source Output"
+                  startId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output]" />
+                <path
+                  refId="Package\Loop Through and import Call tracking tab\Import excel sheet.Paths[Row Count Output 1]"
+                  endId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Inputs[Derived Column Input]"
+                  name="Row Count Output 1"
+                  startId="Package\Loop Through and import Call tracking tab\Import excel sheet\Row Count.Outputs[Row Count Output 1]" />
+              </paths>
+            </pipeline>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Loop Through and import Call tracking tab\Insert FilesProcessed Table"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{0febc7de-e281-4368-8a86-fefee177e66d}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Insert FilesProcessed Table"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{80834618-47A0-4AF0-AB32-23B31714FAAC}"
+              SQLTask:SqlStatementSource="DECLARE @return INT&#xA;EXEC Logging.dbo.InsetFilesProcessed @EtlLoadId=?, @TaskDescription=?, @FileName=?, @ResulsValue=@return OUTPUT&#xA;&#xA;SELECT @return "
+              SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ResultBinding
+                SQLTask:ResultName="0"
+                SQLTask:DtsVariableName="User::DuplicateFile" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="User::EtlLoadId"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="1"
+                SQLTask:DtsVariableName="User::TaskDescription"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="2"
+                SQLTask:DtsVariableName="User::FileName"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Loop Through and import Call tracking tab\Update Row Count FilesProcessed Table"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{31f9655b-b281-4f7e-ae5a-c7ac24efacf2}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update Row Count FilesProcessed Table"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{80834618-47A0-4AF0-AB32-23B31714FAAC}"
+              SQLTask:SqlStatementSource="EXEC Logging.dbo.UpdateFilesProcessed @EtlLoadId=?, @TaskDescription=?, @FileName=?, @RowCount=?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="User::EtlLoadId"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="1"
+                SQLTask:DtsVariableName="User::TaskDescription"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="2"
+                SQLTask:DtsVariableName="User::FileName"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="3"
+                SQLTask:DtsVariableName="User::FileProcessedRowCount"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="3"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Loop Through and import Call tracking tab.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{553DA181-6EA9-4C7E-AC2E-8E7E615438A1}"
+          DTS:From="Package\Loop Through and import Call tracking tab\Insert FilesProcessed Table"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\Loop Through and import Call tracking tab\Import excel sheet" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Loop Through and import Call tracking tab.PrecedenceConstraints[Constraint 10]"
+          DTS:CreationName=""
+          DTS:DTSID="{e835c028-4f4d-4e66-a406-d79d6bb6d005}"
+          DTS:From="Package\Loop Through and import Call tracking tab\Update Row Count FilesProcessed Table"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 10"
+          DTS:To="Package\Loop Through and import Call tracking tab\Archive File" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Loop Through and import Call tracking tab.PrecedenceConstraints[Constraint 2]"
+          DTS:CreationName=""
+          DTS:DTSID="{CFA1F044-A165-472C-969F-673CB44AD92E}"
+          DTS:From="Package\Loop Through and import Call tracking tab\Delete Junk Rows from excel file"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 2"
+          DTS:To="Package\Loop Through and import Call tracking tab\Update Row Count FilesProcessed Table" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Loop Through and import Call tracking tab.PrecedenceConstraints[Constraint 3]"
+          DTS:CreationName=""
+          DTS:DTSID="{c3736ad4-122e-4e87-bff8-4ea278976969}"
+          DTS:From="Package\Loop Through and import Call tracking tab\Import excel sheet"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 3"
+          DTS:To="Package\Loop Through and import Call tracking tab\Delete Junk Rows from excel file" />
+      </DTS:PrecedenceConstraints>
+      <DTS:ForEachVariableMappings>
+        <DTS:ForEachVariableMapping
+          DTS:CreationName=""
+          DTS:DTSID="{5d55cda4-3eae-461d-824e-dd07fd2ac1eb}"
+          DTS:ObjectName="{5D5FFCA5-CB80-4FC2-9C26-DA458BB31C62}"
+          DTS:ValueIndex="0"
+          DTS:VariableName="User::FileName" />
+      </DTS:ForEachVariableMappings>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Loop Through and import Leads tab"
       DTS:CreationName="STOCK:FOREACHLOOP"
       DTS:DelayValidation="True"
       DTS:Description="Foreach Loop Container"
       DTS:DTSID="{CD512B49-ECF4-4A39-93BA-CF11F5C06984}"
       DTS:ExecutableType="STOCK:FOREACHLOOP"
       DTS:LocaleID="-1"
-      DTS:ObjectName="Loop Through and process Files">
+      DTS:ObjectName="Loop Through and import Leads tab">
       <DTS:ForEachEnumerator
         DTS:CreationName="Microsoft.ForEachFileEnumerator"
         DTS:DTSID="{6E69D015-4EA6-4DDE-A015-1B6DF53EEBEF}"
@@ -297,9 +1130,10 @@
       <DTS:Variables />
       <DTS:Executables>
         <DTS:Executable
-          DTS:refId="Package\Loop Through and process Files\Archive File"
+          DTS:refId="Package\Loop Through and import Leads tab\Archive File"
           DTS:CreationName="Microsoft.FileSystemTask"
           DTS:Description="File System Task"
+          DTS:Disabled="True"
           DTS:DTSID="{148764F7-A425-47FA-A0E3-B3FF42A69F23}"
           DTS:ExecutableType="Microsoft.FileSystemTask"
           DTS:LocaleID="-1"
@@ -318,7 +1152,7 @@
           </DTS:ObjectData>
         </DTS:Executable>
         <DTS:Executable
-          DTS:refId="Package\Loop Through and process Files\Delete Junk Rows from excel file"
+          DTS:refId="Package\Loop Through and import Leads tab\Delete Junk Rows from excel file"
           DTS:CreationName="Microsoft.ExecuteSQLTask"
           DTS:Description="Execute SQL Task"
           DTS:DTSID="{22E30018-2588-45A3-B2DA-4ED678812D0B}"
@@ -341,7 +1175,7 @@
           </DTS:ObjectData>
         </DTS:Executable>
         <DTS:Executable
-          DTS:refId="Package\Loop Through and process Files\Import excel sheet"
+          DTS:refId="Package\Loop Through and import Leads tab\Import excel sheet"
           DTS:CreationName="Microsoft.Pipeline"
           DTS:DelayValidation="True"
           DTS:Description="Data Flow Task"
@@ -358,7 +1192,7 @@
               version="1">
               <components>
                 <component
-                  refId="Package\Loop Through and process Files\Import excel sheet\Derived Column"
+                  refId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column"
                   componentClassID="Microsoft.DerivedColumn"
                   contactInfo="Derived Column;Microsoft Corporation; Microsoft SqlServer v10; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
                   description="Updates column values using expressions"
@@ -366,7 +1200,7 @@
                   usesDispositions="true">
                   <inputs>
                     <input
-                      refId="Package\Loop Through and process Files\Import excel sheet\Derived Column.Inputs[Derived Column Input]"
+                      refId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column.Inputs[Derived Column Input]"
                       description="Input to the Derived Column Transformation"
                       name="Derived Column Input">
                       <externalMetadataColumns />
@@ -374,18 +1208,18 @@
                   </inputs>
                   <outputs>
                     <output
-                      refId="Package\Loop Through and process Files\Import excel sheet\Derived Column.Outputs[Derived Column Output]"
+                      refId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column.Outputs[Derived Column Output]"
                       description="Default Output of the Derived Column Transformation"
                       exclusionGroup="1"
                       name="Derived Column Output"
-                      synchronousInputId="Package\Loop Through and process Files\Import excel sheet\Derived Column.Inputs[Derived Column Input]">
+                      synchronousInputId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column.Inputs[Derived Column Input]">
                       <outputColumns>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[EtlLoadId]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[EtlLoadId]"
                           dataType="i4"
                           errorOrTruncationOperation="Computation"
                           errorRowDisposition="FailComponent"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[EtlLoadId]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[EtlLoadId]"
                           name="EtlLoadId"
                           truncationRowDisposition="FailComponent">
                           <properties>
@@ -403,12 +1237,12 @@
                           </properties>
                         </outputColumn>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[SheetName]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[SheetName]"
                           dataType="wstr"
                           errorOrTruncationOperation="Computation"
                           errorRowDisposition="FailComponent"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[SheetName]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[SheetName]"
                           name="SheetName"
                           truncationRowDisposition="FailComponent">
                           <properties>
@@ -429,23 +1263,23 @@
                       <externalMetadataColumns />
                     </output>
                     <output
-                      refId="Package\Loop Through and process Files\Import excel sheet\Derived Column.Outputs[Derived Column Error Output]"
+                      refId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column.Outputs[Derived Column Error Output]"
                       description="Error Output of the Derived Column Transformation"
                       exclusionGroup="1"
                       isErrorOut="true"
                       name="Derived Column Error Output"
-                      synchronousInputId="Package\Loop Through and process Files\Import excel sheet\Derived Column.Inputs[Derived Column Input]">
+                      synchronousInputId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column.Inputs[Derived Column Input]">
                       <outputColumns>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorCode]"
                           dataType="i4"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorCode]"
                           name="ErrorCode"
                           specialFlags="1" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
                           dataType="i4"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
                           name="ErrorColumn"
                           specialFlags="2" />
                       </outputColumns>
@@ -454,7 +1288,7 @@
                   </outputs>
                 </component>
                 <component
-                  refId="Package\Loop Through and process Files\Import excel sheet\Excel Source"
+                  refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source"
                   componentClassID="Microsoft.ExcelSource"
                   contactInfo="Excel Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
                   description="Excel Source"
@@ -496,205 +1330,205 @@
                   </properties>
                   <connections>
                     <connection
-                      refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Connections[OleDbConnection]"
-                      connectionManagerID="Package.ConnectionManagers[Excel Connection Manager 1]"
-                      connectionManagerRefId="Package.ConnectionManagers[Excel Connection Manager 1]"
+                      refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Connections[OleDbConnection]"
+                      connectionManagerID="Package.ConnectionManagers[LeadTracking]"
+                      connectionManagerRefId="Package.ConnectionManagers[LeadTracking]"
                       description="The OLE DB runtime connection used to access the database."
                       name="OleDbConnection" />
                   </connections>
                   <outputs>
                     <output
-                      refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output]"
+                      refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output]"
                       name="Excel Source Output">
                       <outputColumns>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F1]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F1]"
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F1]"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F1]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F1]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F1]"
                           name="F1"
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F2]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F2]"
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F2]"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F2]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F2]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F2]"
                           name="F2"
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F3]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F3]"
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F3]"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F3]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F3]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F3]"
                           name="F3"
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F4]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F4]"
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F4]"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F4]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F4]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F4]"
                           name="F4"
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F5]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F5]"
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F5]"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F5]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F5]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F5]"
                           name="F5"
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[FA = Facility_PH = Physician]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[FA = Facility_PH = Physician]"
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[FA = Facility_PH = Physician]"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[FA = Facility_PH = Physician]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[FA = Facility_PH = Physician]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[FA = Facility_PH = Physician]"
                           name="FA = Facility_PH = Physician"
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F7]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F7]"
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F7]"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F7]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F7]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F7]"
                           name="F7"
                           truncationRowDisposition="FailComponent" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F8]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F8]"
                           dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F8]"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F8]"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F8]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F8]"
                           name="F8"
                           truncationRowDisposition="FailComponent" />
                       </outputColumns>
                       <externalMetadataColumns
                         isUsed="True">
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F1]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F1]"
                           dataType="date"
                           name="F1" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F2]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F2]"
                           dataType="wstr"
                           length="255"
                           name="F2" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F3]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F3]"
                           dataType="wstr"
                           length="255"
                           name="F3" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F4]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F4]"
                           dataType="wstr"
                           length="255"
                           name="F4" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F5]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F5]"
                           dataType="wstr"
                           length="255"
                           name="F5" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[FA = Facility_PH = Physician]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[FA = Facility_PH = Physician]"
                           dataType="wstr"
                           length="255"
                           name="FA = Facility_PH = Physician" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F7]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F7]"
                           dataType="date"
                           name="F7" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F8]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F8]"
                           dataType="wstr"
                           length="255"
                           name="F8" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F9]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F9]"
                           dataType="nText"
                           name="F9" />
                       </externalMetadataColumns>
                     </output>
                     <output
-                      refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output]"
+                      refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output]"
                       isErrorOut="true"
                       name="Excel Source Error Output">
                       <outputColumns>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F1]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F1]"
                           dataType="date"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F1]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F1]"
                           name="F1" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F2]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F2]"
                           dataType="wstr"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F2]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F2]"
                           name="F2" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F3]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F3]"
                           dataType="wstr"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F3]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F3]"
                           name="F3" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F4]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F4]"
                           dataType="wstr"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F4]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F4]"
                           name="F4" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F5]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F5]"
                           dataType="wstr"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F5]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F5]"
                           name="F5" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[FA = Facility_PH = Physician]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[FA = Facility_PH = Physician]"
                           dataType="wstr"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[FA = Facility_PH = Physician]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[FA = Facility_PH = Physician]"
                           name="FA = Facility_PH = Physician" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F7]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F7]"
                           dataType="date"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F7]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F7]"
                           name="F7" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F8]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F8]"
                           dataType="wstr"
                           length="255"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F8]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[F8]"
                           name="F8" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[ErrorCode]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[ErrorCode]"
                           dataType="i4"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[ErrorCode]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[ErrorCode]"
                           name="ErrorCode"
                           specialFlags="1" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[ErrorColumn]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[ErrorColumn]"
                           dataType="i4"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[ErrorColumn]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Error Output].Columns[ErrorColumn]"
                           name="ErrorColumn"
                           specialFlags="2" />
                       </outputColumns>
@@ -703,7 +1537,7 @@
                   </outputs>
                 </component>
                 <component
-                  refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination"
+                  refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination"
                   componentClassID="Microsoft.OLEDBDestination"
                   contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
                   description="OLE DB Destination"
@@ -760,7 +1594,7 @@
                   </properties>
                   <connections>
                     <connection
-                      refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Connections[OleDbConnection]"
+                      refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Connections[OleDbConnection]"
                       connectionManagerID="Package.ConnectionManagers[SQLVM.EHClinicalStaging]"
                       connectionManagerRefId="Package.ConnectionManagers[SQLVM.EHClinicalStaging]"
                       description="The OLE DB runtime connection used to access the database."
@@ -768,134 +1602,134 @@
                   </connections>
                   <inputs>
                     <input
-                      refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                      refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input]"
                       errorOrTruncationOperation="Insert"
                       errorRowDisposition="FailComponent"
                       hasSideEffects="true"
                       name="OLE DB Destination Input">
                       <inputColumns>
                         <inputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[EtlLoadId]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[EtlLoadId]"
                           cachedDataType="i4"
                           cachedName="EtlLoadId"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EtlLoadId]"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[EtlLoadId]" />
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EtlLoadId]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[EtlLoadId]" />
                         <inputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F1]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F1]"
                           cachedDataType="wstr"
                           cachedLength="255"
                           cachedName="F1"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityDate]"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F1]" />
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityDate]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F1]" />
                         <inputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F2]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F2]"
                           cachedDataType="wstr"
                           cachedLength="255"
                           cachedName="F2"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PatientFirstName]"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F2]" />
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PatientFirstName]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F2]" />
                         <inputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F3]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F3]"
                           cachedDataType="wstr"
                           cachedLength="255"
                           cachedName="F3"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PatientLastName]"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F3]" />
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PatientLastName]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F3]" />
                         <inputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F4]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F4]"
                           cachedDataType="wstr"
                           cachedLength="255"
                           cachedName="F4"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DOB]"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F4]" />
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DOB]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F4]" />
                         <inputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F5]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F5]"
                           cachedDataType="wstr"
                           cachedLength="255"
                           cachedName="F5"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Location]"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F5]" />
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Location]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F5]" />
                         <inputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[FA = Facility_PH = Physician]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[FA = Facility_PH = Physician]"
                           cachedDataType="wstr"
                           cachedLength="255"
                           cachedName="FA = Facility_PH = Physician"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ReferralSource]"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[FA = Facility_PH = Physician]" />
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ReferralSource]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[FA = Facility_PH = Physician]" />
                         <inputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F7]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F7]"
                           cachedDataType="wstr"
                           cachedLength="255"
                           cachedName="F7"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[LastFollowUpDate]"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F7]" />
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[LastFollowUpDate]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F7]" />
                         <inputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F8]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F8]"
                           cachedDataType="wstr"
                           cachedLength="255"
                           cachedName="F8"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Status]"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F8]" />
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Status]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F8]" />
                         <inputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[SheetName]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[SheetName]"
                           cachedDataType="wstr"
                           cachedLength="255"
                           cachedName="SheetName"
-                          externalMetadataColumnId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[SheetName]"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[SheetName]" />
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[SheetName]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[SheetName]" />
                       </inputColumns>
                       <externalMetadataColumns
                         isUsed="True">
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityDate]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityDate]"
                           dataType="wstr"
                           length="255"
                           name="ActivityDate" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PatientFirstName]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PatientFirstName]"
                           dataType="wstr"
                           length="255"
                           name="PatientFirstName" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PatientLastName]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PatientLastName]"
                           dataType="wstr"
                           length="255"
                           name="PatientLastName" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DOB]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DOB]"
                           dataType="wstr"
                           length="255"
                           name="DOB" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Location]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Location]"
                           dataType="wstr"
                           length="100"
                           name="Location" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ReferralSource]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ReferralSource]"
                           dataType="wstr"
                           length="255"
                           name="ReferralSource" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[LastFollowUpDate]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[LastFollowUpDate]"
                           dataType="wstr"
                           length="255"
                           name="LastFollowUpDate" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Status]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Status]"
                           dataType="wstr"
                           length="255"
                           name="Status" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Notes]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Notes]"
                           dataType="nText"
                           name="Notes" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EtlLoadId]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EtlLoadId]"
                           dataType="i4"
                           name="EtlLoadId" />
                         <externalMetadataColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[SheetName]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[SheetName]"
                           dataType="wstr"
                           length="255"
                           name="SheetName" />
@@ -904,22 +1738,22 @@
                   </inputs>
                   <outputs>
                     <output
-                      refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Outputs[OLE DB Destination Error Output]"
+                      refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Outputs[OLE DB Destination Error Output]"
                       exclusionGroup="1"
                       isErrorOut="true"
                       name="OLE DB Destination Error Output"
-                      synchronousInputId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input]">
+                      synchronousInputId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input]">
                       <outputColumns>
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
                           dataType="i4"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
                           name="ErrorCode"
                           specialFlags="1" />
                         <outputColumn
-                          refId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          refId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
                           dataType="i4"
-                          lineageId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          lineageId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
                           name="ErrorColumn"
                           specialFlags="2" />
                       </outputColumns>
@@ -928,7 +1762,7 @@
                   </outputs>
                 </component>
                 <component
-                  refId="Package\Loop Through and process Files\Import excel sheet\Row Count"
+                  refId="Package\Loop Through and import Leads tab\Import excel sheet\Row Count"
                   componentClassID="Microsoft.RowCount"
                   contactInfo="Row Count;Microsoft Corporation; Microsoft SqlServer v10; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
                   description="Counts the rows in a dataset."
@@ -942,7 +1776,7 @@
                   </properties>
                   <inputs>
                     <input
-                      refId="Package\Loop Through and process Files\Import excel sheet\Row Count.Inputs[Row Count Input 1]"
+                      refId="Package\Loop Through and import Leads tab\Import excel sheet\Row Count.Inputs[Row Count Input 1]"
                       hasSideEffects="true"
                       name="Row Count Input 1">
                       <externalMetadataColumns />
@@ -950,9 +1784,9 @@
                   </inputs>
                   <outputs>
                     <output
-                      refId="Package\Loop Through and process Files\Import excel sheet\Row Count.Outputs[Row Count Output 1]"
+                      refId="Package\Loop Through and import Leads tab\Import excel sheet\Row Count.Outputs[Row Count Output 1]"
                       name="Row Count Output 1"
-                      synchronousInputId="Package\Loop Through and process Files\Import excel sheet\Row Count.Inputs[Row Count Input 1]">
+                      synchronousInputId="Package\Loop Through and import Leads tab\Import excel sheet\Row Count.Inputs[Row Count Input 1]">
                       <externalMetadataColumns />
                     </output>
                   </outputs>
@@ -960,26 +1794,26 @@
               </components>
               <paths>
                 <path
-                  refId="Package\Loop Through and process Files\Import excel sheet.Paths[Derived Column Output]"
-                  endId="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                  refId="Package\Loop Through and import Leads tab\Import excel sheet.Paths[Derived Column Output]"
+                  endId="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input]"
                   name="Derived Column Output"
-                  startId="Package\Loop Through and process Files\Import excel sheet\Derived Column.Outputs[Derived Column Output]" />
+                  startId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column.Outputs[Derived Column Output]" />
                 <path
-                  refId="Package\Loop Through and process Files\Import excel sheet.Paths[Excel Source Output]"
-                  endId="Package\Loop Through and process Files\Import excel sheet\Row Count.Inputs[Row Count Input 1]"
+                  refId="Package\Loop Through and import Leads tab\Import excel sheet.Paths[Excel Source Output]"
+                  endId="Package\Loop Through and import Leads tab\Import excel sheet\Row Count.Inputs[Row Count Input 1]"
                   name="Excel Source Output"
-                  startId="Package\Loop Through and process Files\Import excel sheet\Excel Source.Outputs[Excel Source Output]" />
+                  startId="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source.Outputs[Excel Source Output]" />
                 <path
-                  refId="Package\Loop Through and process Files\Import excel sheet.Paths[Row Count Output 1]"
-                  endId="Package\Loop Through and process Files\Import excel sheet\Derived Column.Inputs[Derived Column Input]"
+                  refId="Package\Loop Through and import Leads tab\Import excel sheet.Paths[Row Count Output 1]"
+                  endId="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column.Inputs[Derived Column Input]"
                   name="Row Count Output 1"
-                  startId="Package\Loop Through and process Files\Import excel sheet\Row Count.Outputs[Row Count Output 1]" />
+                  startId="Package\Loop Through and import Leads tab\Import excel sheet\Row Count.Outputs[Row Count Output 1]" />
               </paths>
             </pipeline>
           </DTS:ObjectData>
         </DTS:Executable>
         <DTS:Executable
-          DTS:refId="Package\Loop Through and process Files\Insert FilesProcessed Table"
+          DTS:refId="Package\Loop Through and import Leads tab\Insert FilesProcessed Table"
           DTS:CreationName="Microsoft.ExecuteSQLTask"
           DTS:Description="Execute SQL Task"
           DTS:DTSID="{D1891522-E792-42BF-8F27-AF30E09E20BA}"
@@ -1019,7 +1853,7 @@
           </DTS:ObjectData>
         </DTS:Executable>
         <DTS:Executable
-          DTS:refId="Package\Loop Through and process Files\Inserte into Final table and Capture Changes"
+          DTS:refId="Package\Loop Through and import Leads tab\Inserte into Final table and Capture Changes"
           DTS:CreationName="Microsoft.ExecuteSQLTask"
           DTS:Description="Execute SQL Task"
           DTS:DTSID="{66CC4EB6-36E2-4DC5-9F9B-7E8D72E362E5}"
@@ -1043,7 +1877,7 @@
           </DTS:ObjectData>
         </DTS:Executable>
         <DTS:Executable
-          DTS:refId="Package\Loop Through and process Files\TRUNCATE Import TABLE"
+          DTS:refId="Package\Loop Through and import Leads tab\TRUNCATE Import TABLE"
           DTS:CreationName="Microsoft.ExecuteSQLTask"
           DTS:Description="Execute SQL Task"
           DTS:DTSID="{93DDFCE7-967B-40F6-8E9E-D12247979E18}"
@@ -1060,7 +1894,7 @@
           </DTS:ObjectData>
         </DTS:Executable>
         <DTS:Executable
-          DTS:refId="Package\Loop Through and process Files\Update Row Count FilesProcessed Table"
+          DTS:refId="Package\Loop Through and import Leads tab\Update Row Count FilesProcessed Table"
           DTS:CreationName="Microsoft.ExecuteSQLTask"
           DTS:Description="Execute SQL Task"
           DTS:DTSID="{50310B50-30A7-4B35-B7D6-02CA6CA0B3B4}"
@@ -1104,53 +1938,53 @@
       </DTS:Executables>
       <DTS:PrecedenceConstraints>
         <DTS:PrecedenceConstraint
-          DTS:refId="Package\Loop Through and process Files.PrecedenceConstraints[Constraint]"
+          DTS:refId="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint]"
           DTS:CreationName=""
           DTS:DTSID="{4D9E1410-5523-4F43-B50A-38F3434AD169}"
-          DTS:From="Package\Loop Through and process Files\Insert FilesProcessed Table"
+          DTS:From="Package\Loop Through and import Leads tab\Insert FilesProcessed Table"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint"
-          DTS:To="Package\Loop Through and process Files\TRUNCATE Import TABLE" />
+          DTS:To="Package\Loop Through and import Leads tab\TRUNCATE Import TABLE" />
         <DTS:PrecedenceConstraint
-          DTS:refId="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 1]"
+          DTS:refId="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 1]"
           DTS:CreationName=""
           DTS:DTSID="{B469385F-3D47-4911-9260-3F87BBD04A17}"
-          DTS:From="Package\Loop Through and process Files\TRUNCATE Import TABLE"
+          DTS:From="Package\Loop Through and import Leads tab\TRUNCATE Import TABLE"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 1"
-          DTS:To="Package\Loop Through and process Files\Import excel sheet" />
+          DTS:To="Package\Loop Through and import Leads tab\Import excel sheet" />
         <DTS:PrecedenceConstraint
-          DTS:refId="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 10]"
+          DTS:refId="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 10]"
           DTS:CreationName=""
           DTS:DTSID="{1D6E11A4-8FA1-409E-BD5B-9BF3189B782C}"
-          DTS:From="Package\Loop Through and process Files\Update Row Count FilesProcessed Table"
+          DTS:From="Package\Loop Through and import Leads tab\Update Row Count FilesProcessed Table"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 10"
-          DTS:To="Package\Loop Through and process Files\Archive File" />
+          DTS:To="Package\Loop Through and import Leads tab\Archive File" />
         <DTS:PrecedenceConstraint
-          DTS:refId="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 2]"
+          DTS:refId="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 2]"
           DTS:CreationName=""
           DTS:DTSID="{6724D412-9950-4F21-B971-CF643BC25B59}"
-          DTS:From="Package\Loop Through and process Files\Inserte into Final table and Capture Changes"
+          DTS:From="Package\Loop Through and import Leads tab\Inserte into Final table and Capture Changes"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 2"
-          DTS:To="Package\Loop Through and process Files\Update Row Count FilesProcessed Table" />
+          DTS:To="Package\Loop Through and import Leads tab\Update Row Count FilesProcessed Table" />
         <DTS:PrecedenceConstraint
-          DTS:refId="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 3]"
+          DTS:refId="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 3]"
           DTS:CreationName=""
           DTS:DTSID="{8D121542-47D7-4F0C-9197-B0495EFF6120}"
-          DTS:From="Package\Loop Through and process Files\Import excel sheet"
+          DTS:From="Package\Loop Through and import Leads tab\Import excel sheet"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 3"
-          DTS:To="Package\Loop Through and process Files\Delete Junk Rows from excel file" />
+          DTS:To="Package\Loop Through and import Leads tab\Delete Junk Rows from excel file" />
         <DTS:PrecedenceConstraint
-          DTS:refId="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 5]"
+          DTS:refId="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 5]"
           DTS:CreationName=""
           DTS:DTSID="{E3161F4E-FBBC-41F6-A429-9B11F2C6BDC5}"
-          DTS:From="Package\Loop Through and process Files\Delete Junk Rows from excel file"
+          DTS:From="Package\Loop Through and import Leads tab\Delete Junk Rows from excel file"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 5"
-          DTS:To="Package\Loop Through and process Files\Inserte into Final table and Capture Changes" />
+          DTS:To="Package\Loop Through and import Leads tab\Inserte into Final table and Capture Changes" />
       </DTS:PrecedenceConstraints>
       <DTS:ForEachVariableMappings>
         <DTS:ForEachVariableMapping
@@ -1259,7 +2093,24 @@
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
           SQLTask:Connection="{80834618-47A0-4AF0-AB32-23B31714FAAC}"
-          SQLTask:SqlStatementSource="TRUNCATE TABLE EHClinical.dbo.SalesLeadTracking" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          SQLTask:SqlStatementSource="TRUNCATE TABLE EHClinical.dbo.SalesLeadTracking&#xA;TRUNCATE TABLE EHClinicalStaging.dbo.SalesCallTracking" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Truncate Staging Calls Table"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{969d64ef-756b-4666-a591-0e3233a6f14d}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Truncate Staging Calls Table"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{80834618-47A0-4AF0-AB32-23B31714FAAC}"
+          SQLTask:SqlStatementSource="TRUNCATE TABLE EHClinicalStaging.dbo.SalesCallTracking" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
     </DTS:Executable>
   </DTS:Executables>
@@ -1275,8 +2126,8 @@
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
       DTS:CreationName=""
-      DTS:DTSID="{941D97CF-D210-4345-8B78-9F830ED4E9E6}"
-      DTS:From="Package\Loop Through and process Files"
+      DTS:DTSID="{9F67A82A-411E-4C6A-8DB4-2D3930C38BC7}"
+      DTS:From="Package\Insert Call Tracking Final table"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 1"
       DTS:To="Package\PostExecute" />
@@ -1295,7 +2146,7 @@
       DTS:From="Package\Loop Through and append Date to filename"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 3"
-      DTS:To="Package\Loop Through and process Files" />
+      DTS:To="Package\Loop Through and import Leads tab" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 4]"
       DTS:CreationName=""
@@ -1304,6 +2155,30 @@
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 4"
       DTS:To="Package\TRUNCATE Import TABLE" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 5]"
+      DTS:CreationName=""
+      DTS:DTSID="{0B12A1E3-2520-4BAD-932B-07AD4ED3C8A8}"
+      DTS:From="Package\Loop Through and import Leads tab"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 5"
+      DTS:To="Package\Truncate Staging Calls Table" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 6]"
+      DTS:CreationName=""
+      DTS:DTSID="{E6D5E590-92B9-4C9A-A77E-FC7F06F33B3A}"
+      DTS:From="Package\Loop Through and import Call tracking tab"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 6"
+      DTS:To="Package\Insert Call Tracking Final table" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 7]"
+      DTS:CreationName=""
+      DTS:DTSID="{E138F59B-3D8D-499F-8FFE-4A20D1DCCE9A}"
+      DTS:From="Package\Truncate Staging Calls Table"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 7"
+      DTS:To="Package\Loop Through and import Call tracking tab" />
   </DTS:PrecedenceConstraints>
   <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
 <!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
@@ -1316,7 +2191,7 @@
     design-time-name="Package">
     <LayoutInfo>
       <GraphLayout
-        Capacity="32" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="64" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="163,42"
           Id="Package\Loop Through and append Date to filename\File System Task"
@@ -1330,34 +2205,161 @@
           TopLeft="206.388888888889,230.91666666667" />
         <NodeLayout
           Size="169,51"
-          Id="Package\Loop Through and process Files\Archive File"
-          TopLeft="121.75,566.75" />
+          Id="Package\Loop Through and import Call tracking tab\Archive File"
+          TopLeft="155.75,491.75" />
         <NodeLayout
           Size="238,42"
-          Id="Package\Loop Through and process Files\Delete Junk Rows from excel file"
+          Id="Package\Loop Through and import Call tracking tab\Delete Junk Rows from excel file"
           TopLeft="104,308" />
         <NodeLayout
           Size="169,42"
-          Id="Package\Loop Through and process Files\Import excel sheet"
+          Id="Package\Loop Through and import Call tracking tab\Import excel sheet"
           TopLeft="145.388888888889,205.41666666667" />
         <NodeLayout
           Size="189,44"
-          Id="Package\Loop Through and process Files\Insert FilesProcessed Table"
+          Id="Package\Loop Through and import Call tracking tab\Insert FilesProcessed Table"
+          TopLeft="137.5,115.5" />
+        <NodeLayout
+          Size="280,42"
+          Id="Package\Loop Through and import Call tracking tab\Update Row Count FilesProcessed Table"
+          TopLeft="105.75,387.75" />
+        <EdgeLayout
+          Id="Package\Loop Through and import Call tracking tab.PrecedenceConstraints[Constraint 10]"
+          TopLeft="243,429.75">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,62"
+              Start="0,0"
+              End="0,54.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,54.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Loop Through and import Call tracking tab.PrecedenceConstraints[Constraint 3]"
+          TopLeft="226.444444444445,247.41666666667">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60.58333333333"
+              Start="0,0"
+              End="0,53.08333333333">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,53.08333333333" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Loop Through and import Call tracking tab.PrecedenceConstraints[Constraint 2]"
+          TopLeft="223,350">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="22.75,37.75"
+              Start="0,0"
+              End="22.75,30.25">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,14.875" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,14.875"
+                    Point2="0,18.875"
+                    Point3="4,18.875" />
+                  <mssgle:LineSegment
+                    End="18.75,18.875" />
+                  <mssgle:CubicBezierSegment
+                    Point1="18.75,18.875"
+                    Point2="22.75,18.875"
+                    Point3="22.75,22.875" />
+                  <mssgle:LineSegment
+                    End="22.75,30.25" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Loop Through and import Call tracking tab.PrecedenceConstraints[Constraint]"
+          TopLeft="230.944444444445,159.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,45.91666666667"
+              Start="0,0"
+              End="0,38.41666666667">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,38.41666666667" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43.924528301886795"
+          IsExpanded="True"
+          PanelSize="478,673"
+          Size="478,717"
+          Id="Package\Loop Through and import Call tracking tab"
+          TopLeft="761.722222222222,527.888888888889" />
+        <NodeLayout
+          Size="169,51"
+          Id="Package\Loop Through and import Leads tab\Archive File"
+          TopLeft="121.75,566.75" />
+        <NodeLayout
+          Size="238,42"
+          Id="Package\Loop Through and import Leads tab\Delete Junk Rows from excel file"
+          TopLeft="104,308" />
+        <NodeLayout
+          Size="169,42"
+          Id="Package\Loop Through and import Leads tab\Import excel sheet"
+          TopLeft="145.388888888889,205.41666666667" />
+        <NodeLayout
+          Size="189,44"
+          Id="Package\Loop Through and import Leads tab\Insert FilesProcessed Table"
           TopLeft="115.5,19.5" />
         <NodeLayout
           Size="297,42"
-          Id="Package\Loop Through and process Files\Inserte into Final table and Capture Changes"
+          Id="Package\Loop Through and import Leads tab\Inserte into Final table and Capture Changes"
           TopLeft="69.75,384.75" />
         <NodeLayout
           Size="179,44"
-          Id="Package\Loop Through and process Files\TRUNCATE Import TABLE"
+          Id="Package\Loop Through and import Leads tab\TRUNCATE Import TABLE"
           TopLeft="132.5,110.5" />
         <NodeLayout
           Size="251,44"
-          Id="Package\Loop Through and process Files\Update Row Count FilesProcessed Table"
+          Id="Package\Loop Through and import Leads tab\Update Row Count FilesProcessed Table"
           TopLeft="71.75,462.75" />
         <EdgeLayout
-          Id="Package\Loop Through and process Files.PrecedenceConstraints[Constraint]"
+          Id="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint]"
           TopLeft="210,63.5">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -1391,19 +2393,19 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 1]"
+          Id="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 1]"
           TopLeft="225.944444444445,154.5">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,50.9166666666699"
+              EndConnector="0,50.91666666667"
               Start="0,0"
-              End="0,43.4166666666699">
+              End="0,43.41666666667">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,43.4166666666699" />
+                    End="0,43.41666666667" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -1413,7 +2415,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 10]"
+          Id="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 10]"
           TopLeft="197.25,506.75">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -1447,7 +2449,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 2]"
+          Id="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 2]"
           TopLeft="218.25,426.75">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -1481,7 +2483,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 3]"
+          Id="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 3]"
           TopLeft="226.444444444445,247.41666666667">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -1503,7 +2505,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Loop Through and process Files.PrecedenceConstraints[Constraint 5]"
+          Id="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 5]"
           TopLeft="220.625,350">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -1529,12 +2531,12 @@
           IsExpanded="True"
           PanelSize="478,673"
           Size="478,717"
-          Id="Package\Loop Through and process Files"
+          Id="Package\Loop Through and import Leads tab"
           TopLeft="201.388888888889,489.238095238095" />
         <NodeLayout
           Size="141,42"
           Id="Package\PostExecute"
-          TopLeft="362.52886002886,1269.86111111111" />
+          TopLeft="899.751082251082,1372.55555555555" />
         <NodeLayout
           Size="157,42"
           Id="Package\PreExecute"
@@ -1561,28 +2563,6 @@
                   Capacity="5">
                   <mssgle:LineSegment
                     End="0,25.4924242424272" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 1]"
-          TopLeft="436.708874458874,1199.23809523809">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,70.6230158730193"
-              Start="0,0"
-              End="0,63.1230158730193">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,63.1230158730193" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -1669,44 +2649,24 @@
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
-      </GraphLayout>
-    </LayoutInfo>
-  </Package>
-  <TaskHost
-    design-time-name="Package\Loop Through and process Files\Import excel sheet">
-    <LayoutInfo>
-      <GraphLayout
-        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="133,42"
-          Id="Package\Loop Through and process Files\Import excel sheet\Row Count"
-          TopLeft="62.5,107.5" />
-        <NodeLayout
-          Size="177,42"
-          Id="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination"
-          TopLeft="39,312" />
-        <NodeLayout
-          Size="158,42"
-          Id="Package\Loop Through and process Files\Import excel sheet\Derived Column"
-          TopLeft="50,209.5" />
-        <NodeLayout
-          Size="144,42"
-          Id="Package\Loop Through and process Files\Import excel sheet\Excel Source"
-          TopLeft="47,9" />
+          Size="191,42"
+          Id="Package\Insert Call Tracking Final table"
+          TopLeft="877.75,1294.75" />
         <EdgeLayout
-          Id="Package\Loop Through and process Files\Import excel sheet.Paths[Derived Column Output]"
-          TopLeft="128.25,251.5">
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="971.750541125541,1336.75">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,60.5"
+              EndConnector="0,35.80555555555"
               Start="0,0"
-              End="0,53">
+              End="0,28.30555555555">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,53" />
+                    End="0,28.30555555555" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -1716,7 +2676,137 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Loop Through and process Files\Import excel sheet.Paths[Row Count Output 1]"
+          Id="Package.PrecedenceConstraints[Constraint 6]"
+          TopLeft="1000.72222222222,1244.88888888889">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-27.4722222222219,49.8611111111109"
+              Start="0,0"
+              End="-27.4722222222219,42.3611111111109">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.9305555555554" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,20.9305555555554"
+                    Point2="0,24.9305555555554"
+                    Point3="-4,24.9305555555554" />
+                  <mssgle:LineSegment
+                    End="-23.4722222222219,24.9305555555554" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-23.4722222222219,24.9305555555554"
+                    Point2="-27.4722222222219,24.9305555555554"
+                    Point3="-27.4722222222219,28.9305555555554" />
+                  <mssgle:LineSegment
+                    End="-27.4722222222219,42.3611111111109" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="221,42"
+          Id="Package\Truncate Staging Calls Table"
+          TopLeft="822.5,453.5" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 5]"
+          TopLeft="679.388888888889,847.738095238095">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="143.111111111111,-373.238095238095"
+              Start="0,0"
+              End="135.611111111111,-373.238095238095">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="67.5555555555555,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="67.5555555555555,0"
+                    Point2="71.5555555555555,0"
+                    Point3="71.5555555555555,-4" />
+                  <mssgle:LineSegment
+                    End="71.5555555555555,-369.238095238095" />
+                  <mssgle:CubicBezierSegment
+                    Point1="71.5555555555555,-369.238095238095"
+                    Point2="71.5555555555555,-373.238095238095"
+                    Point3="75.5555555555555,-373.238095238095" />
+                  <mssgle:LineSegment
+                    End="135.611111111111,-373.238095238095" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 7]"
+          TopLeft="933,495.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="67.7222222222219,32.388888888889"
+              Start="0,0"
+              End="67.7222222222219,24.888888888889">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,12.1944444444445" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,12.1944444444445"
+                    Point2="0,16.1944444444445"
+                    Point3="4,16.1944444444445" />
+                  <mssgle:LineSegment
+                    End="63.7222222222219,16.1944444444445" />
+                  <mssgle:CubicBezierSegment
+                    Point1="63.7222222222219,16.1944444444445"
+                    Point2="67.7222222222219,16.1944444444445"
+                    Point3="67.7222222222219,20.1944444444445" />
+                  <mssgle:LineSegment
+                    End="67.7222222222219,24.888888888889" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\Loop Through and import Call tracking tab\Import excel sheet">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="177,42"
+          Id="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination"
+          TopLeft="41,320" />
+        <NodeLayout
+          Size="158,42"
+          Id="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column"
+          TopLeft="50,209.5" />
+        <NodeLayout
+          Size="133,42"
+          Id="Package\Loop Through and import Call tracking tab\Import excel sheet\Row Count"
+          TopLeft="62.5,107.5" />
+        <NodeLayout
+          Size="144,42"
+          Id="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source"
+          TopLeft="57,20" />
+        <EdgeLayout
+          Id="Package\Loop Through and import Call tracking tab\Import excel sheet.Paths[Row Count Output 1]"
           TopLeft="129,149.5">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -1734,11 +2824,135 @@
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Loop Through and process Files\Import excel sheet.Paths[Excel Source Output]"
+          Id="Package\Loop Through and import Call tracking tab\Import excel sheet.Paths[Excel Source Output]"
+          TopLeft="129,62">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,45.5"
+              Start="0,0"
+              End="0,38">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,38" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Loop Through and import Call tracking tab\Import excel sheet.Paths[Derived Column Output]"
+          TopLeft="129.25,251.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,68.5"
+              Start="0,0"
+              End="0,61">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,61" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\Loop Through and import Leads tab\Import excel sheet">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="133,42"
+          Id="Package\Loop Through and import Leads tab\Import excel sheet\Row Count"
+          TopLeft="62.5,107.5" />
+        <NodeLayout
+          Size="177,42"
+          Id="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination"
+          TopLeft="39,312" />
+        <NodeLayout
+          Size="158,42"
+          Id="Package\Loop Through and import Leads tab\Import excel sheet\Derived Column"
+          TopLeft="50,209.5" />
+        <NodeLayout
+          Size="144,42"
+          Id="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source"
+          TopLeft="47,9" />
+        <EdgeLayout
+          Id="Package\Loop Through and import Leads tab\Import excel sheet.Paths[Row Count Output 1]"
+          TopLeft="129,149.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Loop Through and import Leads tab\Import excel sheet.Paths[Excel Source Output]"
           TopLeft="119,51">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -1768,14 +2982,40 @@
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Loop Through and import Leads tab\Import excel sheet.Paths[Derived Column Output]"
+          TopLeft="128.25,251.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60.5"
+              Start="0,0"
+              End="0,53">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,53" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
     </LayoutInfo>
   </TaskHost>
   <PipelineComponentMetadata
-    design-time-name="Package\Loop Through and process Files\Import excel sheet\OLE DB Destination">
+    design-time-name="Package\Loop Through and import Leads tab\Import excel sheet\OLE DB Destination">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
@@ -1788,7 +3028,7 @@
     </Properties>
   </PipelineComponentMetadata>
   <PipelineComponentMetadata
-    design-time-name="Package\Loop Through and process Files\Import excel sheet\Excel Source">
+    design-time-name="Package\Loop Through and import Leads tab\Import excel sheet\Excel Source">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>

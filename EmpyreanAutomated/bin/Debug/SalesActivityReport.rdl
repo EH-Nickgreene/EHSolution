@@ -6,170 +6,138 @@
     <DataSource Name="EHClinical">
       <DataSourceReference>EHClinical</DataSourceReference>
       <rd:SecurityType>None</rd:SecurityType>
-      <rd:DataSourceID>84c95741-3c8f-44e2-be6f-af755564637d</rd:DataSourceID>
+      <rd:DataSourceID>ab2aeda6-6e88-41f9-bf3c-22bbf43d561e</rd:DataSourceID>
     </DataSource>
   </DataSources>
   <DataSets>
     <DataSet Name="DataSet1">
       <Query>
         <DataSourceName>EHClinical</DataSourceName>
-        <CommandText>DECLARE @monthInt INT
-
-SELECT @monthInt =ConfiguredValue
-FROM reference.[dbo].[SSIS Configurations]
-WHERE ConfigurationFilter IN ('ReportSenderEHHospiceDailyReport')
-and PackagePath='\Package.Variables[User::MonthInt].Properties[Value]'
-
+        <CommandText>
 DECLARE @StartDate date,@EndDate date
 
-SELECT @StartDate=MIN(date)
-FROM Reference.dbo.DimDate
-WHERE monthint=@monthInt
-
-IF GETDATE()&gt;(SELECT MAX(date) 
-				FROM Reference.dbo.DimDate
-				WHERE monthint=@monthInt)
-BEGIN
-	SELECT @EndDate=dateadd(dd,1,MAX(date))
-	FROM Reference.dbo.DimDate
-	WHERE monthint=@monthInt
-END
-ELSE
-BEGIN
-	set @EndDate=CONVERT(date,getdate())
-END
+SET @StartDate =
+(
+	SELECT MIN(Date)
+	FROM (
+		SELECT TOP 7 date
+		FROM Reference.dbo.DimDate
+		WHERE date&lt;getdate()
+		and day='Sunday'
+		ORDER BY date desc
+		) a
+)
 
 
+SET @EndDate= dateadd(dd,43,@StartDate)
 
-
-IF OBJECT_ID('tempdb..#admits') IS NOT NULL DROP TABLE #admits
-CREATE TABLE #admits(BranchCode varchar(10),BranchName varchar(200),epi_socdate date, DayOfMonth INT,Admits float)
-INSERT INTO #admits
-exec usp_forecastadmissions @StartDate,@EndDate
-
-
-IF OBJECT_ID('tempdb..#Discharges') IS NOT NULL DROP TABLE #Discharges
-CREATE TABLE #Discharges(BranchCode varchar(10),BranchName varchar(200),epi_dischargeDate date, DayOfMonth INT,Discharges float)
-INSERT INTO #Discharges
-exec usp_forecastdischarges @StartDate,@EndDate
-
---SELECT * FROM #Discharges
-
-IF OBJECT_ID('tempdb..#census') IS NOT NULL DROP TABLE #census
+--FRIST QUERY CREATE BASE SO A RECORD IS RETURNED FOR EVERY COMBINATION
+--0 FOR TOTAL GUARANTEES IT WONT SKEW ANY TOTALS
 SELECT 
-	bd.branchCode,
-	wh.ServiceDate,
-	COUNT(*) Census
-INTO #census
-FROM wh_PatientDays wh
-LEFT JOIN Reference.dbo.BranchData bd on wh.Branch_Code=bd.BranchCode
-WHERE wh.serviceDate&gt;=@StartDate
-and wh.serviceDate&lt;@EndDate
-GROUP BY bd.branchCode,
-	wh.ServiceDate
-
-
-IF OBJECT_ID('tempdb..#ReadyForAgg') IS NOT NULL DROP TABLE #ReadyForAgg
-SELECT 
+	metric.Metric MetricName,
 	CASE
-		WHEN c.census IS NOT NULL
-		THEN 'actual'
-		ELSE 'forecast'
-	END rowtype,
-	admit.BranchCode,
-	admit.BranchName,
-	admit.epi_socdate date,
-	admit.DayOfMonth,
-	admit.Admits,
-	dc.Discharges,
-	c.Census,
-	LAG(dc.Discharges,1,0) OVER(PARTITION BY admit.BranchCode order by admit.epi_socdate) DcDayBefore
-	--LAG(c.Census,1,0) OVER(PARTITION BY admit.BranchCode order by admit.epi_socdate) ForecastCensus
+		WHEN metric.Metric='CallTracking' THEN 1
+		WHEN metric.Metric='LeadTracking' THEN 2
+		WHEN metric.Metric='Admissions' THEN 3
+		ELSE 4
+	END as MetricOrder,
+	sth.ExcelRepName SalesRep,
+	dd.WeeKofYearDisplay,
+	dd.WeekStartDate,
+	0 as Total
+FROM [dbo].[SalesTargets] st
+INNER JOIN HCHB_EMPYREAN.dbo.ADMISSION_COORDINATORS ac on ac_id=st.AdmissionCoordinatorID and ac.ac_active='Y'
+LEFT JOIN SalesExcelRepNamesToHCHBRepNames sth on sth.HCHBRepName=ac_lastname+', '+ac_Firstname
+CROSS JOIN (
+		SELECT
+		DISTINCT WeeKofYearDisplay,WeekStartDate
+		FROM Reference.dbo.dimdate dd 
+		WHERE dd.date&gt;=@StartDate
+		and dd.date&lt;@EndDate
+	) dd 
+CROSS JOIN (
+	SELECT 'CallTracking' Metric
+	UNION ALL
+	SELECT 'LeadTracking'
+	UNION ALL
+	SELECT 'Admissions'
+	)	Metric
 
-INTO #ReadyForAgg
-FROM #admits admit
-LEFT JOIN #Discharges dc ON admit.BranchCode=dc.BranchCode and admit.epi_socdate=dc.epi_dischargeDate
-LEFT JOIN #census c on c.BranchCode=admit.BranchCode and c.ServiceDate=admit.epi_socdate
---WHERE admit.BranchCode='EAI'
-ORDER BY 3
+UNION ALL
 
 
-DECLARE @LastDayCensus float
-
-SET @LastDayCensus =(SELECT TOP 1 Census FROM #ReadyForAgg WHERE Census IS NOT NULL ORDER BY date desc )
-
-UPDATE ra
-SET Census=(SELECT TOP 1 Census FROM #ReadyForAgg WHERE Census IS NOT NULL and BranchCode=ra.BranchCode ORDER BY date desc )
-FROM #ReadyForAgg ra
-WHERE Census IS NULL
 
 SELECT 
-ra.rowtype,
-ra.BranchCode,
-ra.BranchName,
-ra.date,
-ra.DayOfMonth,
-ra.Admits,
-ra.Discharges,
-ra.Census,
-CASE
-	WHEN rowtype='actual' THEN census
-	ELSE census+Admitforecast-Dischargeforecast
-END projectedCensus
-
-	
-FROM #ReadyForAgg ra
-OUTER APPLY (
-	SELECT SUM(Admits) Admitforecast
-	FROM #ReadyForAgg 
-	WHERE BranchCode=ra.BranchCode
-	and date&lt;=ra.date
-	and rowtype='forecast'
-	) f_admit
-OUTER APPLY (
-	SELECT SUM(DcDayBefore) Dischargeforecast
-	FROM #ReadyForAgg 
-	WHERE BranchCode=ra.BranchCode
-	and date&lt;=ra.date
-	and rowtype='forecast'
-	) f_discharge</CommandText>
+	'CallTracking' MetricName,
+	1 as MetricOrder,
+	a.SalesRep,
+	dd.WeeKofYearDisplay,
+	dd.WeekStartDate,
+	COUNT(*) Total
+FROM EHClinical.dbo.SalesCallTracking a
+LEFT JOIN Reference.dbo.dimdate dd on a.ActivityDate=dd.date
+WHERE dd.date&gt;=@StartDate
+and dd.date&lt;@EndDate
+GROUP By a.SalesRep,
+	dd.WeeKofYearDisplay,
+	dd.WeekStartDate
+UNION ALL 
+SELECT 
+	'LeadTracking' MetricName,
+	2 as MetricOrder,
+	a.SalesRep,
+	dd.WeeKofYearDisplay,
+	dd.WeekStartDate,
+	COUNT(*)
+FROM EHClinical.dbo.SalesLeadTracking a
+LEFT JOIN Reference.dbo.dimdate dd on a.ActivityDate=dd.date
+WHERE dd.date&gt;=@StartDate
+and dd.date&lt;@EndDate
+GROUP By a.SalesRep,
+	dd.WeeKofYearDisplay,
+	dd.WeekStartDate
+UNION ALL 
+SELECT
+	'Admissions' MetricName,
+	3 as MetricOrder,
+	sth.ExcelRepName,
+	dd.WeeKofYearDisplay,
+	dd.WeekStartDate,
+	COUNT(*)
+FROM wh_admissions a
+LEFT JOIN SalesExcelRepNamesToHCHBRepNames sth on sth.HCHBRepName=a.AdmissionCoord
+LEFT JOIN Reference.dbo.dimdate dd on a.epi_socdate=dd.date
+WHERE dd.date&gt;=@StartDate
+and dd.date&lt;@EndDate
+GROUP BY 
+	sth.ExcelRepName,
+	dd.WeeKofYearDisplay,
+	dd.WeekStartDate</CommandText>
       </Query>
       <Fields>
-        <Field Name="rowtype">
-          <DataField>rowtype</DataField>
+        <Field Name="MetricName">
+          <DataField>MetricName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="BranchCode">
-          <DataField>BranchCode</DataField>
+        <Field Name="MetricOrder">
+          <DataField>MetricOrder</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="SalesRep">
+          <DataField>SalesRep</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="BranchName">
-          <DataField>BranchName</DataField>
+        <Field Name="WeeKofYearDisplay">
+          <DataField>WeeKofYearDisplay</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="date">
-          <DataField>date</DataField>
+        <Field Name="WeekStartDate">
+          <DataField>WeekStartDate</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
-        <Field Name="DayOfMonth">
-          <DataField>DayOfMonth</DataField>
+        <Field Name="Total">
+          <DataField>Total</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="Admits">
-          <DataField>Admits</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
-        </Field>
-        <Field Name="Discharges">
-          <DataField>Discharges</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
-        </Field>
-        <Field Name="Census">
-          <DataField>Census</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="projectedCensus">
-          <DataField>projectedCensus</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -184,16 +152,17 @@ OUTER APPLY (
                 <TablixCornerRow>
                   <TablixCornerCell>
                     <CellContents>
-                      <Textbox Name="Textbox11">
+                      <Textbox Name="Textbox10">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>Hospice Center</Value>
+                                <Value>Sales Rep</Value>
                                 <Style>
                                   <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
                                   <FontWeight>Bold</FontWeight>
                                   <Color>White</Color>
                                 </Style>
@@ -204,13 +173,14 @@ OUTER APPLY (
                             </Style>
                           </Paragraph>
                         </Paragraphs>
-                        <rd:DefaultName>Textbox11</rd:DefaultName>
+                        <rd:DefaultName>Textbox10</rd:DefaultName>
                         <Style>
                           <Border>
                             <Color>LightGrey</Color>
                             <Style>Solid</Style>
                           </Border>
                           <BackgroundColor>Teal</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
                           <PaddingLeft>2pt</PaddingLeft>
                           <PaddingRight>2pt</PaddingRight>
                           <PaddingTop>2pt</PaddingTop>
@@ -228,8 +198,9 @@ OUTER APPLY (
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value />
+                                <Value>Metric Name</Value>
                                 <Style>
+                                  <FontSize>8pt</FontSize>
                                   <FontWeight>Bold</FontWeight>
                                   <Color>White</Color>
                                 </Style>
@@ -247,6 +218,7 @@ OUTER APPLY (
                             <Style>Solid</Style>
                           </Border>
                           <BackgroundColor>Teal</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
                           <PaddingLeft>2pt</PaddingLeft>
                           <PaddingRight>2pt</PaddingRight>
                           <PaddingTop>2pt</PaddingTop>
@@ -261,7 +233,7 @@ OUTER APPLY (
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>0.59375in</Width>
+                  <Width>0.92708in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
@@ -273,32 +245,29 @@ OUTER APPLY (
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Admits">
+                        <Textbox Name="Total">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!Admits.Value)</Value>
+                                  <Value>=Sum(Fields!Total.Value)</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
+                              <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Admits</rd:DefaultName>
+                          <rd:DefaultName>Total</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>=IIF(RunningValue(Fields!BranchName.Value, CountDistinct, Nothing) MOD 2 = 1,"WhiteSmoke", "White")</BackgroundColor>
-                            <VerticalAlign>Middle</VerticalAlign>
+                            <BackgroundColor>=IIF(RunningValue(Fields!SalesRep.Value, CountDistinct, Nothing) MOD 2 = 1,"WhiteSmoke", "White")</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -309,109 +278,30 @@ OUTER APPLY (
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Admits3">
+                        <Textbox Name="Total1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!Admits.Value)</Value>
+                                  <Value>=Sum(Fields!Total.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
+                              <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Admits</rd:DefaultName>
+                          <rd:DefaultName>Total1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>=IIF(RunningValue(Fields!BranchName.Value, CountDistinct, Nothing) MOD 2 = 1,"WhiteSmoke", "White")</BackgroundColor>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                  </TablixCells>
-                </TablixRow>
-                <TablixRow>
-                  <Height>0.25in</Height>
-                  <TablixCells>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Discharges">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Sum(Fields!Discharges.Value)</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Discharges</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <BackgroundColor>=IIF(RunningValue(Fields!BranchName.Value, CountDistinct, Nothing) MOD 2 = 1,"WhiteSmoke", "White")</BackgroundColor>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Discharges3">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Sum(Fields!Discharges.Value)</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Discharges</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <BackgroundColor>=IIF(RunningValue(Fields!BranchName.Value, CountDistinct, Nothing) MOD 2 = 1,"WhiteSmoke", "White")</BackgroundColor>
-                            <VerticalAlign>Middle</VerticalAlign>
+                            <BackgroundColor>=IIF(RunningValue(Fields!SalesRep.Value, CountDistinct, Nothing) MOD 2 = 1,"WhiteSmoke", "White")</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -427,32 +317,31 @@ OUTER APPLY (
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="projectedCensus">
+                        <Textbox Name="Textbox20">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Sum(Fields!projectedCensus.Value) IS NOTHING,0,Sum(Fields!projectedCensus.Value))</Value>
+                                  <Value>=SUM(IIF(Fields!MetricName.Value="CallTracking",Fields!Total.Value,0) )</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
+                              <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>projectedCensus</rd:DefaultName>
+                          <rd:DefaultName>Textbox20</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>=IIF(RunningValue(Fields!BranchName.Value, CountDistinct, Nothing) MOD 2 = 1,"WhiteSmoke", "White")</BackgroundColor>
-                            <VerticalAlign>Middle</VerticalAlign>
+                            <BackgroundColor>LightGrey</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -463,33 +352,31 @@ OUTER APPLY (
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox7">
+                        <Textbox Name="Textbox21">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!projectedCensus.Value)/MAX(Fields!DayOfMonth.Value)</Value>
+                                  <Value>=Sum(IIF(Fields!MetricName.Value = "CallTracking", Fields!Total.Value, 0))</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
-                                    <Format>#,0.0;(#,0.0)</Format>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
+                              <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox7</rd:DefaultName>
+                          <rd:DefaultName>Textbox20</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
-                            <BackgroundColor>=IIF(RunningValue(Fields!BranchName.Value, CountDistinct, Nothing) MOD 2 = 1,"WhiteSmoke", "White")</BackgroundColor>
-                            <VerticalAlign>Middle</VerticalAlign>
+                            <BackgroundColor>LightGrey</BackgroundColor>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -505,33 +392,31 @@ OUTER APPLY (
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Admits2">
+                        <Textbox Name="Textbox23">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!Admits.Value)</Value>
+                                  <Value>=SUM(IIF(Fields!MetricName.Value="LeadTracking",Fields!Total.Value,0) )</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
+                              <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Admits</rd:DefaultName>
+                          <rd:DefaultName>Textbox23</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
                             <BackgroundColor>LightGrey</BackgroundColor>
-                            <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -542,112 +427,31 @@ OUTER APPLY (
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Admits6">
+                        <Textbox Name="Textbox24">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!Admits.Value)</Value>
+                                  <Value>=Sum(IIF(Fields!MetricName.Value = "LeadTracking", Fields!Total.Value, 0))</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
+                              <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Admits</rd:DefaultName>
+                          <rd:DefaultName>Textbox23</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
                             <BackgroundColor>LightGrey</BackgroundColor>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                  </TablixCells>
-                </TablixRow>
-                <TablixRow>
-                  <Height>0.25in</Height>
-                  <TablixCells>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Discharges2">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Sum(Fields!Discharges.Value)</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Discharges</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <BackgroundColor>LightGrey</BackgroundColor>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Discharges6">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Sum(Fields!Discharges.Value)</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Discharges</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <BackgroundColor>LightGrey</BackgroundColor>
-                            <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -663,33 +467,31 @@ OUTER APPLY (
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Census2">
+                        <Textbox Name="Textbox26">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!projectedCensus.Value)</Value>
+                                  <Value>=SUM(IIF(Fields!MetricName.Value="Admissions",Fields!Total.Value,0) )</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
+                              <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Census</rd:DefaultName>
+                          <rd:DefaultName>Textbox26</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
                             <BackgroundColor>LightGrey</BackgroundColor>
-                            <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -700,34 +502,31 @@ OUTER APPLY (
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox67">
+                        <Textbox Name="Textbox27">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!projectedCensus.Value)/MAX(Fields!DayOfMonth.Value)</Value>
+                                  <Value>=Sum(IIF(Fields!MetricName.Value = "Admissions", Fields!Total.Value, 0))</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
-                                    <Format>#,0.0;(#,0.0)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
+                              <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox67</rd:DefaultName>
+                          <rd:DefaultName>Textbox26</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
                               <Style>Solid</Style>
                             </Border>
                             <BackgroundColor>LightGrey</BackgroundColor>
-                            <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
                             <PaddingRight>2pt</PaddingRight>
                             <PaddingTop>2pt</PaddingTop>
@@ -743,28 +542,28 @@ OUTER APPLY (
             <TablixColumnHierarchy>
               <TablixMembers>
                 <TablixMember>
-                  <Group Name="DayOfMonth">
+                  <Group Name="WeeKofYearDisplay">
                     <GroupExpressions>
-                      <GroupExpression>=Fields!DayOfMonth.Value</GroupExpression>
+                      <GroupExpression>=Fields!WeeKofYearDisplay.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!DayOfMonth.Value</Value>
+                      <Value>=Fields!WeekStartDate.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
-                    <Size>0.25in</Size>
+                    <Size>0.39583in</Size>
                     <CellContents>
-                      <Textbox Name="DayOfMonth">
-                        <CanGrow>true</CanGrow>
+                      <Textbox Name="WeeKofYearDisplay">
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>=Fields!DayOfMonth.Value</Value>
+                                <Value>=Fields!WeeKofYearDisplay.Value</Value>
                                 <Style>
+                                  <FontSize>8pt</FontSize>
                                   <FontWeight>Bold</FontWeight>
                                   <Color>White</Color>
                                 </Style>
@@ -775,13 +574,14 @@ OUTER APPLY (
                             </Style>
                           </Paragraph>
                         </Paragraphs>
-                        <rd:DefaultName>DayOfMonth</rd:DefaultName>
+                        <rd:DefaultName>WeeKofYearDisplay</rd:DefaultName>
                         <Style>
                           <Border>
                             <Color>LightGrey</Color>
                             <Style>Solid</Style>
                           </Border>
                           <BackgroundColor>Teal</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
                           <PaddingLeft>2pt</PaddingLeft>
                           <PaddingRight>2pt</PaddingRight>
                           <PaddingTop>2pt</PaddingTop>
@@ -793,17 +593,19 @@ OUTER APPLY (
                 </TablixMember>
                 <TablixMember>
                   <TablixHeader>
-                    <Size>0.25in</Size>
+                    <Size>0.39583in</Size>
                     <CellContents>
-                      <Textbox Name="Textbox1">
+                      <Textbox Name="Textbox32">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>Total/ADC</Value>
+                                <Value>Total</Value>
                                 <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
                                   <FontWeight>Bold</FontWeight>
                                   <Color>White</Color>
                                 </Style>
@@ -814,13 +616,14 @@ OUTER APPLY (
                             </Style>
                           </Paragraph>
                         </Paragraphs>
-                        <rd:DefaultName>Textbox1</rd:DefaultName>
+                        <rd:DefaultName>Textbox32</rd:DefaultName>
                         <Style>
                           <Border>
                             <Color>LightGrey</Color>
                             <Style>Solid</Style>
                           </Border>
                           <BackgroundColor>Teal</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
                           <PaddingLeft>2pt</PaddingLeft>
                           <PaddingRight>2pt</PaddingRight>
                           <PaddingTop>2pt</PaddingTop>
@@ -835,29 +638,30 @@ OUTER APPLY (
             <TablixRowHierarchy>
               <TablixMembers>
                 <TablixMember>
-                  <Group Name="BranchName">
+                  <Group Name="SalesRep">
                     <GroupExpressions>
-                      <GroupExpression>=Fields!BranchName.Value</GroupExpression>
+                      <GroupExpression>=Fields!SalesRep.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!BranchName.Value</Value>
+                      <Value>=Fields!SalesRep.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
-                    <Size>1.09375in</Size>
+                    <Size>1in</Size>
                     <CellContents>
-                      <Textbox Name="BranchName">
+                      <Textbox Name="SalesRep">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>=Fields!BranchName.Value</Value>
+                                <Value>=Fields!SalesRep.Value</Value>
                                 <Style>
                                   <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
                                 </Style>
                               </TextRun>
                             </TextRuns>
@@ -866,13 +670,13 @@ OUTER APPLY (
                             </Style>
                           </Paragraph>
                         </Paragraphs>
-                        <rd:DefaultName>BranchName</rd:DefaultName>
+                        <rd:DefaultName>SalesRep</rd:DefaultName>
                         <Style>
                           <Border>
                             <Color>LightGrey</Color>
                             <Style>Solid</Style>
                           </Border>
-                          <BackgroundColor>=IIF(RunningValue(Fields!BranchName.Value, CountDistinct, Nothing) MOD 2 = 1,"WhiteSmoke", "White")</BackgroundColor>
+                          <BackgroundColor>=IIF(RunningValue(Fields!SalesRep.Value, CountDistinct, Nothing) MOD 2 = 1,"WhiteSmoke", "White")</BackgroundColor>
                           <VerticalAlign>Middle</VerticalAlign>
                           <PaddingLeft>2pt</PaddingLeft>
                           <PaddingRight>2pt</PaddingRight>
@@ -884,113 +688,42 @@ OUTER APPLY (
                   </TablixHeader>
                   <TablixMembers>
                     <TablixMember>
+                      <Group Name="MetricName">
+                        <GroupExpressions>
+                          <GroupExpression>=Fields!MetricName.Value</GroupExpression>
+                        </GroupExpressions>
+                      </Group>
+                      <SortExpressions>
+                        <SortExpression>
+                          <Value>=Fields!MetricOrder.Value</Value>
+                        </SortExpression>
+                      </SortExpressions>
                       <TablixHeader>
                         <Size>1in</Size>
                         <CellContents>
-                          <Textbox Name="Textbox5">
+                          <Textbox Name="MetricName">
                             <CanGrow>true</CanGrow>
                             <KeepTogether>true</KeepTogether>
                             <Paragraphs>
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>Admissions</Value>
+                                    <Value>=Fields!MetricName.Value</Value>
                                     <Style>
-                                      <FontFamily>Arial</FontFamily>
+                                      <FontSize>8pt</FontSize>
                                     </Style>
                                   </TextRun>
                                 </TextRuns>
-                                <Style>
-                                  <TextAlign>Center</TextAlign>
-                                </Style>
+                                <Style />
                               </Paragraph>
                             </Paragraphs>
-                            <rd:DefaultName>Textbox5</rd:DefaultName>
+                            <rd:DefaultName>MetricName</rd:DefaultName>
                             <Style>
                               <Border>
                                 <Color>LightGrey</Color>
                                 <Style>Solid</Style>
                               </Border>
-                              <BackgroundColor>=IIF(RunningValue(Fields!BranchName.Value, CountDistinct, Nothing) MOD 2 = 1,"WhiteSmoke", "White")</BackgroundColor>
-                              <VerticalAlign>Middle</VerticalAlign>
-                              <PaddingLeft>2pt</PaddingLeft>
-                              <PaddingRight>2pt</PaddingRight>
-                              <PaddingTop>2pt</PaddingTop>
-                              <PaddingBottom>2pt</PaddingBottom>
-                            </Style>
-                          </Textbox>
-                        </CellContents>
-                      </TablixHeader>
-                    </TablixMember>
-                    <TablixMember>
-                      <TablixHeader>
-                        <Size>1in</Size>
-                        <CellContents>
-                          <Textbox Name="Textbox22">
-                            <CanGrow>true</CanGrow>
-                            <KeepTogether>true</KeepTogether>
-                            <Paragraphs>
-                              <Paragraph>
-                                <TextRuns>
-                                  <TextRun>
-                                    <Value>Discharges</Value>
-                                    <Style>
-                                      <FontFamily>Arial</FontFamily>
-                                    </Style>
-                                  </TextRun>
-                                </TextRuns>
-                                <Style>
-                                  <TextAlign>Center</TextAlign>
-                                </Style>
-                              </Paragraph>
-                            </Paragraphs>
-                            <rd:DefaultName>Textbox22</rd:DefaultName>
-                            <Style>
-                              <Border>
-                                <Color>LightGrey</Color>
-                                <Style>Solid</Style>
-                              </Border>
-                              <BackgroundColor>=IIF(RunningValue(Fields!BranchName.Value, CountDistinct, Nothing) MOD 2 = 1,"WhiteSmoke", "White")</BackgroundColor>
-                              <VerticalAlign>Middle</VerticalAlign>
-                              <PaddingLeft>2pt</PaddingLeft>
-                              <PaddingRight>2pt</PaddingRight>
-                              <PaddingTop>2pt</PaddingTop>
-                              <PaddingBottom>2pt</PaddingBottom>
-                            </Style>
-                          </Textbox>
-                        </CellContents>
-                      </TablixHeader>
-                    </TablixMember>
-                    <TablixMember>
-                      <TablixHeader>
-                        <Size>1in</Size>
-                        <CellContents>
-                          <Textbox Name="Textbox25">
-                            <CanGrow>true</CanGrow>
-                            <KeepTogether>true</KeepTogether>
-                            <Paragraphs>
-                              <Paragraph>
-                                <TextRuns>
-                                  <TextRun>
-                                    <Value>Census</Value>
-                                    <Style>
-                                      <FontFamily>Arial</FontFamily>
-                                    </Style>
-                                  </TextRun>
-                                </TextRuns>
-                                <Style>
-                                  <TextAlign>Center</TextAlign>
-                                </Style>
-                              </Paragraph>
-                            </Paragraphs>
-                            <rd:DefaultName>Textbox25</rd:DefaultName>
-                            <Style>
-                              <Border>
-                                <Color>LightGrey</Color>
-                                <Style>Solid</Style>
-                              </Border>
-                              <BackgroundColor>=IIF(RunningValue(Fields!BranchName.Value, CountDistinct, Nothing) MOD 2 = 1,"WhiteSmoke", "White")</BackgroundColor>
-                              <VerticalAlign>Middle</VerticalAlign>
+                              <BackgroundColor>=IIF(RunningValue(Fields!SalesRep.Value, CountDistinct, Nothing) MOD 2 = 1,"WhiteSmoke", "White")</BackgroundColor>
                               <PaddingLeft>2pt</PaddingLeft>
                               <PaddingRight>2pt</PaddingRight>
                               <PaddingTop>2pt</PaddingTop>
@@ -1004,9 +737,9 @@ OUTER APPLY (
                 </TablixMember>
                 <TablixMember>
                   <TablixHeader>
-                    <Size>1.09375in</Size>
+                    <Size>1in</Size>
                     <CellContents>
-                      <Textbox Name="Textbox27">
+                      <Textbox Name="Textbox18">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
@@ -1016,6 +749,7 @@ OUTER APPLY (
                                 <Value>Total</Value>
                                 <Style>
                                   <FontFamily>Arial</FontFamily>
+                                  <FontSize>8pt</FontSize>
                                   <FontWeight>Bold</FontWeight>
                                 </Style>
                               </TextRun>
@@ -1025,7 +759,7 @@ OUTER APPLY (
                             </Style>
                           </Paragraph>
                         </Paragraphs>
-                        <rd:DefaultName>Textbox27</rd:DefaultName>
+                        <rd:DefaultName>Textbox18</rd:DefaultName>
                         <Style>
                           <Border>
                             <Color>LightGrey</Color>
@@ -1046,33 +780,31 @@ OUTER APPLY (
                       <TablixHeader>
                         <Size>1in</Size>
                         <CellContents>
-                          <Textbox Name="Textbox6">
+                          <Textbox Name="Textbox19">
                             <CanGrow>true</CanGrow>
                             <KeepTogether>true</KeepTogether>
                             <Paragraphs>
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>Admissions</Value>
+                                    <Value>CallTracking</Value>
                                     <Style>
                                       <FontFamily>Arial</FontFamily>
+                                      <FontSize>8pt</FontSize>
                                       <FontWeight>Bold</FontWeight>
                                     </Style>
                                   </TextRun>
                                 </TextRuns>
-                                <Style>
-                                  <TextAlign>Center</TextAlign>
-                                </Style>
+                                <Style />
                               </Paragraph>
                             </Paragraphs>
-                            <rd:DefaultName>Textbox5</rd:DefaultName>
+                            <rd:DefaultName>Textbox19</rd:DefaultName>
                             <Style>
                               <Border>
                                 <Color>LightGrey</Color>
                                 <Style>Solid</Style>
                               </Border>
                               <BackgroundColor>LightGrey</BackgroundColor>
-                              <VerticalAlign>Middle</VerticalAlign>
                               <PaddingLeft>2pt</PaddingLeft>
                               <PaddingRight>2pt</PaddingRight>
                               <PaddingTop>2pt</PaddingTop>
@@ -1086,23 +818,22 @@ OUTER APPLY (
                       <TablixHeader>
                         <Size>1in</Size>
                         <CellContents>
-                          <Textbox Name="Textbox23">
+                          <Textbox Name="Textbox22">
                             <CanGrow>true</CanGrow>
                             <KeepTogether>true</KeepTogether>
                             <Paragraphs>
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>Discharges</Value>
+                                    <Value>LeadTracking</Value>
                                     <Style>
                                       <FontFamily>Arial</FontFamily>
+                                      <FontSize>8pt</FontSize>
                                       <FontWeight>Bold</FontWeight>
                                     </Style>
                                   </TextRun>
                                 </TextRuns>
-                                <Style>
-                                  <TextAlign>Center</TextAlign>
-                                </Style>
+                                <Style />
                               </Paragraph>
                             </Paragraphs>
                             <rd:DefaultName>Textbox22</rd:DefaultName>
@@ -1112,7 +843,6 @@ OUTER APPLY (
                                 <Style>Solid</Style>
                               </Border>
                               <BackgroundColor>LightGrey</BackgroundColor>
-                              <VerticalAlign>Middle</VerticalAlign>
                               <PaddingLeft>2pt</PaddingLeft>
                               <PaddingRight>2pt</PaddingRight>
                               <PaddingTop>2pt</PaddingTop>
@@ -1126,23 +856,22 @@ OUTER APPLY (
                       <TablixHeader>
                         <Size>1in</Size>
                         <CellContents>
-                          <Textbox Name="Textbox26">
+                          <Textbox Name="Textbox25">
                             <CanGrow>true</CanGrow>
                             <KeepTogether>true</KeepTogether>
                             <Paragraphs>
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>Census</Value>
+                                    <Value>Admissions</Value>
                                     <Style>
                                       <FontFamily>Arial</FontFamily>
+                                      <FontSize>8pt</FontSize>
                                       <FontWeight>Bold</FontWeight>
                                     </Style>
                                   </TextRun>
                                 </TextRuns>
-                                <Style>
-                                  <TextAlign>Center</TextAlign>
-                                </Style>
+                                <Style />
                               </Paragraph>
                             </Paragraphs>
                             <rd:DefaultName>Textbox25</rd:DefaultName>
@@ -1152,7 +881,6 @@ OUTER APPLY (
                                 <Style>Solid</Style>
                               </Border>
                               <BackgroundColor>LightGrey</BackgroundColor>
-                              <VerticalAlign>Middle</VerticalAlign>
                               <PaddingLeft>2pt</PaddingLeft>
                               <PaddingRight>2pt</PaddingRight>
                               <PaddingTop>2pt</PaddingTop>
@@ -1168,23 +896,89 @@ OUTER APPLY (
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>DataSet1</DataSetName>
-            <Top>1.38417in</Top>
-            <Height>1.75in</Height>
-            <Width>3.6875in</Width>
+            <PageName>Summary</PageName>
+            <Top>0.81125in</Top>
+            <Height>1.39583in</Height>
+            <Width>3.92708in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Tablix>
-          <Textbox Name="Textbox31">
+          <Tablix Name="Tablix3">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>3.92708in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.71875in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="Subreport1">
+                          <ReportName>SalesActivitySubReport</ReportName>
+                          <Parameters>
+                            <Parameter Name="SalesRep">
+                              <Value>=Fields!SalesRep.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Subreport>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="Details">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!SalesRep.Value</GroupExpression>
+                    </GroupExpressions>
+                    <PageBreak>
+                      <BreakLocation>Between</BreakLocation>
+                    </PageBreak>
+                  </Group>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>DataSet1</DataSetName>
+            <PageBreak>
+              <BreakLocation>Start</BreakLocation>
+            </PageBreak>
+            <Top>2.405in</Top>
+            <Height>0.71875in</Height>
+            <Width>3.92708in</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Textbox Name="Textbox48">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Census Forecast Report</Value>
+                    <Value EvaluationMode="Constant">Sales Activity Analysis</Value>
                     <Style>
                       <FontWeight>Bold</FontWeight>
                     </Style>
@@ -1193,41 +987,9 @@ OUTER APPLY (
                 <Style />
               </Paragraph>
             </Paragraphs>
-            <rd:DefaultName>Textbox31</rd:DefaultName>
+            <rd:DefaultName>Textbox48</rd:DefaultName>
             <Height>0.25in</Height>
-            <Width>23.44792in</Width>
-            <ZIndex>1</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox32">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>="Executed On: " &amp; FORMAT(NOW(),"MM/dd/yyyy hh:mm tt")</Value>
-                    <Style>
-                      <FontSize>9pt</FontSize>
-                      <FontWeight>Normal</FontWeight>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox31</rd:DefaultName>
-            <Top>0.25in</Top>
-            <Height>0.25in</Height>
-            <Width>23.44792in</Width>
+            <Width>3.92708in</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -1239,62 +1001,27 @@ OUTER APPLY (
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
-          <Textbox Name="Textbox68">
+          <Textbox Name="Textbox49">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Forecast Logic:</Value>
+                    <Value>="Executed On: " &amp; FORMAT(Today(),"MM/dd/yyyy")</Value>
                     <Style>
-                      <FontSize>9pt</FontSize>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
                     </Style>
                   </TextRun>
                 </TextRuns>
-                <Style />
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Using below formulas, this report will calculate average admits &amp; discharges per business day, then use those to predict futrue days in the month</Value>
-                    <Style>
-                      <FontSize>9pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <ListLevel>1</ListLevel>
-                <Style />
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>admission forecast = (Total admissions last 4 weeks) / (Total business days last 4 weeks)</Value>
-                    <Style>
-                      <FontSize>9pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <ListLevel>1</ListLevel>
-                <Style />
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>discharge forecast =  (Total discharges last 4 weeks) / (Total business days last 4 weeks)</Value>
-                    <Style>
-                      <FontSize>9pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <ListLevel>1</ListLevel>
                 <Style />
               </Paragraph>
             </Paragraphs>
-            <rd:DefaultName>Textbox68</rd:DefaultName>
-            <Top>0.49875in</Top>
-            <Height>0.71875in</Height>
-            <Width>23.44792in</Width>
+            <rd:DefaultName>Textbox48</rd:DefaultName>
+            <Top>0.27778in</Top>
+            <Height>0.25in</Height>
+            <Width>3.92708in</Width>
             <ZIndex>3</ZIndex>
             <Style>
               <Border>
@@ -1307,10 +1034,10 @@ OUTER APPLY (
             </Style>
           </Textbox>
         </ReportItems>
-        <Height>3.13417in</Height>
+        <Height>3.12375in</Height>
         <Style />
       </Body>
-      <Width>23.44792in</Width>
+      <Width>3.92708in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>
@@ -1327,5 +1054,5 @@ OUTER APPLY (
     </GridLayoutDefinition>
   </ReportParametersLayout>
   <rd:ReportUnitType>Inch</rd:ReportUnitType>
-  <rd:ReportID>3167a2fb-c4cd-4353-bb8e-e96f7b062d4a</rd:ReportID>
+  <rd:ReportID>199ffa9f-c713-42d5-89e7-773b5fa5f006</rd:ReportID>
 </Report>

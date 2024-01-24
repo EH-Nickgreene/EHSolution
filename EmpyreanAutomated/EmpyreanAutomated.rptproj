@@ -62,11 +62,14 @@
     <Report Include="NewHiresReport.rdl" />
     <Report Include="Nursing Productivity.rdl" />
     <Report Include="OpsMetrics.rdl" />
+    <Report Include="OpsMetrics_IDGMeetings.rdl" />
     <Report Include="OpsMetrics_LateVisits.rdl" />
     <Report Include="OpsMetrics_OutstandingCoordinationNotes.rdl" />
     <Report Include="OpsMetrics_OutstandingPatientRelatedTasks.rdl" />
     <Report Include="OpsMetrics_Summary.rdl" />
     <Report Include="OpsMetrics_UnverifiedVisits.rdl" />
+    <Report Include="SalesActivityReport.rdl" />
+    <Report Include="SalesActivitySubReport.rdl" />
     <Report Include="SSRSWakeUp.rdl" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Reporting Services\Microsoft.ReportingServices.MSBuilder.targets" />
