@@ -153,6 +153,11 @@
           <FullPath>ReportSenderEHMTDAdmissionsBySalesRep.dtsx</FullPath>
           <References />
         </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>ReportSenderEHOpsMetrics.dtsx</Name>
+          <FullPath>ReportSenderEHOpsMetrics.dtsx</FullPath>
+          <References />
+        </DtsPackage>
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderEHNursingProductivity.dtsx</Name>
           <FullPath>ReportSenderEHNursingProductivity.dtsx</FullPath>

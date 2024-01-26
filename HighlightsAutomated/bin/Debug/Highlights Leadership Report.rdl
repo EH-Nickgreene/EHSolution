@@ -926,7 +926,7 @@ LEFT JOIN insights.Client c on ms.ClientID=c.ClientId
 LEFT JOIN #dates d on d.[Planned Start Week ]=ISNULL(ms.[Planned Start Week ],'12/31/9999')
 WHERE ms.[Reason Code] IN ('Up Next')
 and ms.[Current Service] IN ('ABA','ABA (Dx)')
-and d.Rowid&gt;=5
+and ms.[Planned Start Week ] IS NULL
 GROUP BY ms.ServiceLocation </CommandText>
       </Query>
       <Fields>

@@ -42,7 +42,7 @@ UNION ALL
 SELECT  
 	1 VerticalOrder,
 	branch_name, 
-	'Outstanding Notes' MetricName,
+	'Coordination Notes' MetricName,
 	CONVERT(varchar(10),COUNT(MRNum)) 
 FROM EHClinicalStaging.dbo.Temp_SSRS_CoordinationNotes
 GROUP BY branch_name
@@ -85,7 +85,7 @@ UNION ALL
 SELECT   
 	2 VerticalOrder,
 	'Total', 
-	'Outstanding Notes' MetricName,
+	'Coordination Notes' MetricName,
 	CONVERT(varchar(10),COUNT(MRNum)) 
 FROM EHClinicalStaging.dbo.Temp_SSRS_CoordinationNotes
 UNION ALL 
@@ -94,8 +94,7 @@ SELECT
 	'Total', 
 	'IDG' MetricName,
 	CONVERT(varchar(10),COUNT(MRNum)) 
-FROM EHClinicalStaging.dbo.Temp_SSRS_IDGMeeting
-</CommandText>
+FROM EHClinicalStaging.dbo.Temp_SSRS_IDGMeeting</CommandText>
       </Query>
       <Fields>
         <Field Name="VerticalOrder">
