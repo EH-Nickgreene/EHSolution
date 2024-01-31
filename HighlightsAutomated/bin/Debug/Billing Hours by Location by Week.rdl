@@ -368,7 +368,7 @@ GROUP By bdp.Branchname,WeekOfYearDisplay,d.WeekStartDate</CommandText>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!WeekOfYearDisplay.Value</Value>
+                      <Value>=Fields!WeekStartDate.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
@@ -898,7 +898,7 @@ GROUP By bdp.Branchname,WeekOfYearDisplay,d.WeekStartDate</CommandText>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!WeekOfYearDisplay.Value</Value>
+                      <Value>=Fields!WeekStartDate.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
@@ -1316,7 +1316,7 @@ GROUP By bdp.Branchname,WeekOfYearDisplay,d.WeekStartDate</CommandText>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!WeekOfYearDisplay.Value</Value>
+                      <Value>=Fields!WeekStartDate.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>

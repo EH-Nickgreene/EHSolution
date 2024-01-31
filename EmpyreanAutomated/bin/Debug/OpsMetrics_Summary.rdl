@@ -264,6 +264,7 @@ FROM EHClinicalStaging.dbo.Temp_SSRS_IDGMeeting</CommandText>
                           <PaddingBottom>2pt</PaddingBottom>
                         </Style>
                       </Textbox>
+                      <rd:Selected>true</rd:Selected>
                     </CellContents>
                   </TablixHeader>
                 </TablixMember>

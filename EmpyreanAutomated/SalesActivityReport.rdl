@@ -74,10 +74,17 @@ SELECT
 	dd.WeeKofYearDisplay,
 	dd.WeekStartDate,
 	COUNT(*) Total
+	--SELECT * 
 FROM EHClinical.dbo.SalesCallTracking a
 LEFT JOIN Reference.dbo.dimdate dd on a.ActivityDate=dd.date
 WHERE dd.date&gt;=@StartDate
 and dd.date&lt;@EndDate
+AND (CASE WHEN ISNULL(Location,'') &lt;&gt;'' THEN 1 ELSE 0 END+
+CASE WHEN ISNULL(ReferralSource,'') &lt;&gt;'' THEN 1 ELSE 0 END+
+CASE WHEN ISNULL(ContactType,'') &lt;&gt;'' THEN 1 ELSE 0 END+
+CASE WHEN ISNULL(ContactName,'') &lt;&gt;'' THEN 1 ELSE 0 END+
+CASE WHEN ISNULL(ContactRole,'') &lt;&gt;'' THEN 1 ELSE 0 END+
+CASE WHEN ISNULL(Notes,'') &lt;&gt;'' THEN 1 ELSE 0 END)&gt;=3
 GROUP By a.SalesRep,
 	dd.WeeKofYearDisplay,
 	dd.WeekStartDate
@@ -255,6 +262,7 @@ GROUP BY
                                   <Value>=Sum(Fields!Total.Value)</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
+                                    <Format>#,0;(#,0)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -289,6 +297,7 @@ GROUP BY
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
+                                    <Format>#,0;(#,0)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -329,6 +338,7 @@ GROUP BY
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
+                                    <Format>#,0;(#,0)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -364,6 +374,7 @@ GROUP BY
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
+                                    <Format>#,0;(#,0)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -404,6 +415,7 @@ GROUP BY
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
+                                    <Format>#,0;(#,0)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -439,6 +451,7 @@ GROUP BY
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
+                                    <Format>#,0;(#,0)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -479,6 +492,7 @@ GROUP BY
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
+                                    <Format>#,0;(#,0)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -514,6 +528,7 @@ GROUP BY
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
+                                    <Format>#,0;(#,0)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -897,74 +912,10 @@ GROUP BY
             </TablixRowHierarchy>
             <DataSetName>DataSet1</DataSetName>
             <PageName>Summary</PageName>
-            <Top>0.81125in</Top>
+            <Top>1.38132in</Top>
+            <Left>0in</Left>
             <Height>1.39583in</Height>
             <Width>3.92708in</Width>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Tablix>
-          <Tablix Name="Tablix3">
-            <TablixBody>
-              <TablixColumns>
-                <TablixColumn>
-                  <Width>3.92708in</Width>
-                </TablixColumn>
-              </TablixColumns>
-              <TablixRows>
-                <TablixRow>
-                  <Height>0.71875in</Height>
-                  <TablixCells>
-                    <TablixCell>
-                      <CellContents>
-                        <Subreport Name="Subreport1">
-                          <ReportName>SalesActivitySubReport</ReportName>
-                          <Parameters>
-                            <Parameter Name="SalesRep">
-                              <Value>=Fields!SalesRep.Value</Value>
-                            </Parameter>
-                          </Parameters>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                          </Style>
-                        </Subreport>
-                      </CellContents>
-                    </TablixCell>
-                  </TablixCells>
-                </TablixRow>
-              </TablixRows>
-            </TablixBody>
-            <TablixColumnHierarchy>
-              <TablixMembers>
-                <TablixMember />
-              </TablixMembers>
-            </TablixColumnHierarchy>
-            <TablixRowHierarchy>
-              <TablixMembers>
-                <TablixMember>
-                  <Group Name="Details">
-                    <GroupExpressions>
-                      <GroupExpression>=Fields!SalesRep.Value</GroupExpression>
-                    </GroupExpressions>
-                    <PageBreak>
-                      <BreakLocation>Between</BreakLocation>
-                    </PageBreak>
-                  </Group>
-                </TablixMember>
-              </TablixMembers>
-            </TablixRowHierarchy>
-            <DataSetName>DataSet1</DataSetName>
-            <PageBreak>
-              <BreakLocation>Start</BreakLocation>
-            </PageBreak>
-            <Top>2.405in</Top>
-            <Height>0.71875in</Height>
-            <Width>3.92708in</Width>
-            <ZIndex>1</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -990,7 +941,7 @@ GROUP BY
             <rd:DefaultName>Textbox48</rd:DefaultName>
             <Height>0.25in</Height>
             <Width>3.92708in</Width>
-            <ZIndex>2</ZIndex>
+            <ZIndex>1</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1022,6 +973,38 @@ GROUP BY
             <Top>0.27778in</Top>
             <Height>0.25in</Height>
             <Width>3.92708in</Width>
+            <ZIndex>2</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox50">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value EvaluationMode="Constant">Any call tracking record that has less than 3 fields filled in for Location, Referral Source, Contact Type, Contact Name, Contact Role, or Notes will be excluded</Value>
+                    <Style>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox48</rd:DefaultName>
+            <Top>0.68688in</Top>
+            <Height>0.51042in</Height>
+            <Width>3.92708in</Width>
             <ZIndex>3</ZIndex>
             <Style>
               <Border>
@@ -1034,7 +1017,7 @@ GROUP BY
             </Style>
           </Textbox>
         </ReportItems>
-        <Height>3.12375in</Height>
+        <Height>3.61333in</Height>
         <Style />
       </Body>
       <Width>3.92708in</Width>

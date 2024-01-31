@@ -153,14 +153,19 @@
           <FullPath>ReportSenderEHMTDAdmissionsBySalesRep.dtsx</FullPath>
           <References />
         </DtsPackage>
-        <DtsPackage FormatVersion="0">
+        <DtsPackage FormatVersion="8">
+          <Name>ReportSenderEHNursingProductivity.dtsx</Name>
+          <FullPath>ReportSenderEHNursingProductivity.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="8">
           <Name>ReportSenderEHOpsMetrics.dtsx</Name>
           <FullPath>ReportSenderEHOpsMetrics.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">
-          <Name>ReportSenderEHNursingProductivity.dtsx</Name>
-          <FullPath>ReportSenderEHNursingProductivity.dtsx</FullPath>
+          <Name>ReportSenderEHSalesActivity.dtsx</Name>
+          <FullPath>ReportSenderEHSalesActivity.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">

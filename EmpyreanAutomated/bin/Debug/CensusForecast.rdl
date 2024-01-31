@@ -1257,7 +1257,7 @@ OUTER APPLY (
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Using below formulas, this report will calculate average admits &amp; discharges per business day, then use those to predict futrue days in the month</Value>
+                    <Value>Using below formulas, this report will calculate average admits &amp; discharges per business day, then use those to predict future days in the month</Value>
                     <Style>
                       <FontSize>9pt</FontSize>
                     </Style>

@@ -5,23 +5,23 @@
   DTS:CreationName="Microsoft.Package"
   DTS:CreatorComputerName="SQLVM"
   DTS:CreatorName="SQLVM\NickGreene"
-  DTS:DTSID="{20520344-71B1-4CBA-9C14-E7BC8EEC89C6}"
+  DTS:DTSID="{E7308139-DB16-4058-9CC5-A31EEBD63F01}"
   DTS:EnableConfig="True"
   DTS:ExecutableType="Microsoft.Package"
   DTS:LastModifiedProductVersion="16.0.5270.0"
   DTS:LocaleID="1033"
-  DTS:ObjectName="ReportSenderEHOpsMetrics"
+  DTS:ObjectName="ReportSenderEHSalesActivity"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="102"
-  DTS:VersionGUID="{C9329246-2C62-406E-A48F-AD816D6C02F2}">
+  DTS:VersionBuild="87"
+  DTS:VersionGUID="{12265C2A-F34F-4D04-8E57-8E28F50FB840}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[Logging]"
       DTS:CreationName="OLEDB"
-      DTS:DTSID="{06419665-0738-4517-A46D-C39BDFAA9B0E}"
+      DTS:DTSID="{B7B2C26B-7A77-4E12-B033-86BE63D06FE7}"
       DTS:ObjectName="Logging">
       <DTS:ObjectData>
         <DTS:ConnectionManager
@@ -33,7 +33,7 @@
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[SQLVM.Reference]"
       DTS:CreationName="OLEDB"
-      DTS:DTSID="{24996CD1-576D-4BD2-BEB8-2A475C792A2F}"
+      DTS:DTSID="{E46AE433-6FD2-4AD5-8D3D-85475B2739C0}"
       DTS:ObjectName="SQLVM.Reference">
       <DTS:ObjectData>
         <DTS:ConnectionManager
@@ -45,26 +45,16 @@
   </DTS:ConnectionManagers>
   <DTS:Configurations>
     <DTS:Configuration
-      DTS:ConfigurationString="&quot;SQLVM.Reference&quot;;&quot;[dbo].[SSIS Configurations]&quot;;&quot;ReportSenderEHOpsMetrics&quot;;"
+      DTS:ConfigurationString="&quot;SQLVM.Reference&quot;;&quot;[dbo].[SSIS Configurations]&quot;;&quot;ReportSenderEHSalesActivity&quot;;"
       DTS:ConfigurationType="7"
       DTS:CreationName=""
-      DTS:DTSID="{D1A3DFFA-6AA5-44D8-ABEF-FC971F0B0635}"
+      DTS:DTSID="{FBB808BD-570C-4FB8-AB85-4FF2322EE178}"
       DTS:ObjectName="Configuration 1" />
   </DTS:Configurations>
   <DTS:Variables>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{528CB816-4E3C-49DD-9908-BEB55260AF1A}"
-      DTS:IncludeInDebugDump="2345"
-      DTS:Namespace="User"
-      DTS:ObjectName="DirectorEmails">
-      <DTS:VariableValue
-        DTS:DataType="8"
-        xml:space="preserve"></DTS:VariableValue>
-    </DTS:Variable>
-    <DTS:Variable
-      DTS:CreationName=""
-      DTS:DTSID="{826340F2-0117-408D-B19E-F9CAE6562DB3}"
+      DTS:DTSID="{02E04AF0-3CB0-494E-9C72-4D970DE48237}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EmailBCC">
@@ -73,7 +63,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{1F6232D5-65FB-40D0-B04B-080B77250A70}"
+      DTS:DTSID="{35AA60CA-5A9D-4323-B991-59A7B1FE4377}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EmailBody">
@@ -83,7 +73,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{DA89F3BA-2A62-43FE-95AA-C44ACAE2A68E}"
+      DTS:DTSID="{A1083418-7B7B-487B-AB3A-C04DCF21CFD6}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EmailCC">
@@ -93,7 +83,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{77C6C742-5140-4498-96A7-C331147ACBDA}"
+      DTS:DTSID="{2E83CB18-C082-48FD-80FA-9AB549471D5B}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EmailProfile">
@@ -102,7 +92,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{893F066B-1F94-46A2-9470-7E41F8EB7899}"
+      DTS:DTSID="{52F9A949-A7B4-4ED0-8C8B-BE546BED22D8}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EmailSignature">
@@ -111,25 +101,25 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{A3692055-4EF1-47CB-A594-923E9A6821FF}"
+      DTS:DTSID="{C941B938-03AA-4003-9C52-7E0990426DB4}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EmailSubject">
       <DTS:VariableValue
-        DTS:DataType="8">Office Operational Metrics mm.dd.yy</DTS:VariableValue>
+        DTS:DataType="8">Sales Activity mm.dd.yy</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{E4381B97-3C0D-456F-8C35-A48F67651206}"
+      DTS:DTSID="{ED170D38-8845-42F4-B701-BA27B178BF75}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EmailTo">
       <DTS:VariableValue
-        DTS:DataType="8">elle.baker@empyreanhospice.com;january.menees@empyreanhospice.com;tanya.smith@empyreanhospice.com;nick.greene@empyreanhospice.com</DTS:VariableValue>
+        DTS:DataType="8">nick.greene@empyreanhospice.com</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{31BAAC8A-9145-4303-9B79-DBE3DC309595}"
+      DTS:DTSID="{BF6D100F-31A5-410D-96DE-96DC1C28D1F0}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="EndDate">
@@ -138,7 +128,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{77EF0649-2069-4C13-BA1A-34AD4639CBD7}"
+      DTS:DTSID="{0EC79766-88DA-4740-8FBD-0A7D3A9E76E6}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EtlLoadId">
@@ -148,7 +138,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{85A6761C-19AB-4B15-9DDC-558514CEAC45}"
+      DTS:DTSID="{70D698EE-3FFB-4B81-BE42-BB5C39061C7E}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="FileExists">
@@ -157,7 +147,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{93FA703C-1F6C-4975-ADA5-31AA59873372}"
+      DTS:DTSID="{BEC08506-7319-4BDE-A715-29C732FBB64D}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="FileExtension">
@@ -166,16 +156,16 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{D6A004AD-6989-4666-B253-8E59173C87A0}"
+      DTS:DTSID="{8EAA5958-4F80-4E0B-87FC-54F4BD10F554}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="Filename">
       <DTS:VariableValue
-        DTS:DataType="8">Operational Metrics yyyymmdd.xlsx</DTS:VariableValue>
+        DTS:DataType="8">Sales Activity yyyymmdd.xlsx</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{8F001D2A-241D-4B71-8FEA-AB74518D5D7D}"
+      DTS:DTSID="{F2E0A477-B958-4A0A-AF21-F400841874BD}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="FileProcessedRowCount">
@@ -184,7 +174,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{27490A01-1BD2-4A22-A35C-F19DF1337E36}"
+      DTS:DTSID="{1DDCBF56-2666-468D-8A38-18EE31FC9D12}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="FileType">
@@ -193,7 +183,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{CE54EB52-11AB-46A5-9307-BACECC5BC7C5}"
+      DTS:DTSID="{AF5811C8-0AA1-4236-9CEC-EF63C94DAE70}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="FolderPath">
@@ -202,18 +192,18 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{FD636AA5-8204-4948-B843-459479231431}"
+      DTS:DTSID="{F5C7B8A9-87AD-4459-B9EC-40361F65D8A8}"
       DTS:EvaluateAsExpression="True"
       DTS:Expression="@[User::FolderPath] + @[User::Filename]"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="FullFilePath">
       <DTS:VariableValue
-        DTS:DataType="8">D:\SSRSReports\Operational Metrics yyyymmdd.xlsx</DTS:VariableValue>
+        DTS:DataType="8">D:\SSRSReports\Sales Activity yyyymmdd.xlsx</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{09A67E30-81EE-4A22-9F9E-093321F2928C}"
+      DTS:DTSID="{DE901DC1-E00D-437E-AD5B-98261AA607AC}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="MonthInt">
@@ -222,37 +212,35 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{C74E044B-13B6-48CB-A7F7-AF9FF8DF9C28}"
+      DTS:DTSID="{E3C1F536-E95C-476E-B97C-3C5A03524ACE}"
       DTS:EvaluateAsExpression="True"
-      DTS:Expression="&quot;EXEC msdb.dbo.sp_send_dbmail&#xA;&#x9;&#x9;@profile_name = '&quot;+ @[User::EmailProfile] +&quot;',&#xA;&#x9;&#x9;@recipients = '&quot;+@[User::EmailTo]+&quot;',&#xA;&#x9;&#x9;@copy_recipients  = '&quot;+ @[User::EmailCC] +&quot;',&#xA;&#x9;&#x9;@blind_copy_recipients= '&quot;+ @[User::EmailBCC] +&quot;',&#xA;&#x9;&#x9;@body = '&quot;+ @[User::EmailBody] +&quot;',&#xA;&#x9;&#x9;@query='SET NOCOUNT ON SELECT HTMLData FROM  CentralReachStaging.dbo.Temp_opsmetricshtmlbody',&#xA;&#x9;&#x9;@query_no_truncate=1 ,&#xA;&#x9;&#x9;@subject = '&quot;+ @[User::EmailSubject] +&quot;',&#xA;&#x9;&#x9;@body_format ='HTML',&#xA;&#x9;&#x9;@file_attachments = '&quot;+ @[User::FullFilePath] +&quot;'&quot;"
+      DTS:Expression="&quot;EXEC msdb.dbo.sp_send_dbmail&#xA;&#x9;&#x9;@profile_name = '&quot;+ @[User::EmailProfile] +&quot;',&#xA;&#x9;&#x9;@recipients = '&quot;+@[User::EmailTo]+&quot;',&#xA;&#x9;&#x9;@copy_recipients  = '&quot;+ @[User::EmailCC] +&quot;',&#xA;&#x9;&#x9;@blind_copy_recipients= '&quot;+ @[User::EmailBCC] +&quot;',&#xA;&#x9;&#x9;@body = '&quot;+ @[User::EmailBody] +&quot;',&#xA;&#x9;&#x9;@subject = '&quot;+ @[User::EmailSubject] +&quot;',&#xA;&#x9;&#x9;@body_format ='HTML',&#xA;&#x9;&#x9;@file_attachments = '&quot;+ @[User::FullFilePath] +&quot;'&quot;"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="SQLEmail">
       <DTS:VariableValue
         DTS:DataType="8">EXEC msdb.dbo.sp_send_dbmail
 		@profile_name = 'Reporting',
-		@recipients = 'elle.baker@empyreanhospice.com;january.menees@empyreanhospice.com;tanya.smith@empyreanhospice.com;nick.greene@empyreanhospice.com',
+		@recipients = 'nick.greene@empyreanhospice.com',
 		@copy_recipients  = '',
 		@blind_copy_recipients= 'ReportingBCC@empyreanhospice.com',
 		@body = '',
-		@query='SET NOCOUNT ON SELECT HTMLData FROM  CentralReachStaging.dbo.Temp_opsmetricshtmlbody',
-		@query_no_truncate=1 ,
-		@subject = 'Office Operational Metrics mm.dd.yy',
+		@subject = 'Sales Activity mm.dd.yy',
 		@body_format ='HTML',
-		@file_attachments = 'D:\SSRSReports\Operational Metrics yyyymmdd.xlsx'</DTS:VariableValue>
+		@file_attachments = 'D:\SSRSReports\Sales Activity yyyymmdd.xlsx'</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{146FA06E-D813-4FD5-99FB-49606280B9B5}"
+      DTS:DTSID="{8462B484-1843-4B29-83ED-C1A167302A0F}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="SSRSReportName">
       <DTS:VariableValue
-        DTS:DataType="8">/EmpyreanAutomated/OpsMetrics</DTS:VariableValue>
+        DTS:DataType="8">/EmpyreanAutomated/SalesActivityReport</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{1D66BDEA-1E08-450A-967E-0FFBCD25FC0F}"
+      DTS:DTSID="{5E6F42EB-7B04-47D5-ABF7-6E575A2FF282}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="SSRSUrl">
@@ -261,7 +249,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{F7FD3E3B-E812-40A4-8D77-1D840C99DF1B}"
+      DTS:DTSID="{2F7F881C-9425-4BB5-801F-7036C47FEC6C}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="StartDate">
@@ -270,7 +258,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{374F7E84-E1F7-41E8-A9A1-051FC3C35100}"
+      DTS:DTSID="{2C850938-7602-4FAB-98AE-611ED267E596}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="TaskDescription">
@@ -280,26 +268,10 @@
   </DTS:Variables>
   <DTS:Executables>
     <DTS:Executable
-      DTS:refId="Package\Generate HTML for body of email"
-      DTS:CreationName="Microsoft.ExecuteSQLTask"
-      DTS:Description="Execute SQL Task"
-      DTS:DTSID="{586A11B0-5B32-4661-88D4-122C4A733F0D}"
-      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
-      DTS:LocaleID="-1"
-      DTS:ObjectName="Generate HTML for body of email"
-      DTS:ThreadHint="0">
-      <DTS:Variables />
-      <DTS:ObjectData>
-        <SQLTask:SqlTaskData
-          SQLTask:Connection="{24996CD1-576D-4BD2-BEB8-2A475C792A2F}"
-          SQLTask:SqlStatementSource="&#xA;&#xA;IF OBJECT_ID('tempdb..#unverifiedVisits') IS NOT NULL DROP TABLE #unverifiedVisits &#xA;SELECT &#xA;&#x9;1 VerticalOrder,&#xA;&#x9;branch_name,&#xA;&#x9;'Unverified Visits' MetricName,&#xA;&#x9;COUNT(MRNum) Total&#xA;INTO #unverifiedVisits&#xA;FROM EHClinicalStaging.dbo.Temp_SSRS_UnverifiedVisits&#xA;GROUP BY branch_name&#xA;&#xA;IF OBJECT_ID('tempdb..#visitSyncTime') IS NOT NULL DROP TABLE #visitSyncTime&#xA;SELECT &#xA;&#x9;1 VerticalOrder,&#xA;&#x9;branch_name,&#xA;&#x9;'% Late Visits' MetricName,&#xA;&#x9;CONVERT(varchar(10),ROUND((SUM(CASE WHEN IsLate=1 THEN 1 ELSE 0 END) /CONVERT(FLOAT,COUNT(IsLate)))*100,1))+'%' Total,&#xA;&#x9;SUM(CASE WHEN IsLate=1 THEN 1 ELSE 0 END) IsLateCount,&#xA;&#x9;COUNT(IsLate) TotalCount&#xA;&#xA;INTO #visitSyncTime&#xA;FROM EHClinicalStaging.dbo.Temp_SSRS_VisitSyncTime&#xA;GROUP By branch_name&#xA;HAVING COUNT(IsLate)&gt;0&#xA;&#xA;IF OBJECT_ID('tempdb..#OutstandingTasks') IS NOT NULL DROP TABLE #OutstandingTasks&#xA;SELECT  &#xA;&#x9;1 VerticalOrder,&#xA;&#x9;branch_name,&#xA;&#x9;'Outstanding Tasks' MetricName,&#xA;&#x9;COUNT(MRNum) Total&#xA;INTO #OutstandingTasks&#x9;&#xA;FROM EHClinicalStaging.dbo.Temp_SSRS_OutstandingPatientRelatedTasks&#xA;GROUP BY branch_name&#xA;&#xA;IF OBJECT_ID('tempdb..#Coordnotes') IS NOT NULL DROP TABLE #Coordnotes&#xA;SELECT  &#xA;&#x9;1 VerticalOrder,&#xA;&#x9;branch_name, &#xA;&#x9;'Outstanding Notes' MetricName,&#xA;&#x9;COUNT(MRNum) Total&#xA;INTO #Coordnotes&#xA;FROM EHClinicalStaging.dbo.Temp_SSRS_CoordinationNotes&#xA;GROUP BY branch_name&#xA;&#xA;IF OBJECT_ID('tempdb..#IDG') IS NOT NULL DROP TABLE #IDG&#xA;SELECT  &#xA;&#x9;1 VerticalOrder,&#xA;&#x9;branch_name, &#xA;&#x9;'IDG' MetricName,&#xA;&#x9;COUNT(MRNum) Total&#xA;INTO #IDG&#xA;FROM EHClinicalStaging.dbo.Temp_SSRS_IDGMeeting&#xA;GROUP BY branch_name&#xA;&#xA;&#xA;&#xA;IF OBJECT_ID('tempdb..#summary') IS NOT NULL DROP TABLE #summary&#xA;SELECT &#xA;1 as orderBy,&#xA;uv.branch_name,&#xA;uv.Total UnverifiedVists,&#xA;vs.Total LateVisits,&#xA;ot.Total OutstandingTasks,&#xA;cn.Total CoordinationNotes,&#xA;idg.Total IDG&#xA;INTO #summary&#xA;FROM #unverifiedVisits uv&#xA;LEFT JOIN #visitSyncTime vs on uv.branch_name=vs.branch_name&#xA;LEFT JOIN #OutstandingTasks ot on ot.branch_name=vs.branch_name&#xA;LEFT JOIN #Coordnotes cn ON cn.branch_name=vs.branch_name&#xA;LEFT JOIN #IDG idg on idg.branch_name=vs.branch_name&#xA;&#xA;UNION ALL&#xA;&#xA;SELECT &#xA;2 as orderBy,&#xA;'Total',&#xA;SUM(uv.Total) UnverifiedVists,&#xA;CONVERT(varchar(10),ROUND((SUM(IsLateCount) /CONVERT(FLOAT,SUM(TotalCount)))*100,1))+'%' LateVisits,&#xA;SUM(ot.Total) OutstandingTasks,&#xA;SUM(cn.Total) CoordinationNotes,&#xA;SUM(idg.Total) IDG&#xA;FROM #unverifiedVisits uv&#xA;LEFT JOIN #visitSyncTime vs on uv.branch_name=vs.branch_name&#xA;LEFT JOIN #OutstandingTasks ot on ot.branch_name=vs.branch_name&#xA;LEFT JOIN #Coordnotes cn ON cn.branch_name=vs.branch_name&#xA;LEFT JOIN #IDG idg on idg.branch_name=vs.branch_name&#xA;&#xA;&#xA;IF OBJECT_ID('CentralReachStaging.dbo.Temp_opsmetricshtmlbody') IS NOT NULL DROP TABLE CentralReachStaging.dbo.Temp_opsmetricshtmlbody&#xA;CREATE TABLE CentralReachStaging.dbo.Temp_opsmetricshtmlbody(HTMLData varchar(max))&#xA;&#xA;INSERT INTO CentralReachStaging.dbo.Temp_opsmetricshtmlbody&#xA;SELECT '&#xA;&lt;!DOCTYPE html&gt;&#xA;&lt;html lang=&quot;en&quot;&gt;&#xA;&lt;head&gt;&#xA;    &lt;meta charset=&quot;UTF-8&quot;&gt;&#xA;    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;&#xA;    &lt;title&gt;Employee''s Missing Employee Number in CR&lt;/title&gt;&#xA;   &lt;style&gt;&#xA;        body {&#xA;            text-align: center; /* Center the title */&#xA;        }&#xA;&#xA;        h2 {&#xA;            margin-top: 20px; /* Add some top margin for spacing */&#xA;        }&#xA;&#xA;        table {&#xA;            width: 50%;&#xA;            border-collapse: collapse;&#xA;            margin: 3px auto;&#xA;        }&#xA;&#xA;        th, td {&#xA;            padding: 8px; /* Reduce row height */&#xA;            text-align: center;&#xA;            border-bottom: 1px solid #ddd;&#xA;            font-size: 14px; /* Reduce text size */&#xA;        }&#xA;&#xA;        th {&#xA;            background-color: #f2f2f2;&#xA;        }&#xA;&#xA;        tr:nth-child(even) {&#xA;            background-color: #f9f9f9; /* Alternate row color */&#xA;        }&#xA;&#xA;        tr:hover {&#xA;            background-color: #f5f5f5;&#xA;        }&#xA;    &lt;/style&gt;&#xA;&lt;/head&gt;&#xA;&lt;body&gt;&#xA;&#xA;    &lt;h2&gt;Ops Metrics Summary&lt;/h2&gt;&#xA;&#xA;    &lt;table&gt;&#xA;        &lt;thead&gt;&#xA;            &lt;tr&gt;&#xA;                &lt;th&gt;Hospice Center&lt;/th&gt;&#xA;                &lt;th&gt;Late Visits&lt;/th&gt;&#xA;                &lt;th&gt;Coordination Notes&lt;/th&gt;&#xA;&#x9;&#x9;&#x9;    &lt;th&gt;IDG&lt;/th&gt;&#xA;               &#x9;&lt;th&gt;Outstanding Tasks&lt;/th&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&lt;th&gt;Unverified Visits&lt;/th&gt;&#xA;            &lt;/tr&gt;&#xA;        &lt;/thead&gt;&#xA;        &lt;tbody&gt;&#xA;'&#xA;&#xA;INSERT INTO CentralReachStaging.dbo.Temp_opsmetricshtmlbody&#xA;SELECT &#xA;&#x9;'&lt;tr&gt;&lt;td&gt;'+ISNULL(branch_name,'')+'&lt;/td&gt;'+&#xA;&#x9;'&lt;td&gt;'+ISNULL(LateVisits,'')+'&lt;/td&gt;'+&#xA;&#x9;'&lt;td&gt;'+ISNULL(CONVERT(varchar(20),CoordinationNotes),'')+'&lt;/td&gt;'+&#xA;&#x9;'&lt;td&gt;'+ISNULL(CONVERT(varchar(20),IDG),'')+'&lt;/td&gt;'+&#xA;&#x9;'&lt;td&gt;'+ISNULL(CONVERT(varchar(20),OutstandingTasks),'')+'&lt;/td&gt;'+&#xA;&#x9;'&lt;td&gt;'+ISNULL(CONVERT(varchar(20),UnverifiedVists),'')+'&lt;/td&gt;&lt;/tr&gt;' &#xA;--SELECT * &#xA;FROM #summary &#xA;ORDER BY orderBy&#xA;&#x9;&#x9;&#x9;--and 1=2&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;INSERT INTO CentralReachStaging.dbo.Temp_opsmetricshtmlbody&#xA;SELECT '&#xA;&lt;/tbody&gt;&#xA;    &lt;/table&gt;&#xA;&#xA;&lt;/body&gt;&#xA;&lt;/html&gt;&#xA;'&#xA;&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
-      </DTS:ObjectData>
-    </DTS:Executable>
-    <DTS:Executable
       DTS:refId="Package\Generate SSRS Report"
       DTS:CreationName="Microsoft.ScriptTask"
       DTS:Description="Script Task"
-      DTS:DTSID="{FCF6F519-375F-41A6-B53A-798D15B82098}"
+      DTS:DTSID="{53AF4A1F-6D59-463B-A996-323706A3FE15}"
       DTS:ExecutableType="Microsoft.ScriptTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="Generate SSRS Report"
@@ -332,7 +304,7 @@
     <msb:CodeName>ST_e5f3b936834a4ad891f9339d8cba91a4</msb:CodeName>
     <msb:Language>msBuild</msb:Language>
     <msb:DisplayName>ST_e5f3b936834a4ad891f9339d8cba91a4</msb:DisplayName>
-    <msb:ProjectId>{CE2BAA86-A31B-441C-81EB-271DF6F6DE04}</msb:ProjectId>
+    <msb:ProjectId>{F4B6AFB8-2780-4ECF-B3BB-E963DE31FA42}</msb:ProjectId>
   </msb:PropertyGroup>
   <msb:ItemGroup>
     <msb:Project Include="ST_e5f3b936834a4ad891f9339d8cba91a4.vbproj" />
@@ -7652,7 +7624,7 @@ Imports System.Runtime.InteropServices
           <BinaryItem
             Name="ST_e5f3b936834a4ad891f9339d8cba91a4.dll">TVqQAAMAAAAEAAAA//8AALgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAgAAAAA4fug4AtAnNIbgBTM0hVGhpcyBwcm9ncmFtIGNhbm5vdCBiZSBydW4gaW4gRE9TIG1v
-ZGUuDQ0KJAAAAAAAAABQRQAATAEDAKaDsmUAAAAAAAAAAOAAIiALAVAAAHQBAAAIAAAAAAAAKpMB
+ZGUuDQ0KJAAAAAAAAABQRQAATAEDAJHVt2UAAAAAAAAAAOAAIiALAVAAAHQBAAAIAAAAAAAAKpMB
 AAAgAAAAoAEAAAAAEAAgAAAAAgAABAAAAAAAAAAGAAAAAAAAAADgAQAAAgAAAAAAAAMAYIUAABAA
 ABAAAAAAEAAAEAAAAAAAABAAAAAAAAAAAAAAANiSAQBPAAAAAKABAEgEAAAAAAAAAAAAAAAAAAAA
 AAAAAMABAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -8812,7 +8784,7 @@ AGwAZQBFAHgAdABlAG4AcwBpAG8AbgAAJVUAcwBlAHIAOgA6AEYAdQBsAGwARgBpAGwAZQBQAGEA
 dABoAAAbVQBzAGUAcgA6ADoAUwBTAFIAUwBVAHIAbAAAKVUAcwBlAHIAOgA6AFMAUwBSAFMAUgBl
 AHAAbwByAHQATgBhAG0AZQAAC2UAbgAtAHUAcwABGUYAaQByAGUAIABFAHIAcgBvAHIAOgAgAAAB
 AEdQAHIAbwBwAGUAcgB0AHkAIABjAGEAbgAgAG8AbgBsAHkAIABiAGUAIABzAGUAdAAgAHQAbwAg
-AE4AbwB0AGgAaQBuAGcAAAAA0ql3dw+LxE2EQPENGdRd3gAEIAEBCAMgAAEFIAEBEREEIAEBDgQg
+AE4AbwB0AGgAaQBuAGcAAAAAKdRfztLUMEScNjPKXINR3wAEIAEBCAMgAAEFIAEBEREEIAEBDgQg
 AQECBSACAQ4OBSABARFFByAEAQ4ODg4FIAEBEm0GIAEBEYEFBxUSgbwBEgwHFRKBvAESCAcVEoG8
 ARJlCBUSgbwBEoG4BCAAEwAHAAESbRGBHQUgABKBIQcgAgEOEoEhAyAADgMgAAILBwMSgIwSgIwS
 gIwLAAISgSkSgSkSgSkMEAEDHgAQHgAeAB4ABQoBEoCMCwcDEoCUEoCUEoCUBQoBEoCUCwcDEoCc
@@ -9373,7 +9345,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       DTS:refId="Package\Log Report Send"
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
-      DTS:DTSID="{DEA109AC-3572-44E4-8A38-AC37906F7DF9}"
+      DTS:DTSID="{B67702A7-1114-4785-8112-0D7802245BA6}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="Log Report Send"
@@ -9384,7 +9356,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
         DTS:FilterKind="0" />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{06419665-0738-4517-A46D-C39BDFAA9B0E}"
+          SQLTask:Connection="{B7B2C26B-7A77-4E12-B033-86BE63D06FE7}"
           SQLTask:SqlStatementSource="exec InsertReportSenderExecution&#xA;&#x9;@EtlLoadId=? ,&#xA;&#x9;&#x9;@FileName=? ,&#xA;&#x9;&#x9;@EmailSubject =?,&#xA;&#x9;&#x9;@EmailTo =?,&#xA;&#x9;&#x9;@EmailCC =?,&#xA;&#x9;&#x9;@EmailBCC =?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ParameterBinding
             SQLTask:ParameterName="0"
@@ -9429,7 +9401,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       DTS:refId="Package\PostExecute"
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
-      DTS:DTSID="{DF4291D8-ED47-4C24-A473-EE255696B39D}"
+      DTS:DTSID="{927CF1AA-6B1F-4F3B-90BD-F3D50CD33A65}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="PostExecute"
@@ -9440,7 +9412,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
         DTS:FilterKind="0" />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{06419665-0738-4517-A46D-C39BDFAA9B0E}"
+          SQLTask:Connection="{B7B2C26B-7A77-4E12-B033-86BE63D06FE7}"
           SQLTask:SqlStatementSource="DECLARE @NextEtlLoadId varchar(20)&#xA;EXEC Logging.dbo.SSISPostExecute @EtlLoadId=?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ParameterBinding
             SQLTask:ParameterName="0"
@@ -9456,7 +9428,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:DelayValidation="True"
       DTS:Description="Execute SQL Task"
-      DTS:DTSID="{43802C33-AAB1-436D-9C55-8653D8238B33}"
+      DTS:DTSID="{AF1A9737-E8EF-403C-9081-785E6ADCD9B9}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="PreExecute"
@@ -9467,7 +9439,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
         DTS:FilterKind="0" />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{06419665-0738-4517-A46D-C39BDFAA9B0E}"
+          SQLTask:Connection="{B7B2C26B-7A77-4E12-B033-86BE63D06FE7}"
           SQLTask:SqlStatementSource="DECLARE @NextEtlLoadId INT&#xA;EXEC Logging.dbo.SSISPreExecute @PackageName=?,@Servername=?,@EtlLoadId = @NextEtlLoadId"
           SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ResultBinding
@@ -9492,7 +9464,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       DTS:refId="Package\Send Report"
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
-      DTS:DTSID="{065E2911-B9DC-409F-AF8D-45BE0237D028}"
+      DTS:DTSID="{91CC1D02-CF42-4B75-A6D4-6283A3752312}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="Send Report"
@@ -9500,30 +9472,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{06419665-0738-4517-A46D-C39BDFAA9B0E}"
+          SQLTask:Connection="{B7B2C26B-7A77-4E12-B033-86BE63D06FE7}"
           SQLTask:SqlStmtSourceType="Variable"
           SQLTask:SqlStatementSource="User::SQLEmail" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
-      </DTS:ObjectData>
-    </DTS:Executable>
-    <DTS:Executable
-      DTS:refId="Package\Set EmailTo to Director Emails"
-      DTS:CreationName="Microsoft.ExecuteSQLTask"
-      DTS:Description="Execute SQL Task"
-      DTS:DTSID="{edc3b5b4-ef68-4591-86ed-83efa7ae6957}"
-      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
-      DTS:LocaleID="-1"
-      DTS:ObjectName="Set EmailTo to Director Emails"
-      DTS:ThreadHint="0">
-      <DTS:Variables />
-      <DTS:ObjectData>
-        <SQLTask:SqlTaskData
-          SQLTask:Connection="{24996CD1-576D-4BD2-BEB8-2A475C792A2F}"
-          SQLTask:SqlStatementSource="DECLARE @DirectorEmails VARCHAR(8000)&#xA;SELECT  @DirectorEmails =STRING_AGG (BranchDirectorEmail,';')&#xA;FROM Reference.dbo.BranchData&#xA;WHERE lob='empyrean'&#xA;and branchstatus='Active'&#xA;&#xA;&#xA;IF LEN(@DirectorEmails)&lt;8000&#xA;BEGIN&#xA; SELECT @DirectorEmails&#xA;END &#xA;ELSE&#xA;BEGIN&#xA; RAISERROR (N'Email variable length is beyond 8000 characters. Email list will be truncated.  Cannot use varchar(MAX) because SSIS Task will fail.', -- Message text.&#xA;           11, -- Severity,&#xA;           1)&#xA;END"
-          SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
-          <SQLTask:ResultBinding
-            SQLTask:ResultName="0"
-            SQLTask:DtsVariableName="User::DirectorEmails" />
-        </SQLTask:SqlTaskData>
       </DTS:ObjectData>
     </DTS:Executable>
     <DTS:Executable
@@ -9531,15 +9482,15 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
       DTS:Disabled="True"
-      DTS:DTSID="{1C4581EC-96FA-49F6-927C-E2DF32753DB9}"
+      DTS:DTSID="{59D834DD-8179-4236-9A3C-2911A99C01B8}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="set EndDate"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{24996CD1-576D-4BD2-BEB8-2A475C792A2F}"
+          SQLTask:Connection="{E46AE433-6FD2-4AD5-8D3D-85475B2739C0}"
           SQLTask:SqlStatementSource="DECLARE @StartDate date,@EndDate date&#xA;&#xA;SET @StartDate =&#xA;(&#xA;&#x9;SELECT TOP 1 date&#xA;&#x9;FROM &#xA;&#x9;&#x9;(&#xA;&#x9;&#x9;SELECT TOP 2 date FROM reference.dbo.dimdate&#xA;&#x9;&#x9;WHERE day='Sunday'&#xA;&#x9;&#x9;and date&lt;=GETDATE()&#xA;&#x9;&#x9;ORDER BY date desc&#xA;&#xA;&#x9;&#x9;) a&#xA;&#x9;ORDER BY date&#xA;)&#xA;&#xA;SET @EndDate= dateadd(dd,6,@StartDate)&#xA;&#xA;SELECT @EndDate"
           SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ResultBinding
@@ -9559,15 +9510,15 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
       DTS:Disabled="True"
-      DTS:DTSID="{4AB70592-2FD5-40BB-81D3-31FE6B3B9080}"
+      DTS:DTSID="{74ADFF41-D2D5-496C-AA35-88D65E500417}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="Set Start Date"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{24996CD1-576D-4BD2-BEB8-2A475C792A2F}"
+          SQLTask:Connection="{E46AE433-6FD2-4AD5-8D3D-85475B2739C0}"
           SQLTask:SqlStatementSource="DECLARE @StartDate date,@EndDate date&#xA;&#xA;SET @StartDate =&#xA;(&#xA;&#x9;SELECT TOP 1 date&#xA;&#x9;FROM &#xA;&#x9;&#x9;(&#xA;&#x9;&#x9;SELECT TOP 2 date FROM reference.dbo.dimdate&#xA;&#x9;&#x9;WHERE day='Sunday'&#xA;&#x9;&#x9;and date&lt;=GETDATE()&#xA;&#x9;&#x9;ORDER BY date desc&#xA;&#xA;&#x9;&#x9;) a&#xA;&#x9;ORDER BY date&#xA;)&#xA;&#xA;SET @EndDate= dateadd(dd,6,@StartDate)&#xA;&#xA;SELECT @StartDate"
           SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ResultBinding
@@ -9586,7 +9537,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       DTS:refId="Package\Set Variables"
       DTS:CreationName="Microsoft.ScriptTask"
       DTS:Description="Script Task"
-      DTS:DTSID="{EA9199E0-2DED-414D-94F5-7DFC975509AA}"
+      DTS:DTSID="{CACC6494-3FD7-4DAF-A01C-D0017A62F0BF}"
       DTS:ExecutableType="Microsoft.ScriptTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="Set Variables"
@@ -9598,7 +9549,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
           VSTAMajorVersion="15"
           VSTAMinorVersion="0"
           Language="VisualBasic"
-          ReadWriteVariables="User::DirectorEmails,User::EmailBCC,User::EmailBody,User::EmailCC,User::EmailProfile,User::EmailSignature,User::EmailSubject,User::EmailTo,User::Filename">
+          ReadWriteVariables="User::EmailBCC,User::EmailBody,User::EmailCC,User::EmailProfile,User::EmailSignature,User::EmailSubject,User::EmailTo,User::Filename">
           <ProjectItem
             Name="My Project\AssemblyInfo.vb"
             Encoding="UTF8"><![CDATA[Imports System
@@ -9730,15 +9681,13 @@ Partial Public Class ScriptMain
             Dim EmailSignature As String = Dts.Variables("User::EmailSignature").Value.ToString
 
 
-            Dts.Variables("User::EmailTo").Value = Dts.Variables("User::EmailTo").Value.ToString & ";" & Dts.Variables("User::DirectorEmails").Value.ToString
-
             Dts.Variables("User::Filename").Value = Replace(Filename, "yyyymmdd", Format(Today, "yyyyMMdd"))
 
             'Dts.Variables("User::EmailSubject").Value = "Hospice Daily Report " & Format(Today, "MM/dd/yyyy")
             Dts.Variables("User::EmailSubject").Value = Replace(EmailSubject, "yyyymmdd", Format(Today, "yyyyMMdd"))
             Dts.Variables("User::EmailSubject").Value = Replace(EmailSubject, "mm.dd.yy", Format(Today, "MM.dd.yy"))
 
-            Dts.Variables("User::EmailBody").Value = "" '"Gettings,</br></br> Please see attached report.   " + EmailSignature
+            Dts.Variables("User::EmailBody").Value = "Gettings,</br></br> Please see attached report.   " + EmailSignature
 
         Catch ex As Exception
             Dts.Events.FireError(0, "Fire Error: " & ex.ToString, "", "", 0)
@@ -9917,7 +9866,7 @@ End Class]]></ProjectItem>
     <msb:CodeName>ST_8f2fb709fb354cf282c545e9c8d00bd4</msb:CodeName>
     <msb:Language>msBuild</msb:Language>
     <msb:DisplayName>ST_8f2fb709fb354cf282c545e9c8d00bd4</msb:DisplayName>
-    <msb:ProjectId>{6FBBCD1A-2C46-4D12-80D4-AAB4C7F6DFA5}</msb:ProjectId>
+    <msb:ProjectId>{91F29A26-5E88-4EA2-A0D6-5EE282E092AF}</msb:ProjectId>
   </msb:PropertyGroup>
   <msb:ItemGroup>
     <msb:Project Include="ST_8f2fb709fb354cf282c545e9c8d00bd4.vbproj" />
@@ -10114,141 +10063,141 @@ End Namespace]]></ProjectItem>
           <BinaryItem
             Name="ST_8f2fb709fb354cf282c545e9c8d00bd4.dll">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
-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
+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
-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
+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
-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
+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
-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
+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
-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
+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
-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
-oiAAAAAAEwjCBoABAQCuIAAAAAATCG0HhQEBALogAAAAAAMYJwcGAAEAwiAAAAAAFgiCBooBAQDu
-IAAAAAAWCI8BjwEBAPUgAAAAABYImwGUAQEA/SAAAAAAERgtB9IAAgAOIQAAAAAGGCcHBgACABgh
-AAAAABYIVwSaAQIAdCEAAAAABhgnBwYAAgB8IQAAAAAGAK0FBgACAIQjAAAAAMYC0QjWAAIAkiMA
-AAAAxgIRAdsAAwCaIwAAAACDAH8BnwEDAKYjAAAAAMYCpQSOAAMAsCMAAAAAEQCNAKQBAwDQIwAA
-AAABAHkArAEEALogAAAAAAYYJwcGAAUA3CMAAAAAAwj4AEoABQAQJAAAAAAGGCcHBgAFAAAAAQB0
-BAAAAQAgBgAAAQAIAQAAAQAIAQkAJwcBABEAJwcGABkAJwcKACkAJwcQADEAJwcQADkAJwcQAEEA
-JwcQAEkAJwcQAFEAJwcQAFkAJwcVAGEAJwcVAGkAJwcQAHEAJwcQAHkAJwcQAIEAJwcaAJEAJwcg
-AKkAJwcGALEAJwcGALkAJwcGANEAJwcmAOkAJwcQAAkBJwcGABEBJwcGAJkAJwcGAKEAJwcGAAwA
-JwcGABQAJwcGABwAJwcGACQAJwcGAAwA+ABKABQA+ABKABwA+ABKACQA+ABKAMEAJwcGANkAOAFP
-ANkAhAlXAPEAJwddAEkBawRlAAEBJwcGAFEBywZqAFEBNQlqABkBJwcGABkB7wh3AFkBsAh9AGEB
-dQWDAGkBVwSKAMEApQSOAHEBEAmSAGkBYQSZAHkBegmeAIkBFwmkAIkB4QCqAJkBDQe2AFkBBQm9
-ACkBpQSOAHEBEAnDAKEB8QbJAJkB+wbSAFkBOgkBAMEA0QjWAMEAEQHbAKkB6QDnADQASQn+ADwA
-VwRKADwAYQQVATwAJwcGAAgALAA2AQgAMAA7ASkAqwBeAy4ACwDcAS4AEwDlAS4AGwAEAi4AIwAN
-Ai4AKwA2Ai4AMwA2Ai4AOwANAi4AQwA8Ai4ASwA2Ai4AUwBTAi4AWwA2Ai4AYwBZAi4AawCDAi4A
-cwCQAkAAiwA7AUAAgwDaAkMAewDjAkMAgwDaAkkAqwBvA2MAewDjAmMAgwDaAmkAqwCDA4AAiwA7
-AYMAkwA7AYMAmwA7AYMAewDjAokAqwCQA6AAiwA7AakAgwAEAsAAiwA7AckAgwAEAuAAiwA7AeMA
-uwA7AeMAUwA2AukAswA7AQMBgwDaAgMBowD8AiMBgwDaAiMBWwA2AiACgwDaAiACiwA7AUACgwDa
-AkACiwA7AWACgwDaAmACiwA7AYACgwDaAoACiwA7AaACiwA7AcACiwA7AeACiwA7AeACgwDaAgAD
-iwA7ASADiwA7ASADgwDaAm8A3wDyAAQAAQAFAAUABgAHAAkACAAAAOAGtAEAAMQFuQEAAMYGvgEA
-AH8HwwEAAIYGyAEAAKsBzQEAAHQE0gEAAPwA1wECAAQAAwACAAUABQACAAYABwACAAcACQACAAkA
-CwACAAoADQABAAsADQACAA4ADwACABgAEQAuADUAPABDAOQA9wAGAQ0BBIAAAAEAAAAAAAAAAAAA
-AAAAKwAAAAQAAAAAAAAAAAAAABsBtAAAAAAABAAAAAAAAAAAAAAAGwF+BQAAAAAKAAAAAAAAAAAA
-AAAkAb0AAAAAAA4AAAAAAAAAAAAAAC0BswQAAAAADgAAAAAAAAAAAAAALQFYAAAAAAAAAAAAAQAA
-AGkIAAAIAAQACQAEAAoABwAAABAAEgB3AAAAEAArAHcAAAAAAC0AdwB9AO0AfQAQAQAAAENvbnRl
-eHRWYWx1ZWAxAFRocmVhZFNhZmVPYmplY3RQcm92aWRlcmAxAFNUXzhmMmZiNzA5ZmIzNTRjZjI4
-MmM1NDVlOWM4ZDAwYmQ0ADxNb2R1bGU+AE1pY3Jvc29mdC5TcWxTZXJ2ZXIuTWFuYWdlZERUUwBU
-AERpc3Bvc2VfX0luc3RhbmNlX18AQ3JlYXRlX19JbnN0YW5jZV9fAHZhbHVlX18AUHJvamVjdERh
-dGEAbXNjb3JsaWIATWljcm9zb2Z0LlZpc3VhbEJhc2ljAENvbXBhcmVNZXRob2QAUmVwbGFjZQBD
-cmVhdGVJbnN0YW5jZQBnZXRfR2V0SW5zdGFuY2UAaW5zdGFuY2UAR2V0SGFzaENvZGUAVmFyaWFi
-bGUAUnVudGltZVR5cGVIYW5kbGUAR2V0VHlwZUZyb21IYW5kbGUARGF0ZUFuZFRpbWUARGF0ZVRp
-bWUATWljcm9zb2Z0LlNxbFNlcnZlci5EdHMuUnVudGltZQBHZXRUeXBlAEZhaWx1cmUAZ2V0X0N1
-bHR1cmUAc2V0X0N1bHR1cmUAX3Jlc0N1bHR1cmUAVlNUQVJUU2NyaXB0T2JqZWN0TW9kZWxCYXNl
-AEFwcGxpY2F0aW9uQmFzZQBBcHBsaWNhdGlvblNldHRpbmdzQmFzZQBFZGl0b3JCcm93c2FibGVT
-dGF0ZQBHdWlkQXR0cmlidXRlAEhlbHBLZXl3b3JkQXR0cmlidXRlAEdlbmVyYXRlZENvZGVBdHRy
-aWJ1dGUARGVidWdnZXJOb25Vc2VyQ29kZUF0dHJpYnV0ZQBEZWJ1Z2dhYmxlQXR0cmlidXRlAEVk
-aXRvckJyb3dzYWJsZUF0dHJpYnV0ZQBDb21WaXNpYmxlQXR0cmlidXRlAEFzc2VtYmx5VGl0bGVB
-dHRyaWJ1dGUAU3RhbmRhcmRNb2R1bGVBdHRyaWJ1dGUASGlkZU1vZHVsZU5hbWVBdHRyaWJ1dGUA
-QXNzZW1ibHlUcmFkZW1hcmtBdHRyaWJ1dGUAVGFyZ2V0RnJhbWV3b3JrQXR0cmlidXRlAERlYnVn
-Z2VySGlkZGVuQXR0cmlidXRlAEFzc2VtYmx5RmlsZVZlcnNpb25BdHRyaWJ1dGUATXlHcm91cENv
-bGxlY3Rpb25BdHRyaWJ1dGUAQXNzZW1ibHlEZXNjcmlwdGlvbkF0dHJpYnV0ZQBDb21waWxhdGlv
-blJlbGF4YXRpb25zQXR0cmlidXRlAEFzc2VtYmx5UHJvZHVjdEF0dHJpYnV0ZQBBc3NlbWJseUNv
-cHlyaWdodEF0dHJpYnV0ZQBDTFNDb21wbGlhbnRBdHRyaWJ1dGUAU1NJU1NjcmlwdFRhc2tFbnRy
-eVBvaW50QXR0cmlidXRlAEFzc2VtYmx5Q29tcGFueUF0dHJpYnV0ZQBSdW50aW1lQ29tcGF0aWJp
-bGl0eUF0dHJpYnV0ZQBtX1ZhbHVlAGdldF9WYWx1ZQBzZXRfVmFsdWUAR2V0T2JqZWN0VmFsdWUA
-U3lzdGVtLlRocmVhZGluZwBTeXN0ZW0uUnVudGltZS5WZXJzaW9uaW5nAFRvU3RyaW5nAE1hdGgA
-TWljcm9zb2Z0LlNxbFNlcnZlci5TY3JpcHRUYXNrAE1pY3Jvc29mdC5TcWxTZXJ2ZXIuRHRzLlRh
-c2tzLlNjcmlwdFRhc2sATWljcm9zb2Z0LlZpc3VhbEJhc2ljLk15U2VydmljZXMuSW50ZXJuYWwA
-U2NyaXB0T2JqZWN0TW9kZWwAU3lzdGVtLkNvbXBvbmVudE1vZGVsAFNUXzhmMmZiNzA5ZmIzNTRj
-ZjI4MmM1NDVlOWM4ZDAwYmQ0LmRsbABnZXRfSXRlbQBTeXN0ZW0ARW51bQBTeXN0ZW0uQ29tcG9u
-ZW50TW9kZWwuRGVzaWduAFNjcmlwdE1haW4AZ2V0X0FwcGxpY2F0aW9uAE15QXBwbGljYXRpb24A
-U3lzdGVtLkNvbmZpZ3VyYXRpb24AU3lzdGVtLkdsb2JhbGl6YXRpb24AU3lzdGVtLlJlZmxlY3Rp
-b24ARXhjZXB0aW9uAEN1bHR1cmVJbmZvAG1fQXBwT2JqZWN0UHJvdmlkZXIAbV9Vc2VyT2JqZWN0
-UHJvdmlkZXIAbV9Db21wdXRlck9iamVjdFByb3ZpZGVyAG1fTXlXZWJTZXJ2aWNlc09iamVjdFBy
-b3ZpZGVyAGdldF9SZXNvdXJjZU1hbmFnZXIAU3lzdGVtLkNvZGVEb20uQ29tcGlsZXIARXZlbnRz
-T2JqZWN0V3JhcHBlcgBnZXRfVXNlcgBFbnRlcgBnZXRfQ29tcHV0ZXIATXlDb21wdXRlcgBfcmVz
-TWdyAEZpcmVFcnJvcgBDbGVhclByb2plY3RFcnJvcgBTZXRQcm9qZWN0RXJyb3IAQWN0aXZhdG9y
-AC5jdG9yAC5jY3RvcgBNb25pdG9yAFN5c3RlbS5EaWFnbm9zdGljcwBNaWNyb3NvZnQuVmlzdWFs
-QmFzaWMuRGV2aWNlcwBnZXRfV2ViU2VydmljZXMATXlXZWJTZXJ2aWNlcwBNaWNyb3NvZnQuVmlz
-dWFsQmFzaWMuQXBwbGljYXRpb25TZXJ2aWNlcwBTeXN0ZW0uUnVudGltZS5JbnRlcm9wU2Vydmlj
-ZXMATWljcm9zb2Z0LlZpc3VhbEJhc2ljLkNvbXBpbGVyU2VydmljZXMAU3lzdGVtLlJ1bnRpbWUu
-Q29tcGlsZXJTZXJ2aWNlcwBTeXN0ZW0uUmVzb3VyY2VzAFNUXzhmMmZiNzA5ZmIzNTRjZjI4MmM1
-NDVlOWM4ZDAwYmQ0Lk15LlJlc291cmNlcwBNeVJlc291cmNlcwBTVF84ZjJmYjcwOWZiMzU0Y2Yy
-ODJjNTQ1ZTljOGQwMGJkNC5SZXNvdXJjZXMucmVzb3VyY2VzAERlYnVnZ2luZ01vZGVzAGdldF9W
-YXJpYWJsZXMAU3RyaW5ncwBNeVNldHRpbmdzAEVxdWFscwBSdW50aW1lSGVscGVycwBTdWNjZXNz
-AGdldF9EdHMAU2NyaXB0UmVzdWx0cwBnZXRfRXZlbnRzAENvbmNhdABGb3JtYXQAbV9TeW5jT2Jq
-ZWN0AE15UHJvamVjdABFeGl0AHNldF9UYXNrUmVzdWx0AG1fQ29udGV4dABTVF84ZjJmYjcwOWZi
-MzU0Y2YyODJjNTQ1ZTljOGQwMGJkNC5NeQBnZXRfVG9kYXkAZ2V0X0Fzc2VtYmx5AAAAAAAxTQB5
-AC4AUgBlAHMAbwB1AHIAYwBlAHMALgBNAHkAUgBlAHMAbwB1AHIAYwBlAHMAAB1VAHMAZQByADoA
-OgBGAGkAbABlAG4AYQBtAGUAACVVAHMAZQByADoAOgBFAG0AYQBpAGwAUwB1AGIAagBlAGMAdAAA
-KVUAcwBlAHIAOgA6AEUAbQBhAGkAbABTAGkAZwBuAGEAdAB1AHIAZQAAG1UAcwBlAHIAOgA6AEUA
-bQBhAGkAbABUAG8AAAM7AAApVQBzAGUAcgA6ADoARABpAHIAZQBjAHQAbwByAEUAbQBhAGkAbABz
-AAAReQB5AHkAeQBtAG0AZABkAAAReQB5AHkAeQBNAE0AZABkAAARbQBtAC4AZABkAC4AeQB5AAAR
-TQBNAC4AZABkAC4AeQB5AAAfVQBzAGUAcgA6ADoARQBtAGEAaQBsAEIAbwBkAHkAAAEAGUYAaQBy
-AGUAIABFAHIAcgBvAHIAOgAgAAAAWMoFsIJSFEW/x4ggwUm+8wAEIAEBCAMgAAEFIAEBEREEIAEB
-DgQgAQECBSACAQ4OBSABARFFByAEAQ4ODg4GFRIkARIMBhUSJAESCAYVEiQBEmUGFRIkARIgBCAA
-EwAHAAESbRGAnQUgABKAoQcgAgEOEoChBAABHBwEAAEBHAcHAw4OEoCVBSAAEoCtBSAAEoCxBiAB
-EoC1HAMgABwDIAAOBgADDg4ODgQgAQEcBQAAEYDBBQACDhwOCwAGDg4ODggIEYDJBgABARKAlQUg
-ABKA0QUAAg4ODgggBQIIDg4OCAMAAAEEIAECHAMgAAgEBwEeAAIeAAUQAQAeAAQKAR4ABAcBEwAG
-FRIkARMABwYVEnEBEwAGFRJxARMAAhMABAoBEwAFIAEBEwAIt3pcVhk04IkIsD9ffxHVCjoIiYRd
-zYCAzJEEAAAAAAQBAAAABwYVEiQBEgwHBhUSJAESCAcGFRIkARJlBwYVEiQBEiADBhJ5AwYSfQMG
-EhgCBhwCBggDBhEoBAAAEgwEAAASCAQAABJlBAAAEiAEAAASeQQAABJ9BQABARJ9BAAAEhgEIAAS
-bQcQAQEeAB4ABzABAQEQHgAECAASDAQIABIIBAgAEmUECAASIAQIABJ5BAgAEn0ECAASGAQoABMA
-CAEACAAAAAAAHgEAAQBUAhZXcmFwTm9uRXhjZXB0aW9uVGhyb3dzAQgBAAIAAAAAACgBACNTVF84
-ZjJmYjcwOWZiMzU0Y2YyODJjNTQ1ZTljOGQwMGJkNAAABQEAAAAAFgEAEUNvcHlyaWdodCBAICAy
-MDIzAAAFAQABAAApAQAkNTE5OTI0OTYtZTk0ZS00NjYwLTkzNTgtOTAzMzEyOWY1NjYxAAAMAQAH
-MS4wLjAuMAAASQEAGi5ORVRGcmFtZXdvcmssVmVyc2lvbj12NC41AQBUDhRGcmFtZXdvcmtEaXNw
-bGF5TmFtZRIuTkVUIEZyYW1ld29yayA0LjUIAQABAAAAAAAYAQAKTXlUZW1wbGF0ZQgxMS4wLjAu
-MAAAYQEANFN5c3RlbS5XZWIuU2VydmljZXMuUHJvdG9jb2xzLlNvYXBIdHRwQ2xpZW50UHJvdG9j
-b2wSQ3JlYXRlX19JbnN0YW5jZV9fE0Rpc3Bvc2VfX0luc3RhbmNlX18AAAAQAQALTXkuQ29tcHV0
-ZXIAABMBAA5NeS5BcHBsaWNhdGlvbgAADAEAB015LlVzZXIAABMBAA5NeS5XZWJTZXJ2aWNlcwAA
-tAAAAM7K774BAAAAkQAAAGxTeXN0ZW0uUmVzb3VyY2VzLlJlc291cmNlUmVhZGVyLCBtc2Nvcmxp
-YiwgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1
-YzU2MTkzNGUwODkjU3lzdGVtLlJlc291cmNlcy5SdW50aW1lUmVzb3VyY2VTZXQCAAAAAAAAAAAA
-AABQQURQQURQtAAAAEQ8AAAAAAAAAAAAAF48AAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQPAAA
-AAAAAAAAAAAAAF9Db3JEbGxNYWluAG1zY29yZWUuZGxsAAAAAAD/JQAgABAAAAAAAAAAAAAAAAAA
+KCsAAApvLAAACnJ3AABwby0AAApvLgAACm8vAAAKDAIoKwAACm8sAAAKcjMAAHBvLQAACgZyoQAA
+cCgwAAAKjC8AAAFyswAAcCgxAAAKFxUWKDIAAApvMwAACgIoKwAACm8sAAAKclEAAHBvLQAACgdy
+oQAAcCgwAAAKjC8AAAFyswAAcCgxAAAKFxUWKDIAAApvMwAACgIoKwAACm8sAAAKclEAAHBvLQAA
+CgdyxQAAcCgwAAAKjC8AAAFy1wAAcCgxAAAKFxUWKDIAAApvMwAACgIoKwAACm8sAAAKcukAAHBv
+LQAACnIJAQBwCCg0AAAKbzMAAAreOyUoNQAACg0CKCsAAApvNgAAChZybwEAcAlvNwAACig0AAAK
+cokBAHByiQEAcBZvOAAACiYoOQAACt4AAigrAAAKFm86AAAKKgBBHAAAAAAAAAAAAAA7AQAAOwEA
+ADsAAAAlAAABNgIDKCYAAAooOwAACioeAig8AAAKKi7QCAAAAigjAAAKKh4CKC8AAAoqAAATMAEA
+FAAAAAIAABECjAUAABstCCgBAAArCisCAgoGKiID/hUFAAAbKgAAABMwAgAoAAAAAwAAEQJ7PgAA
+Cm8/AAAKCgaMCAAAGy0SKAIAACsKAns+AAAKBm9AAAAKBipKAigiAAAKAnNBAAAKfT4AAAoqAEJT
+SkIBAAEAAAAAAAwAAAB2NC4wLjMwMzE5AAAAAAUAbAAAABgIAAAjfgAAhAgAAJQJAAAjU3RyaW5n
+cwAAAAAYEgAAjAEAACNVUwCkEwAAEAAAACNHVUlEAAAAtBMAAKADAAAjQmxvYgAAAAAAAAACAAAB
+Vx2iCQkPAAAA+gEzABYAAAEAAAA1AAAACgAAAAwAAAAZAAAABAAAAEEAAAACAAAANwAAAAMAAAAE
+AAAACAAAAAkAAAAIAAAAAQAAAAUAAAABAAAAAwAAAAMAAAACAAAAAABNBQEAAAAAAAYAjAP7BwYA
+MQT7BwYAYwI8Bw8AoQgAAAYApAL6BQYAbwP6BQYAGAT6BQYArAP6BQYAxQP6BQYA6wL6BQYA4AN+
+BQYAkAK1BwYADAK1BwYANwP6BQYABgOLBAoALwKWBgoA9wE3BQoAdwI3BQ4AzwGLBw4A4AZPBwYA
+HwM8Bw4AuwLUBw4A0wK9AAYAJAl+BQ4AxgaLBw4AVAO9AAYAggF+BQ4AAQD7BAoAGgKKBQYAhgYb
+CAYAFgblBQoA3wHQBQYARgI8BxIA9gPSBBIAswHSBAYArgR+BQYADAZ+BQYAhQV+BQYAJgF+BQYA
+iAn6BQYA2Aj7BwYANAd6BBIAJQXSBBYAtAhfARYAHQFfAQ4ASgG9AAYAVgF+BQ4Avgi9AA4A0wC9
+AAYApwR+BQ4AqADUBxIArgbSBAYAHQd+BQAAAABPAAAAAAABAAEAAAAAAMIFUwlNAAEAAQAAAAAA
+3gZTCVEAAQACAAABEAArCVMJYQABAAMAAAAAAF0ILAhhAAUACAAAARAAxggrAIEABwAMAAEAAACn
+BSsAjQAJAA8ABQEAAH0HAABhAAkAEQAFAQAAEAAAAGEACQAYAAIBAAD3CAAAmQAKABoAMQBLBjoB
+MQAiBkIBMQA2BkoBMQBkBlIBEQDpBloBEQCnAV4BEQBPBGIBEQAeCWYBIQBJCfgABgagAGkBVoDn
+CGwBVoCHAWwBUCAAAAAABhgnBwYAAQBYIAAAAAAGGCcHBgABAGAgAAAAABEYLQfMAAEAiiAAAAAA
+EwjRBnABAQCWIAAAAAATCLIFdQEBAKIgAAAAABMIwgZ6AQEAriAAAAAAEwhtB38BAQC6IAAAAAAD
+GCcHBgABAMIgAAAAABYIggaEAQEA7iAAAAAAFgiPAYkBAQD1IAAAAAAWCJsBjgEBAP0gAAAAABEY
+LQfMAAIADiEAAAAABhgnBwYAAgAYIQAAAAAWCFcElAECAHQhAAAAAAYYJwcGAAIAfCEAAAAABgCt
+BQYAAgAoIwAAAADGAtEI0AACADYjAAAAAMYCEQHVAAMAPiMAAAAAgwB/AZkBAwBKIwAAAADGAqUE
+jwADAFQjAAAAABEAjQCeAQMAdCMAAAAAAQB5AKYBBAC6IAAAAAAGGCcHBgAFAIAjAAAAAAMI+ABK
+AAUAtCMAAAAABhgnBwYABQAAAAEAdAQAAAEAIAYAAAEACAEAAAEACAEJACcHAQARACcHBgAZACcH
+CgApACcHEAAxACcHEAA5ACcHEABBACcHEABJACcHEABRACcHEABZACcHFQBhACcHFQBpACcHEABx
+ACcHEAB5ACcHEACBACcHGgCRACcHIACpACcHBgCxACcHBgC5ACcHBgDRACcHJgDpACcHEAAJAScH
+BgARAScHBgCZACcHBgChACcHBgAMACcHBgAUACcHBgAcACcHBgAkACcHBgAMAPgASgAUAPgASgAc
+APgASgAkAPgASgDBACcHBgDZADgBTwDZAIQJVwDxACcHXQBJAWsEZQABAScHBgBRAcsGagBRATUJ
+agAZAScHBgAZAe8IeABZAbAIfgBhAXUFhABpAVcEiwDBAKUEjwBxAXoJkwCBARcJmQCBAeEAnwBp
+AWEEqwCRARAJsACZAQ0HtgBZAQUJvQApAaUEjwChAfEGwwCZAfsGzABZAToJAQDBANEI0ADBABEB
+1QCpAekA4QA0AEkJ+AA8AFcESgA8AGEEDwE8ACcHBgAIACwAMAEIADAANQEpAKsAWAMuAAsA1gEu
+ABMA3wEuABsA/gEuACMABwIuACsAMAIuADMAMAIuADsABwIuAEMANgIuAEsAMAIuAFMATQIuAFsA
+MAIuAGMAUwIuAGsAfQIuAHMAigJAAIsANQFAAIMA1AJDAHsA3QJDAIMA1AJJAKsAaQNjAHsA3QJj
+AIMA1AJpAKsAfQOAAIsANQGDAJMANQGDAJsANQGDAHsA3QKJAKsAigOgAIsANQGpAIMA/gHAAIsA
+NQHJAIMA/gHgAIsANQHjALsANQHjAFMAMALpALMANQEDAYMA1AIDAaMA9gIjAYMA1AIjAVsAMAIg
+AoMA1AIgAosANQFAAoMA1AJAAosANQFgAoMA1AJgAosANQGAAoMA1AKAAosANQGgAosANQHAAosA
+NQHgAosANQHgAoMA1AIAA4sANQEgA4sANQEgA4MA1AJvANkA7AAEAAEABQAFAAYABwAJAAgAAADg
+Bq4BAADEBbMBAADGBrgBAAB/B70BAACGBsIBAACrAccBAAB0BMwBAAD8ANEBAgAEAAMAAgAFAAUA
+AgAGAAcAAgAHAAkAAgAJAAsAAgAKAA0AAQALAA0AAgAOAA8AAgAYABEALgA1ADwAQwDeAPEAAAEH
+AQSAAAABAAAAAAAAAAAAAAAAACsAAAAEAAAAAAAAAAAAAAAVAbQAAAAAAAQAAAAAAAAAAAAAABUB
+fgUAAAAACgAAAAAAAAAAAAAAHgG9AAAAAAAOAAAAAAAAAAAAAAAnAbMEAAAAAA4AAAAAAAAAAAAA
+ACcBWAAAAAAAAAAAAAEAAABpCAAACAAEAAkABAAKAAcAAAAQABIAdwAAABAAKwB3AAAAAAAtAHcA
+ewDnAHsACgEAAAAAAENvbnRleHRWYWx1ZWAxAFRocmVhZFNhZmVPYmplY3RQcm92aWRlcmAxAFNU
+XzhmMmZiNzA5ZmIzNTRjZjI4MmM1NDVlOWM4ZDAwYmQ0ADxNb2R1bGU+AE1pY3Jvc29mdC5TcWxT
+ZXJ2ZXIuTWFuYWdlZERUUwBUAERpc3Bvc2VfX0luc3RhbmNlX18AQ3JlYXRlX19JbnN0YW5jZV9f
+AHZhbHVlX18AUHJvamVjdERhdGEAbXNjb3JsaWIATWljcm9zb2Z0LlZpc3VhbEJhc2ljAENvbXBh
+cmVNZXRob2QAUmVwbGFjZQBDcmVhdGVJbnN0YW5jZQBnZXRfR2V0SW5zdGFuY2UAaW5zdGFuY2UA
+R2V0SGFzaENvZGUAVmFyaWFibGUAUnVudGltZVR5cGVIYW5kbGUAR2V0VHlwZUZyb21IYW5kbGUA
+RGF0ZUFuZFRpbWUARGF0ZVRpbWUATWljcm9zb2Z0LlNxbFNlcnZlci5EdHMuUnVudGltZQBHZXRU
+eXBlAEZhaWx1cmUAZ2V0X0N1bHR1cmUAc2V0X0N1bHR1cmUAX3Jlc0N1bHR1cmUAVlNUQVJUU2Ny
+aXB0T2JqZWN0TW9kZWxCYXNlAEFwcGxpY2F0aW9uQmFzZQBBcHBsaWNhdGlvblNldHRpbmdzQmFz
+ZQBFZGl0b3JCcm93c2FibGVTdGF0ZQBHdWlkQXR0cmlidXRlAEhlbHBLZXl3b3JkQXR0cmlidXRl
+AEdlbmVyYXRlZENvZGVBdHRyaWJ1dGUARGVidWdnZXJOb25Vc2VyQ29kZUF0dHJpYnV0ZQBEZWJ1
+Z2dhYmxlQXR0cmlidXRlAEVkaXRvckJyb3dzYWJsZUF0dHJpYnV0ZQBDb21WaXNpYmxlQXR0cmli
+dXRlAEFzc2VtYmx5VGl0bGVBdHRyaWJ1dGUAU3RhbmRhcmRNb2R1bGVBdHRyaWJ1dGUASGlkZU1v
+ZHVsZU5hbWVBdHRyaWJ1dGUAQXNzZW1ibHlUcmFkZW1hcmtBdHRyaWJ1dGUAVGFyZ2V0RnJhbWV3
+b3JrQXR0cmlidXRlAERlYnVnZ2VySGlkZGVuQXR0cmlidXRlAEFzc2VtYmx5RmlsZVZlcnNpb25B
+dHRyaWJ1dGUATXlHcm91cENvbGxlY3Rpb25BdHRyaWJ1dGUAQXNzZW1ibHlEZXNjcmlwdGlvbkF0
+dHJpYnV0ZQBDb21waWxhdGlvblJlbGF4YXRpb25zQXR0cmlidXRlAEFzc2VtYmx5UHJvZHVjdEF0
+dHJpYnV0ZQBBc3NlbWJseUNvcHlyaWdodEF0dHJpYnV0ZQBDTFNDb21wbGlhbnRBdHRyaWJ1dGUA
+U1NJU1NjcmlwdFRhc2tFbnRyeVBvaW50QXR0cmlidXRlAEFzc2VtYmx5Q29tcGFueUF0dHJpYnV0
+ZQBSdW50aW1lQ29tcGF0aWJpbGl0eUF0dHJpYnV0ZQBtX1ZhbHVlAGdldF9WYWx1ZQBzZXRfVmFs
+dWUAR2V0T2JqZWN0VmFsdWUAU3lzdGVtLlRocmVhZGluZwBTeXN0ZW0uUnVudGltZS5WZXJzaW9u
+aW5nAFRvU3RyaW5nAE1hdGgATWljcm9zb2Z0LlNxbFNlcnZlci5TY3JpcHRUYXNrAE1pY3Jvc29m
+dC5TcWxTZXJ2ZXIuRHRzLlRhc2tzLlNjcmlwdFRhc2sATWljcm9zb2Z0LlZpc3VhbEJhc2ljLk15
+U2VydmljZXMuSW50ZXJuYWwAU2NyaXB0T2JqZWN0TW9kZWwAU3lzdGVtLkNvbXBvbmVudE1vZGVs
+AFNUXzhmMmZiNzA5ZmIzNTRjZjI4MmM1NDVlOWM4ZDAwYmQ0LmRsbABnZXRfSXRlbQBTeXN0ZW0A
+RW51bQBTeXN0ZW0uQ29tcG9uZW50TW9kZWwuRGVzaWduAFNjcmlwdE1haW4AZ2V0X0FwcGxpY2F0
+aW9uAE15QXBwbGljYXRpb24AU3lzdGVtLkNvbmZpZ3VyYXRpb24AU3lzdGVtLkdsb2JhbGl6YXRp
+b24AU3lzdGVtLlJlZmxlY3Rpb24ARXhjZXB0aW9uAEN1bHR1cmVJbmZvAG1fQXBwT2JqZWN0UHJv
+dmlkZXIAbV9Vc2VyT2JqZWN0UHJvdmlkZXIAbV9Db21wdXRlck9iamVjdFByb3ZpZGVyAG1fTXlX
+ZWJTZXJ2aWNlc09iamVjdFByb3ZpZGVyAGdldF9SZXNvdXJjZU1hbmFnZXIAU3lzdGVtLkNvZGVE
+b20uQ29tcGlsZXIARXZlbnRzT2JqZWN0V3JhcHBlcgBnZXRfVXNlcgBFbnRlcgBnZXRfQ29tcHV0
+ZXIATXlDb21wdXRlcgBfcmVzTWdyAEZpcmVFcnJvcgBDbGVhclByb2plY3RFcnJvcgBTZXRQcm9q
+ZWN0RXJyb3IAQWN0aXZhdG9yAC5jdG9yAC5jY3RvcgBNb25pdG9yAFN5c3RlbS5EaWFnbm9zdGlj
+cwBNaWNyb3NvZnQuVmlzdWFsQmFzaWMuRGV2aWNlcwBnZXRfV2ViU2VydmljZXMATXlXZWJTZXJ2
+aWNlcwBNaWNyb3NvZnQuVmlzdWFsQmFzaWMuQXBwbGljYXRpb25TZXJ2aWNlcwBTeXN0ZW0uUnVu
+dGltZS5JbnRlcm9wU2VydmljZXMATWljcm9zb2Z0LlZpc3VhbEJhc2ljLkNvbXBpbGVyU2Vydmlj
+ZXMAU3lzdGVtLlJ1bnRpbWUuQ29tcGlsZXJTZXJ2aWNlcwBTeXN0ZW0uUmVzb3VyY2VzAFNUXzhm
+MmZiNzA5ZmIzNTRjZjI4MmM1NDVlOWM4ZDAwYmQ0Lk15LlJlc291cmNlcwBNeVJlc291cmNlcwBT
+VF84ZjJmYjcwOWZiMzU0Y2YyODJjNTQ1ZTljOGQwMGJkNC5SZXNvdXJjZXMucmVzb3VyY2VzAERl
+YnVnZ2luZ01vZGVzAGdldF9WYXJpYWJsZXMAU3RyaW5ncwBNeVNldHRpbmdzAEVxdWFscwBSdW50
+aW1lSGVscGVycwBTdWNjZXNzAGdldF9EdHMAU2NyaXB0UmVzdWx0cwBnZXRfRXZlbnRzAENvbmNh
+dABGb3JtYXQAbV9TeW5jT2JqZWN0AE15UHJvamVjdABFeGl0AHNldF9UYXNrUmVzdWx0AG1fQ29u
+dGV4dABTVF84ZjJmYjcwOWZiMzU0Y2YyODJjNTQ1ZTljOGQwMGJkNC5NeQBnZXRfVG9kYXkAZ2V0
+X0Fzc2VtYmx5AAAAAAAxTQB5AC4AUgBlAHMAbwB1AHIAYwBlAHMALgBNAHkAUgBlAHMAbwB1AHIA
+YwBlAHMAAB1VAHMAZQByADoAOgBGAGkAbABlAG4AYQBtAGUAACVVAHMAZQByADoAOgBFAG0AYQBp
+AGwAUwB1AGIAagBlAGMAdAAAKVUAcwBlAHIAOgA6AEUAbQBhAGkAbABTAGkAZwBuAGEAdAB1AHIA
+ZQAAEXkAeQB5AHkAbQBtAGQAZAAAEXkAeQB5AHkATQBNAGQAZAAAEW0AbQAuAGQAZAAuAHkAeQAA
+EU0ATQAuAGQAZAAuAHkAeQAAH1UAcwBlAHIAOgA6AEUAbQBhAGkAbABCAG8AZAB5AABlRwBlAHQA
+dABpAG4AZwBzACwAPAAvAGIAcgA+ADwALwBiAHIAPgAgAFAAbABlAGEAcwBlACAAcwBlAGUAIABh
+AHQAdABhAGMAaABlAGQAIAByAGUAcABvAHIAdAAuACAAIAAgAAAZRgBpAHIAZQAgAEUAcgByAG8A
+cgA6ACAAAAEAAMbY+Ae2XrZGsQae/3Ip3w0ABCABAQgDIAABBSABARERBCABAQ4EIAEBAgUgAgEO
+DgUgAQERRQcgBAEODg4OBhUSJAESDAYVEiQBEggGFRIkARJlBhUSJAESIAQgABMABwABEm0RgJ0F
+IAASgKEHIAIBDhKAoQQAARwcBAABARwIBwQODg4SgJUFIAASgK0FIAASgLEGIAESgLUcAyAAHAMg
+AA4FAAARgL0FAAIOHA4LAAYODg4OCAgRgMUEIAEBHAUAAg4ODgYAAQESgJUFIAASgNEIIAUCCA4O
+DggDAAABBCABAhwDIAAIBAcBHgACHgAFEAEAHgAECgEeAAQHARMABhUSJAETAAcGFRJxARMABhUS
+cQETAAITAAQKARMABSABARMACLd6XFYZNOCJCLA/X38R1Qo6CImEXc2AgMyRBAAAAAAEAQAAAAcG
+FRIkARIMBwYVEiQBEggHBhUSJAESZQcGFRIkARIgAwYSeQMGEn0DBhIYAgYcAgYIAwYRKAQAABIM
+BAAAEggEAAASZQQAABIgBAAAEnkEAAASfQUAAQESfQQAABIYBCAAEm0HEAEBHgAeAAcwAQEBEB4A
+BAgAEgwECAASCAQIABJlBAgAEiAECAASeQQIABJ9BAgAEhgEKAATAAgBAAgAAAAAAB4BAAEAVAIW
+V3JhcE5vbkV4Y2VwdGlvblRocm93cwEIAQACAAAAAAAoAQAjU1RfOGYyZmI3MDlmYjM1NGNmMjgy
+YzU0NWU5YzhkMDBiZDQAAAUBAAAAABYBABFDb3B5cmlnaHQgQCAgMjAyMwAABQEAAQAAKQEAJDUx
+OTkyNDk2LWU5NGUtNDY2MC05MzU4LTkwMzMxMjlmNTY2MQAADAEABzEuMC4wLjAAAEkBABouTkVU
+RnJhbWV3b3JrLFZlcnNpb249djQuNQEAVA4URnJhbWV3b3JrRGlzcGxheU5hbWUSLk5FVCBGcmFt
+ZXdvcmsgNC41CAEAAQAAAAAAGAEACk15VGVtcGxhdGUIMTEuMC4wLjAAAGEBADRTeXN0ZW0uV2Vi
+LlNlcnZpY2VzLlByb3RvY29scy5Tb2FwSHR0cENsaWVudFByb3RvY29sEkNyZWF0ZV9fSW5zdGFu
+Y2VfXxNEaXNwb3NlX19JbnN0YW5jZV9fAAAAEAEAC015LkNvbXB1dGVyAAATAQAOTXkuQXBwbGlj
+YXRpb24AAAwBAAdNeS5Vc2VyAAATAQAOTXkuV2ViU2VydmljZXMAAAAAtAAAAM7K774BAAAAkQAA
+AGxTeXN0ZW0uUmVzb3VyY2VzLlJlc291cmNlUmVhZGVyLCBtc2NvcmxpYiwgVmVyc2lvbj00LjAu
+MC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkjU3lz
+dGVtLlJlc291cmNlcy5SdW50aW1lUmVzb3VyY2VTZXQCAAAAAAAAAAAAAABQQURQQURQtAAAAPw7
+AAAAAAAAAAAAABY8AAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIPAAAAAAAAAAAAAAAAF9Db3JE
+bGxNYWluAG1zY29yZWUuZGxsAAAAAAD/JQAgABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -10282,7 +10231,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAADAAAAHA8AAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAADAAAACg8AAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -10300,7 +10249,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint]"
       DTS:CreationName=""
-      DTS:DTSID="{DBD853FF-99FE-413C-86E4-916AA845B5FC}"
+      DTS:DTSID="{B734A9D7-A66B-46A7-95F0-96096EE8DBFA}"
       DTS:From="Package\PreExecute"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint"
@@ -10308,7 +10257,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
       DTS:CreationName=""
-      DTS:DTSID="{78805E2F-61CA-42DF-B06A-024ABC0F0447}"
+      DTS:DTSID="{26A5AD33-1AC5-4959-AD29-E16F551CDA54}"
       DTS:From="Package\Set Variables"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 1"
@@ -10316,7 +10265,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
       DTS:CreationName=""
-      DTS:DTSID="{EFD4B150-9D00-427E-8CDD-6A51CFDF44DF}"
+      DTS:DTSID="{BBC76FC0-C4DC-43D8-BA8D-429BF4E1B833}"
       DTS:From="Package\Generate SSRS Report"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 2"
@@ -10324,7 +10273,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 3]"
       DTS:CreationName=""
-      DTS:DTSID="{86DF4329-7902-4636-8B40-F22B460A38AF}"
+      DTS:DTSID="{8CB77A2C-4EEE-4B8E-8657-A7A29F4D8B12}"
       DTS:From="Package\Send Report"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 3"
@@ -10332,7 +10281,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 4]"
       DTS:CreationName=""
-      DTS:DTSID="{87427FF8-CED2-476D-9206-6735C68ACA06}"
+      DTS:DTSID="{411FB655-5C9B-4812-8A8C-3BAA690DA4D0}"
       DTS:From="Package\Log Report Send"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 4"
@@ -10340,7 +10289,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 5]"
       DTS:CreationName=""
-      DTS:DTSID="{0D25667D-6660-406A-953B-6778648355DA}"
+      DTS:DTSID="{C9465011-21F6-4932-A8F2-62C06587240C}"
       DTS:From="Package\PreExecute"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 5"
@@ -10348,34 +10297,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 6]"
       DTS:CreationName=""
-      DTS:DTSID="{B72713A8-BCFF-4B22-845E-EF82D0939B81}"
-      DTS:From="Package\set EndDate"
+      DTS:DTSID="{303E6404-AF82-4BF3-B636-E0B7AB91C662}"
+      DTS:From="Package\Set Start Date"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 6"
-      DTS:To="Package\Generate HTML for body of email" />
+      DTS:To="Package\Set Variables" />
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 7]"
       DTS:CreationName=""
-      DTS:DTSID="{18FCB13A-C9A9-4F2D-82A3-22D6BA3156C8}"
-      DTS:From="Package\Set Start Date"
+      DTS:DTSID="{B2DA7BDE-2C47-48BD-AC87-ED2EA6E99D59}"
+      DTS:From="Package\set EndDate"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 7"
-      DTS:To="Package\Generate HTML for body of email" />
-    <DTS:PrecedenceConstraint
-      DTS:refId="Package.PrecedenceConstraints[Constraint 8]"
-      DTS:CreationName=""
-      DTS:DTSID="{E20D20BE-8BDF-4B44-B7B9-B583A560969F}"
-      DTS:From="Package\Generate HTML for body of email"
-      DTS:LogicalAnd="True"
-      DTS:ObjectName="Constraint 8"
-      DTS:To="Package\Set EmailTo to Director Emails" />
-    <DTS:PrecedenceConstraint
-      DTS:refId="Package.PrecedenceConstraints[Constraint 9]"
-      DTS:CreationName=""
-      DTS:DTSID="{47CA5958-807C-4A34-9F03-1CC86E3B7A67}"
-      DTS:From="Package\Set EmailTo to Director Emails"
-      DTS:LogicalAnd="True"
-      DTS:ObjectName="Constraint 9"
       DTS:To="Package\Set Variables" />
   </DTS:PrecedenceConstraints>
   <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
@@ -10389,23 +10322,19 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     design-time-name="Package">
     <LayoutInfo>
       <GraphLayout
-        Capacity="32" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
-        <NodeLayout
-          Size="242,42"
-          Id="Package\Generate HTML for body of email"
-          TopLeft="122,201" />
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="194,42"
           Id="Package\Generate SSRS Report"
-          TopLeft="141,462" />
+          TopLeft="152,284" />
         <NodeLayout
           Size="169,44"
           Id="Package\Log Report Send"
-          TopLeft="152,616" />
+          TopLeft="163,438" />
         <NodeLayout
           Size="169,44"
           Id="Package\PostExecute"
-          TopLeft="167,704" />
+          TopLeft="178,526" />
         <NodeLayout
           Size="152,44"
           Id="Package\PreExecute"
@@ -10413,11 +10342,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
         <NodeLayout
           Size="141,42"
           Id="Package\Send Report"
-          TopLeft="170,543" />
-        <NodeLayout
-          Size="229,42"
-          Id="Package\Set EmailTo to Director Emails"
-          TopLeft="123,284" />
+          TopLeft="181,365" />
         <NodeLayout
           Size="139,42"
           Id="Package\set EndDate"
@@ -10429,7 +10354,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
         <NodeLayout
           Size="144,42"
           Id="Package\Set Variables"
-          TopLeft="165,380" />
+          TopLeft="176,202" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
           TopLeft="234,82">
@@ -10466,7 +10391,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 1]"
-          TopLeft="237.5,422">
+          TopLeft="248.5,244">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
@@ -10488,7 +10413,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 2]"
-          TopLeft="239.25,504">
+          TopLeft="250.25,326">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
@@ -10510,7 +10435,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 3]"
-          TopLeft="238.5,585">
+          TopLeft="249.5,407">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
@@ -10532,7 +10457,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 4]"
-          TopLeft="236.5,660">
+          TopLeft="247.5,482">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
@@ -10600,30 +10525,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 6]"
-          TopLeft="347.5,166">
+          TopLeft="158,164">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-65.5,35"
+              EndConnector="90,38"
               Start="0,0"
-              End="-65.5,27.5">
+              End="90,30.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,16.8620689655172" />
+                    End="0,15" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,16.8620689655172"
-                    Point2="0,20.8620689655172"
-                    Point3="-4,20.8620689655172" />
+                    Point1="0,15"
+                    Point2="0,19"
+                    Point3="4,19" />
                   <mssgle:LineSegment
-                    End="-61.5,20.8620689655172" />
+                    End="86,19" />
                   <mssgle:CubicBezierSegment
-                    Point1="-61.5,20.8620689655172"
-                    Point2="-65.5,20.8620689655172"
-                    Point3="-65.5,24.8620689655172" />
+                    Point1="86,19"
+                    Point2="90,19"
+                    Point3="90,23" />
                   <mssgle:LineSegment
-                    End="-65.5,27.5" />
+                    End="90,30.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -10634,74 +10559,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 7]"
-          TopLeft="158,164">
+          TopLeft="347.5,166">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="46,37"
+              EndConnector="-76.8333333333334,36"
               Start="0,0"
-              End="46,29.5">
+              End="-76.8333333333334,28.5">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,18.0541871921182" />
+                    End="0,17.3626373626374" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,18.0541871921182"
-                    Point2="0,22.0541871921182"
-                    Point3="4,22.0541871921182" />
+                    Point1="0,17.3626373626374"
+                    Point2="0,21.3626373626374"
+                    Point3="-4,21.3626373626374" />
                   <mssgle:LineSegment
-                    End="42,22.0541871921182" />
+                    End="-72.8333333333334,21.3626373626374" />
                   <mssgle:CubicBezierSegment
-                    Point1="42,22.0541871921182"
-                    Point2="46,22.0541871921182"
-                    Point3="46,26.0541871921182" />
+                    Point1="-72.8333333333334,21.3626373626374"
+                    Point2="-76.8333333333334,21.3626373626374"
+                    Point3="-76.8333333333334,25.3626373626374" />
                   <mssgle:LineSegment
-                    End="46,29.5" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 8]"
-          TopLeft="240.25,243">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,41"
-              Start="0,0"
-              End="0,33.5">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,33.5" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 9]"
-          TopLeft="237.25,326">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,54"
-              Start="0,0"
-              End="0,46.5">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,46.5" />
+                    End="-76.8333333333334,28.5" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
