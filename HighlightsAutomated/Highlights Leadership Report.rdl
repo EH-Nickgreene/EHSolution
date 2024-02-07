@@ -1501,7 +1501,7 @@ and (LegalFirstName+' ' + Legallastname&lt;&gt;'Rodney Pringle' OR EmployeeNumbe
 UNION 
 SELECT 'Robert Cuevas'
 UNION 
-SELECT 'Shanon Conroy'
+SELECT 'Shannon Conroy'
 
 IF OBJECT_ID('tempdb..#CR_Employee') IS NOT NULL DROP TABLE #CR_Employee
 SELECT e.EmployeeFirstName,e.EmployeeLastName,Employeeid,cc.fieldvalue MetaPayrollNumber,EmployeePayrollReference
@@ -1515,6 +1515,12 @@ FROM Centralreach.insights.Provider e
 LEFT JOIN [CentralReach].[insights].[ContactCustomField] cc on e.ProviderId=cc.contactID AND Fieldname='Payroll Number'
 WHERE ISNULL(fieldvalue,'')&lt;&gt;''
 
+IF OBJECT_ID('tempdb..#CR_EmployeeDeDup') IS NOT NULL DROP TABLE #CR_EmployeeDeDup
+SELECT *,
+CASE WHEN ISNULL(EmployeePayrollReference,'')='' THEN MetaPayrollNumber ELSE EmployeePayrollReference END EmployeeNumber,
+Row_number() OVER(PARTITION BY EmployeeID ORDER BY EmployeeID,CASE WHEN ISNULL(EmployeePayrollReference,'')='' THEN MetaPayrollNumber ELSE EmployeePayrollReference END desc ) RowID
+INTO #CR_EmployeeDeDup
+FROM #CR_Employee 
 
 
 ;With CteHires as (
@@ -1524,7 +1530,12 @@ bdp.BranchName,
 ISNULL(
 	CASE
 		WHEN md.FieldValue IN ('Amanda Jacaobs') THEN 'Amanda Jacobs'
-		WHEN md.FieldValue IN ('Samantha') THEN 'Samantha Driscoll'
+		WHEN md.FieldValue IN ('Samantha','Samantha Drsicoll') THEN 'Samantha Driscoll'
+		WHEN md.FieldValue LIKE 'Samantha%' THEN 'Samantha Driscoll'
+		WHEN md.FieldValue LIKE 'Amanda%' THEN 'Amanda Jacobs'
+		WHEN md.FieldValue LIKE 'Robert%' THEN 'Robert Cuevas'
+		WHEN md.FieldValue LIKE 'Shannon%' THEN 'Shannon Conroy'
+		WHEN md.FieldValue LIKE 'Shanon%' THEN 'Shannon Conroy'
 		ELSE md.FieldValue
 	END
 	,'unknown') Recruiter,
@@ -1535,15 +1546,28 @@ COUNT(*) HIres,
 FROM v_employee e
 LEFT JOIN Reference.dbo.branchdata bd ON e.HomeDepartmentCode=bd.ADPHomeDepartmentCode
 LEFT JOIN Reference.dbo.branchdata bdp ON bd.ParentBranchCode=bdp.BranchCode
-LEFT JOIN #CR_Employee ei on e.EmployeeNumber=CASE WHEN ISNULL(ei.EmployeePayrollReference,'')='' THEN MetaPayrollNumber ELSE ei.EmployeePayrollReference END
+LEFT JOIN #CR_EmployeeDeDup ei on e.EmployeeNumber=CASE WHEN ISNULL(ei.EmployeePayrollReference,'')='' THEN MetaPayrollNumber ELSE ei.EmployeePayrollReference END
 LEFT JOIN Centralreach.insights.ContactCustomField md on md.ContactId=ei.employeeid and md.fieldname = 'recruiter'
 WHERE e.hiredate&gt;=@CurrentWeekStart
 and e.hireDate&lt;dateadd(dd,1,@CurrentWeekEnd)
 --and bdp.BranchStatus='Active'
 AND PayrollCompanyCode IN('K86','ODJ')
 AND HomeDepartmentDescription NOT IN ('Support Center','Support Center- Other','Corporate Employee')
-
-GROUP BY bdp.BranchName,md.FieldValue
+AND ei.rowid=1
+GROUP BY 
+	bdp.BranchName,
+	ISNULL(
+	CASE
+		WHEN md.FieldValue IN ('Amanda Jacaobs') THEN 'Amanda Jacobs'
+		WHEN md.FieldValue IN ('Samantha','Samantha Drsicoll') THEN 'Samantha Driscoll'
+		WHEN md.FieldValue LIKE 'Samantha%' THEN 'Samantha Driscoll'
+		WHEN md.FieldValue LIKE 'Amanda%' THEN 'Amanda Jacobs'
+		WHEN md.FieldValue LIKE 'Robert%' THEN 'Robert Cuevas'
+		WHEN md.FieldValue LIKE 'Shannon%' THEN 'Shannon Conroy'
+		WHEN md.FieldValue LIKE 'Shanon%' THEN 'Shannon Conroy'
+		ELSE md.FieldValue
+	END
+	,'unknown')
 )
 
 , CteTerms as (
@@ -1553,7 +1577,12 @@ bdp.BranchName,
 ISNULL(
 	CASE
 		WHEN md.FieldValue IN ('Amanda Jacaobs') THEN 'Amanda Jacobs'
-		WHEN md.FieldValue IN ('Samantha') THEN 'Samantha Driscoll'
+		WHEN md.FieldValue IN ('Samantha','Samantha Drsicoll') THEN 'Samantha Driscoll'
+		WHEN md.FieldValue LIKE 'Samantha%' THEN 'Samantha Driscoll'
+		WHEN md.FieldValue LIKE 'Amanda%' THEN 'Amanda Jacobs'
+		WHEN md.FieldValue LIKE 'Robert%' THEN 'Robert Cuevas'
+		WHEN md.FieldValue LIKE 'Shannon%' THEN 'Shannon Conroy'
+		WHEN md.FieldValue LIKE 'Shanon%' THEN 'Shannon Conroy'
 		ELSE md.FieldValue
 	END
 	,'unknown') Recruiter,
@@ -1570,7 +1599,20 @@ and e.TerminationDate&lt;dateadd(dd,1,@EndDate)
 --and bdp.BranchStatus='Active'
 AND PayrollCompanyCode IN('K86','ODJ')
 AND HomeDepartmentDescription NOT IN ('Support Center','Support Center- Other','Corporate Employee')
-GROUP BY bdp.BranchName,md.FieldValue
+GROUP BY 
+	bdp.BranchName,
+	ISNULL(
+	CASE
+		WHEN md.FieldValue IN ('Amanda Jacaobs') THEN 'Amanda Jacobs'
+		WHEN md.FieldValue IN ('Samantha','Samantha Drsicoll') THEN 'Samantha Driscoll'
+		WHEN md.FieldValue LIKE 'Samantha%' THEN 'Samantha Driscoll'
+		WHEN md.FieldValue LIKE 'Amanda%' THEN 'Amanda Jacobs'
+		WHEN md.FieldValue LIKE 'Robert%' THEN 'Robert Cuevas'
+		WHEN md.FieldValue LIKE 'Shannon%' THEN 'Shannon Conroy'
+		WHEN md.FieldValue LIKE 'Shanon%' THEN 'Shannon Conroy'
+		ELSE md.FieldValue
+	END
+	,'unknown')
 )
 
 
@@ -1883,6 +1925,258 @@ GROUP BY [dbo].[Age](ClientBirthDate,GETDATE()),
         <Field Name="ActiveLearners">
           <DataField>ActiveLearners</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="TermsByRecruiterByWeek">
+      <Query>
+        <DataSourceName>HumanResources</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@StartDate">
+            <Value>=Parameters!StartDate.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>DECLARE @AdjustedStartDate date,@AdjustedEndDate date
+
+
+
+--DECLARE @CurrentWeekStart date,@CurrentWeekEnd date
+
+--SET @CurrentWeekStart =(
+--			SELECT MAX(date) 
+--			FROM Reference.dbo.dimdate 
+--			WHERE date&lt;GETDATE()
+--			and Day='Sunday'
+--			)
+
+--SET @CurrentWeekEnd=dateadd(dd,6,@CurrentWeekStart)
+
+
+SET @AdjustedStartDate =DATEADD(dd,-28,@StartDate)
+SET @AdjustedEndDate=DATEADD(dd,14,@StartDate)
+
+
+
+--DECLARE @CustomStartDate date
+
+--SELECT @CustomStartDate=MIN(date)
+--	FROM (
+--		SELECT TOP 23 date 
+--		FROM Reference.dbo.dimdate 
+--		WHERE date&lt;@EndDate
+--		and day='Monday'
+--		ORDER BY date desc
+--	)a
+
+
+--SELECT @AdjustedStartDate,@AdjustedEndDate
+
+IF OBJECT_ID('tempdb..#dates') IS NOT NULL DROP TABLE #dates
+SELECT date,date HireDate,Dateadd(dd,-7,date) TermDate,WeekOfYearDisplay,WeekStartDate 
+INTO #dates
+FROm Reference.dbo.dimdate dd
+WHERE date&gt;=@AdjustedStartDate
+and date&lt;@AdjustedEndDate
+
+--SELECT * FROm #dates ORDER BY date
+
+
+	   
+IF OBJECT_ID('tempdb..#recruiters') IS NOT NULL DROP TABLE #recruiters
+SELECT LegalFirstName+' ' + Legallastname recruiter
+INTO #recruiters
+FROM v_employee
+WHERE 
+PayrollCompanyCode='K86'
+AND JobTitleCode='RCR' 
+and PositionStatus='Active'
+and (LegalFirstName+' ' + Legallastname&lt;&gt;'Rodney Pringle' OR EmployeeNumber='010042')
+UNION 
+SELECT 'Robert Cuevas'
+UNION 
+SELECT 'Shannon Conroy'
+
+
+IF OBJECT_ID('tempdb..#recruitersWithWeeks') IS NOT NULL DROP TABLE #recruitersWithWeeks
+SELECT r.recruiter,d.WeekOfYearDisplay,d.WeekStartDate
+INTO #recruitersWithWeeks
+FROm #recruiters r
+CROSS JOIN (
+	SELECT DISTINCT WeekofyearDisplay,WeekStartDate
+	FROM #dates
+	) d 
+
+
+
+IF OBJECT_ID('tempdb..#CR_Employee') IS NOT NULL DROP TABLE #CR_Employee
+SELECT e.EmployeeFirstName,e.EmployeeLastName,Employeeid,cc.fieldvalue MetaPayrollNumber,EmployeePayrollReference
+INTO #CR_Employee
+FROM Centralreach.insights.employee e
+LEFT JOIN [CentralReach].[insights].[ContactCustomField] cc on e.EmployeeId=cc.contactID AND Fieldname='Payroll Number'
+UNION
+--EMPLOYEE RECORD ISN'T ALWAYS CREATED IN TIME, SO TO GET A FULL LISTING WE PULL FROM THE PROVIDER TABLE TOO.
+SELECT e.ProviderFirstName,e.ProviderLastName,e.providerID,cc.fieldvalue MetaPayrollNumber,''
+FROM Centralreach.insights.Provider e
+LEFT JOIN [CentralReach].[insights].[ContactCustomField] cc on e.ProviderId=cc.contactID AND Fieldname='Payroll Number'
+WHERE ISNULL(fieldvalue,'')&lt;&gt;''
+
+
+
+IF OBJECT_ID('tempdb..#CR_EmployeeDeDup') IS NOT NULL DROP TABLE #CR_EmployeeDeDup
+SELECT *,
+CASE WHEN ISNULL(EmployeePayrollReference,'')='' THEN MetaPayrollNumber ELSE EmployeePayrollReference END EmployeeNumber,
+Row_number() OVER(PARTITION BY EmployeeID ORDER BY EmployeeID,CASE WHEN ISNULL(EmployeePayrollReference,'')='' THEN MetaPayrollNumber ELSE EmployeePayrollReference END desc ) RowID
+INTO #CR_EmployeeDeDup
+FROM #CR_Employee 
+
+;With CteHires as (
+SELECT 
+--@CustomStartDate StartDate,
+ISNULL(
+	CASE
+		WHEN md.FieldValue IN ('Amanda Jacaobs') THEN 'Amanda Jacobs'
+		WHEN md.FieldValue IN ('Samantha','Samantha Drsicoll') THEN 'Samantha Driscoll'
+		WHEN md.FieldValue LIKE 'Samantha%' THEN 'Samantha Driscoll'
+		WHEN md.FieldValue LIKE 'Amanda%' THEN 'Amanda Jacobs'
+		WHEN md.FieldValue LIKE 'Robert%' THEN 'Robert Cuevas'
+		WHEN md.FieldValue LIKE 'Shannon%' THEN 'Shannon Conroy'
+		WHEN md.FieldValue LIKE 'Shanon%' THEN 'Shannon Conroy'
+		ELSE md.FieldValue
+	END
+	,'unknown') Recruiter,
+COUNT(*) HIres,
+--@CurrentWeekStart WeekStart,
+--@CurrentWeekEnd WeekEnd,
+dd.WeekOfYearDisplay,
+dd.WeekStartDate
+
+FROM v_employee e
+LEFT JOIN Reference.dbo.branchdata bd ON e.HomeDepartmentCode=bd.ADPHomeDepartmentCode
+LEFT JOIN Reference.dbo.branchdata bdp ON bd.ParentBranchCode=bdp.BranchCode
+LEFT JOIN #CR_EmployeeDeDup ei on e.EmployeeNumber=CASE WHEN ISNULL(ei.EmployeePayrollReference,'')='' THEN MetaPayrollNumber ELSE ei.EmployeePayrollReference END
+LEFT JOIN Centralreach.insights.ContactCustomField md on md.ContactId=ei.employeeid and md.fieldname = 'recruiter'
+LEFT JOIN #dates dd on dd.HireDate=e.HireDate
+WHERE 
+PayrollCompanyCode IN('K86','ODJ')
+AND HomeDepartmentDescription NOT IN ('Support Center','Support Center- Other','Corporate Employee')
+AND ei.rowid=1
+GROUP BY 
+ISNULL(
+	CASE
+		WHEN md.FieldValue IN ('Amanda Jacaobs') THEN 'Amanda Jacobs'
+		WHEN md.FieldValue IN ('Samantha','Samantha Drsicoll') THEN 'Samantha Driscoll'
+		WHEN md.FieldValue LIKE 'Samantha%' THEN 'Samantha Driscoll'
+		WHEN md.FieldValue LIKE 'Amanda%' THEN 'Amanda Jacobs'
+		WHEN md.FieldValue LIKE 'Robert%' THEN 'Robert Cuevas'
+		WHEN md.FieldValue LIKE 'Shannon%' THEN 'Shannon Conroy'
+		WHEN md.FieldValue LIKE 'Shanon%' THEN 'Shannon Conroy'
+		ELSE md.FieldValue
+	END
+	,'unknown') ,
+	dd.WeekOfYearDisplay,
+	dd.WeekStartDate
+)
+
+, CteTerms as (
+SELECT 
+--@CustomStartDate StartDate,
+ISNULL(
+	CASE
+		WHEN md.FieldValue IN ('Amanda Jacaobs') THEN 'Amanda Jacobs'
+		WHEN md.FieldValue IN ('Samantha','Samantha Drsicoll') THEN 'Samantha Driscoll'
+		WHEN md.FieldValue LIKE 'Samantha%' THEN 'Samantha Driscoll'
+		WHEN md.FieldValue LIKE 'Amanda%' THEN 'Amanda Jacobs'
+		WHEN md.FieldValue LIKE 'Robert%' THEN 'Robert Cuevas'
+		WHEN md.FieldValue LIKE 'Shannon%' THEN 'Shannon Conroy'
+		WHEN md.FieldValue LIKE 'Shanon%' THEN 'Shannon Conroy'
+		ELSE md.FieldValue
+	END
+	,'unknown') Recruiter,
+COUNT(*) Terms,
+dd.WeekOfYearDisplay,
+dd.WeekStartDate
+
+FROM v_employee e
+LEFT JOIN Reference.dbo.branchdata bd ON e.HomeDepartmentCode=bd.ADPHomeDepartmentCode
+LEFT JOIN Reference.dbo.branchdata bdp ON bd.ParentBranchCode=bdp.BranchCode
+LEFT JOIN Centralreach.insights.employee ei on e.EmployeeNumber=ei.EmployeePayrollReference
+LEFT JOIN Centralreach.insights.ContactCustomField md on md.ContactId=ei.employeeid and md.fieldname = 'recruiter'
+LEFT JOIN #dates dd on dd.TermDate=e.TerminationDate
+WHERE e.HireDate&gt;='2023-6-5'
+AND PayrollCompanyCode IN('K86','ODJ')
+AND HomeDepartmentDescription NOT IN ('Support Center','Support Center- Other','Corporate Employee')
+GROUP BY 
+	ISNULL(
+	CASE
+		WHEN md.FieldValue IN ('Amanda Jacaobs') THEN 'Amanda Jacobs'
+		WHEN md.FieldValue IN ('Samantha','Samantha Drsicoll') THEN 'Samantha Driscoll'
+		WHEN md.FieldValue LIKE 'Samantha%' THEN 'Samantha Driscoll'
+		WHEN md.FieldValue LIKE 'Amanda%' THEN 'Amanda Jacobs'
+		WHEN md.FieldValue LIKE 'Robert%' THEN 'Robert Cuevas'
+		WHEN md.FieldValue LIKE 'Shannon%' THEN 'Shannon Conroy'
+		WHEN md.FieldValue LIKE 'Shanon%' THEN 'Shannon Conroy'
+		ELSE md.FieldValue
+	END
+	,'unknown'),
+	dd.WeekOfYearDisplay,
+	dd.WeekStartDate
+)
+
+
+--SELECT DISTINCT COALESCE(hire.Recruiter,term.Recruiter) Recruiter,COUNT(*)
+ 
+--FROM CteHires hire
+--FULL JOIN CteTerms term on hire.BranchName=term.BranchName 
+--GROUP By COALESCE(hire.Recruiter,term.Recruiter)
+
+
+
+SELECT 
+	1 as OrderBy,
+	a.recruiter,
+	a.WeekOfYearDisplay,
+	a.WeekStartDate,
+	CONVERT(varchar(10),ISNULL(hire.Hires,0))+' / '+CONVERT(varchar(10),ISNULL(term.Terms,0))+' / '+CONVERT(varchar(10),ISNULL(hire.HIres,0)-ISNULL(term.Terms,0)) MetricValue
+
+FROM #recruitersWithWeeks a
+LEFT JOIN CteHires hire on a.recruiter=hire.Recruiter AND a.WeekOfYearDisplay=hire.WeekOfYearDisplay
+LEFT JOIN CteTerms term ON a.recruiter=term.Recruiter AND a.WeekOfYearDisplay=term.WeekOfYearDisplay
+
+UNION ALL
+
+SELECT 
+	2 as OrderBy,
+	'Total' recruiter,
+	a.WeekOfYearDisplay,
+	a.WeekStartdate,
+	CONVERT(varchar(10),SUM(ISNULL(hire.Hires,0)))+' / '+CONVERT(varchar(10),SUM(ISNULL(term.Terms,0)))+' / '+CONVERT(varchar(10),SUM(ISNULL(hire.HIres,0))-SUM(ISNULL(term.Terms,0))) MetricValue
+
+FROM #recruitersWithWeeks a
+LEFT JOIN CteHires hire on a.recruiter=hire.Recruiter AND a.WeekOfYearDisplay=hire.WeekOfYearDisplay
+LEFT JOIN CteTerms term ON a.recruiter=term.Recruiter AND a.WeekOfYearDisplay=term.WeekOfYearDisplay
+GROUP BY a.WeekOfYearDisplay,a.WeekStartdate
+ORDER By 1,2</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="OrderBy">
+          <DataField>OrderBy</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="recruiter">
+          <DataField>recruiter</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="WeekOfYearDisplay">
+          <DataField>WeekOfYearDisplay</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MetricValue">
+          <DataField>MetricValue</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="WeekStartDate">
+          <DataField>WeekStartDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -15481,6 +15775,9 @@ Conversion ABADx</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>TermsByRecruiter</DataSetName>
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
             <Top>31.66542in</Top>
             <Left>0.0117in</Left>
             <Height>0.88542in</Height>
@@ -15508,8 +15805,316 @@ Conversion ABADx</Value>
               </Border>
             </Style>
           </Rectangle>
+          <Tablix Name="Tablix9">
+            <TablixCorner>
+              <TablixCornerRows>
+                <TablixCornerRow>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="Textbox59">
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Recruiter</Value>
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox59</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Teal</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                </TablixCornerRow>
+              </TablixCornerRows>
+            </TablixCorner>
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>1.12367in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="MetricValue2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!MetricValue.Value</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>=IIF(Fields!recruiter.Value="Total","Bold","Normal")</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>MetricValue2</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="WeekOfYearDisplay1">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!WeekOfYearDisplay.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!WeekStartDate.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <TablixHeader>
+                    <Size>0.375in</Size>
+                    <CellContents>
+                      <Textbox Name="WeekOfYearDisplay1">
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>=Fields!WeekOfYearDisplay.Value</Value>
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>WeekOfYearDisplay1</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Teal</BackgroundColor>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="recruiter">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!recruiter.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!OrderBy.Value</Value>
+                    </SortExpression>
+                    <SortExpression>
+                      <Value>=Fields!recruiter.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <TablixHeader>
+                    <Size>2in</Size>
+                    <CellContents>
+                      <Textbox Name="recruiter">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>=Fields!recruiter.Value</Value>
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                  <FontWeight>=IIF(Fields!recruiter.Value="Total","Bold","Normal")</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>recruiter</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>TermsByRecruiterByWeek</DataSetName>
+            <Top>33.70709in</Top>
+            <Height>0.625in</Height>
+            <Width>3.12367in</Width>
+            <ZIndex>46</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Textbox Name="Textbox213">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Employee Turnover by Recruiter"</Value>
+                    <Style>
+                      <FontSize>14pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>#575757</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox189</rd:DefaultName>
+            <Top>32.7025in</Top>
+            <Height>0.35417in</Height>
+            <Width>6.01042in</Width>
+            <ZIndex>47</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox215">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Terminations exclude employees hired before 06/5/2023</Value>
+                    <Style>
+                      <FontSize>9pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <Color>#575757</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <ListStyle>Bulleted</ListStyle>
+                <ListLevel>1</ListLevel>
+                <Style />
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Excludes support centers</Value>
+                    <Style>
+                      <FontSize>9pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <Color>#575757</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <ListStyle>Bulleted</ListStyle>
+                <ListLevel>1</ListLevel>
+                <Style />
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Sorted  by recruiter name</Value>
+                    <Style>
+                      <FontSize>9pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <Color>#575757</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <ListStyle>Bulleted</ListStyle>
+                <ListLevel>1</ListLevel>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox189</rd:DefaultName>
+            <Top>33.0925in</Top>
+            <Height>0.54514in</Height>
+            <Width>4.99867in</Width>
+            <ZIndex>48</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
         </ReportItems>
-        <Height>32.55084in</Height>
+        <Height>35.00917in</Height>
         <Style />
       </Body>
       <Width>10.80574in</Width>
@@ -15523,11 +16128,11 @@ Conversion ABADx</Value>
   <ReportParameters>
     <ReportParameter Name="StartDate">
       <DataType>DateTime</DataType>
-      <Prompt>Start Date</Prompt>
+      <Prompt>Start Date (Sunday Prior Week)</Prompt>
     </ReportParameter>
     <ReportParameter Name="EndDate">
       <DataType>DateTime</DataType>
-      <Prompt>End Date</Prompt>
+      <Prompt>End Date (Saturday Prior Week)</Prompt>
     </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>

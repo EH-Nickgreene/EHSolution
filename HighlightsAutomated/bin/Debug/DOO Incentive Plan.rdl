@@ -21,8 +21,7 @@
             <Value>=Parameters!EndDate.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>
-		DECLARE @CurrentWeekYear varchar(6),@PriorWeekYear varchar(6)
+        <CommandText>		DECLARE @CurrentWeekYear varchar(6),@PriorWeekYear varchar(6)
 		DECLARE @ProductivityGracePeriod int=27--Grace period is 4 weeks, but datediff calc does not count last day, so to account for the datediff function we are using 27
 		DECLARE @NumberOfWeeks	 INT
 	
@@ -31,14 +30,14 @@
 
 			IF OBJECT_ID('tempdb..#Dates') IS NOT NULL DROP TABLE #Dates
 				SELECT 
-					WeekOfYear,
-					Year,
+					--WeekOfYear,
+					--Year,
 					MIN(Date) WeekStartDate,
 					MAX(Date) WeekEndDate,
-					MIN(CONVERT(varchar(4),Year)+' Q'+CONVERT(varchar(4),QuarterOfYear)) QuarterOfYear,
+					--MIN(CONVERT(varchar(4),Year)+' Q'+CONVERT(varchar(4),QuarterOfYear)) QuarterOfYear,
 					Dateadd(dd,1,MIN(Date)) as WeekdayStartDate,
 					Dateadd(dd,-1,MAX(Date)) as WeekDayEndDate,
-					CASE WHEN CONVERT(varchar(4),Year)+CONVERT(varchar(2),WeekOfYear)=@PriorWeekYear THEN 1 ELSE 0 END as IsPriorWeek,
+					--CASE WHEN CONVERT(varchar(4),Year)+CONVERT(varchar(2),WeekOfYear)=@PriorWeekYear THEN 1 ELSE 0 END as IsPriorWeek,
 					SUM(CASE WHEN IsEmpyreanHoliday=0 and IsWeekDay=1 THEN 1 ELSE 0 END) BusinessDays,
 					ROW_NUMBER() OVER(ORDER BY MIN(Date) desc) as WeeksBack,
 					WeekOfYearDisplay
@@ -160,6 +159,7 @@ ee.WorkerCategoryDescription,
 ISNULL(sch.ScheduledHours,ee.ScheduledHours) ScheduledHours,
 dt.WeekOfyearDisplay WeekOfYear,
 dt.WeeksBack,
+dt.WeekStartdate,
 			CASE 
 	
 					WHEN (ABACategory IN ('Level 2','Level 3') OR jc.jobCategory='DOO' OR JObCode IN('RDOO','ADOO')) AND datediff(dd,BCBAFirstDay.BCBAStartDate,dt.WeekDayEndDate)&gt;@ProductivityGracePeriod  --AND ee.PositionStartDate&gt;=WeekStartDate
@@ -220,6 +220,7 @@ SELECT
 			ISNULL(sch.ScheduledHours,ee.ScheduledHours) ScheduledHours,
 			dd.WeekOfYearDisplay WeekOfYear,
 			WeeksBack,
+			dt.WeekStartdate,
 			CASE 
 	
 	
@@ -287,6 +288,7 @@ ORDER BY
 		,WorkerCategoryDescription	
 		,ScheduledHours	
 		,WeekOfYear
+		,WeekStartdate
 		,ExpectedDays
 		,CASE WHEN ExpectedDays=0 THEN 0 ELSE (ISNULL(ScheduledHours,0)/5)*ExpectedDays END ExpectedHours
 		--,IsPTO
@@ -316,6 +318,7 @@ ORDER BY
 		,WorkerCategoryDescription	
 		,ScheduledHours	
 		,WeekOfYear
+		,WeekStartdate
 		,WeeksBack
 		,CASE WHEN WeeksBack&lt;=4 THEN 1 ELSE 0 END
 		,ExpectedDays
@@ -335,7 +338,7 @@ ORDER BY
 		b.WorkerCategoryDescription	,
 		b.ScheduledHours	,
 		b.WeekOfYear	,
-		
+		b.WeekStartdate	,
 		b.ExpectedDays	,
 		CASE WHEN b.ExpectedDays&lt;=0 THEN 0 ELSE (b.ScheduledHours/5)*b.ExpectedDays END ExpectedHours,
 		b.WeeksBack	,
@@ -392,6 +395,10 @@ ORDER BY
         <Field Name="WeekOfYear">
           <DataField>WeekOfYear</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="WeekStartdate">
+          <DataField>WeekStartdate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
         <Field Name="ExpectedDays">
           <DataField>ExpectedDays</DataField>
@@ -1265,7 +1272,7 @@ ORDER BY
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!WeekOfYear.Value</Value>
+                      <Value>=Fields!WeekStartdate.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                 </TablixMember>

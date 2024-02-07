@@ -43,9 +43,19 @@
           <FullPath>CentralReachReplicateAsync.dtsx</FullPath>
           <References />
         </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>CentralReachReplicateWeeklyFull.dtsx</Name>
+          <FullPath>CentralReachReplicateWeeklyFull.dtsx</FullPath>
+          <References />
+        </DtsPackage>
         <DtsPackage FormatVersion="8">
           <Name>EHLeadTrackingImport 1.dtsx</Name>
           <FullPath>EHLeadTrackingImport 1.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>EHHCHBPayrollExportFileImport.dtsx</Name>
+          <FullPath>EHHCHBPayrollExportFileImport.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">
@@ -166,6 +176,11 @@
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderEHSalesActivity.dtsx</Name>
           <FullPath>ReportSenderEHSalesActivity.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>ReportSenderEHUnbilledDailyReport.dtsx</Name>
+          <FullPath>ReportSenderEHUnbilledDailyReport.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">

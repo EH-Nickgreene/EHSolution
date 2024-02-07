@@ -1,0 +1,2618 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="8/23/2012 2:08:19 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="NICKGW7"
+  DTS:CreatorName="PPC\nickg"
+  DTS:DTSID="{A96CFC29-5AFE-40D1-8CF1-4D1509189431}"
+  DTS:EnableConfig="True"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="16.0.5270.0"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="EHHCHBPayrollExportFileImport"
+  DTS:PackageType="5"
+  DTS:ProtectionLevel="0"
+  DTS:VersionBuild="401"
+  DTS:VersionGUID="{E4BC096B-8D52-4DDC-B4F2-5FC352AB2936}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[BatchFile]"
+      DTS:CreationName="FLATFILE"
+      DTS:DTSID="{D1BB99A5-DA04-4F62-BEA2-99C1C1B71BC3}"
+      DTS:ObjectName="BatchFile">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">@[User::FullFileName]</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:Format="Delimited"
+          DTS:LocaleID="1033"
+          DTS:HeaderRowDelimiter="_x000D__x000A_"
+          DTS:ColumnNamesInFirstDataRow="True"
+          DTS:RowDelimiter=""
+          DTS:TextQualifier="_x0022_"
+          DTS:CodePage="1252"
+          DTS:ConnectionString="D:\SSIS\Import\HCHBPayrollExportFile\">
+          <DTS:FlatFileColumns>
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Employee Name"
+              DTS:DTSID="{E3B0E3AC-70AE-46BF-8443-AFF11D862C03}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName=" Activity Date"
+              DTS:DTSID="{8CBD34A8-47E1-4D3E-A4BC-8A43BD260388}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="CO CODE"
+              DTS:DTSID="{8A5708B0-69E6-4606-A569-4BBEFBBD6BD7}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="BATCH ID"
+              DTS:DTSID="{94F778F3-6A68-4D89-9199-B4B58EAFDDCF}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="File #"
+              DTS:DTSID="{97AFCD53-AFC9-445F-8BB3-710DA84AF815}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="REG HOURS"
+              DTS:DTSID="{DA365B63-1706-41EB-8DE3-419CE671EF5A}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Reg Earnings"
+              DTS:DTSID="{FF353B76-AFA6-45D3-83A1-9CDA5F8267DE}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="O T HOURS"
+              DTS:DTSID="{64A56C57-6575-403F-9790-47EAE5C1729A}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Hours 3 Code"
+              DTS:DTSID="{361CBD09-EBB3-4146-82ED-0F8EBA1A7C6E}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Hours 3 Amount"
+              DTS:DTSID="{BB49C387-21AD-4E64-85BC-12BAC9CCB857}"
+              DTS:CreationName="" />
+          </DTS:FlatFileColumns>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[ResultsFile]"
+      DTS:CreationName="FLATFILE"
+      DTS:DTSID="{F844FF36-62C4-474C-B0DA-C8B2741D4214}"
+      DTS:ObjectName="ResultsFile">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">@[User::ExportFilename]</DTS:PropertyExpression>
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:Format="Delimited"
+          DTS:LocaleID="1033"
+          DTS:HeaderRowDelimiter="_x000D__x000A_"
+          DTS:ColumnNamesInFirstDataRow="True"
+          DTS:RowDelimiter=""
+          DTS:TextQualifier="_x0022_"
+          DTS:CodePage="1252"
+          DTS:ConnectionString="D:\SSIS\Import\HCHBPayrollExportFile\ResultsFile\">
+          <DTS:FlatFileColumns>
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="10"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="CO CODE"
+              DTS:DTSID="{CDCDE28A-1688-414A-82F2-39B3FF070567}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="3"
+              DTS:TextQualified="True"
+              DTS:ObjectName="BATCH ID"
+              DTS:DTSID="{54B63FB1-9F6B-43B0-8E9B-8CDABCAD867E}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="50"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="File #"
+              DTS:DTSID="{AAEFFD2F-6296-4234-B5CD-DE8460545F93}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="131"
+              DTS:DataPrecision="38"
+              DTS:DataScale="2"
+              DTS:TextQualified="True"
+              DTS:ObjectName="REG HOURS"
+              DTS:DTSID="{F8610022-6C35-489F-A3BD-7A182FB8175E}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="131"
+              DTS:DataPrecision="38"
+              DTS:DataScale="2"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Reg Earnings"
+              DTS:DTSID="{E8978EB1-2087-4597-AE87-9C8CABDE8598}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:DataType="131"
+              DTS:DataPrecision="38"
+              DTS:DataScale="2"
+              DTS:TextQualified="True"
+              DTS:ObjectName="O/T HOURS"
+              DTS:DTSID="{55FF3E31-F1AF-4BF9-97AB-249CD61B8642}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x002C_"
+              DTS:MaximumWidth="10"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Hours 3 Code"
+              DTS:DTSID="{270925D1-6F51-4BEA-9D78-B819DFC77D0D}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:DataType="131"
+              DTS:DataPrecision="38"
+              DTS:DataScale="2"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Hours 3 Amount"
+              DTS:DTSID="{50D0BC38-01D8-46A0-8139-07679E91A4FA}"
+              DTS:CreationName="" />
+          </DTS:FlatFileColumns>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[SQLVM.HumanResourcesStaging]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{6DDE10B2-95EE-4025-851E-2347E4BB9D40}"
+      DTS:ObjectName="SQLVM.HumanResourcesStaging">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=SQLVM;Initial Catalog=HumanResourcesStaging;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-EHHCHBPayrollExportFileImport-{6DDE10B2-95EE-4025-851E-2347E4BB9D40}SQLVM.HumanResourcesStaging;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[SQLVM.Logging]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{C1B511F8-25DE-4A6D-A2F1-B7106073FB2F}"
+      DTS:ObjectName="SQLVM.Logging">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=SQLVM;Initial Catalog=Logging;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-GroupResources_AirTractor_Eligibility-{97D9DA16-8C74-420D-AAD6-A5A921A04114}SQLVM.Logging;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[SQLVM.Reference]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{E73976C7-11DF-490D-9D94-85B353402E15}"
+      DTS:ObjectName="SQLVM.Reference">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=SQLVM;Initial Catalog=Reference;Provider=SQLNCLI11.1;Integrated Security=SSPI;Application Name=SSIS-GroupResources_AirTractor_Eligibility-{C6B1C9D2-3105-4695-BD42-611143B9E110}SQLVM.Reference;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Configurations>
+    <DTS:Configuration
+      DTS:ConfigurationString="&quot;SQLVM.Reference&quot;;&quot;[dbo].[SSIS Configurations]&quot;;&quot;EHHCHBPayrollExportFileImport&quot;;"
+      DTS:ConfigurationType="7"
+      DTS:CreationName=""
+      DTS:DTSID="{D7F2B9AB-2752-45A6-99C2-2064462FAB96}"
+      DTS:ObjectName="Configuration 1" />
+  </DTS:Configurations>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{CDA20D92-55F0-4FF4-84BC-46DC947697E3}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="BackupDir">
+      <DTS:VariableValue
+        DTS:DataType="8">D:\SSIS\Import\LeadTracker\archive\</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{CEC2A830-0A4F-48EC-BBBB-DAADC8D4F958}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="DuplicateFile">
+      <DTS:VariableValue
+        DTS:DataType="3">0</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{3017AC3B-5BBE-46A1-AE66-4D3B19351758}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="EtlLoadId">
+      <DTS:VariableValue
+        DTS:DataType="8">0</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{B26EC0E6-058C-4A74-B86E-A65CAB4F7A84}"
+      DTS:EvaluateAsExpression="True"
+      DTS:Expression="@[User::ResuiltsDir] +  REPLACE( @[User::FileName] ,&quot;Export&quot;,&quot;ExportCompressed&quot;)"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="ExportFilename">
+      <DTS:VariableValue
+        DTS:DataType="8">D:\SSIS\Import\HCHBPayrollExportFile\ResultsFile\</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{0500FAD5-D5C7-4793-B659-E8F9570E0BEA}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="FileExists">
+      <DTS:VariableValue
+        DTS:DataType="11">0</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{AF062DF9-6A13-42A7-B6B5-5C3195D7C38B}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="FileLocation">
+      <DTS:VariableValue
+        DTS:DataType="8">D:\SSIS\Import\HCHBPayrollExportFile\</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{A1019641-7DA9-4826-9522-0AF320245B1E}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="FileName">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{29599CF9-8F45-485C-AE68-D0F950632724}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="FileProcessedRowCount">
+      <DTS:VariableValue
+        DTS:DataType="3">0</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{2E2E6264-33DD-4930-943A-5305B42FACD5}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="FileProcessID">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{FCBA213F-B970-4E5D-8169-84391CFEE222}"
+      DTS:EvaluateAsExpression="True"
+      DTS:Expression="@[User::FileLocation]+ @[User::FileName]"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="FullFileName">
+      <DTS:VariableValue
+        DTS:DataType="8">D:\SSIS\Import\HCHBPayrollExportFile\</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{F411EC2F-E73D-49CE-B6DF-1AE578E5DAA3}"
+      DTS:EvaluateAsExpression="True"
+      DTS:Expression="@[User::FileLocation]+ REPLACE( @[User::FileName], &quot;.csv&quot;,@[User::today] +&quot;.csv&quot;)"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="NewFullFilename">
+      <DTS:VariableValue
+        DTS:DataType="8">D:\SSIS\Import\HCHBPayrollExportFile\</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{E89FD36F-AF63-4F8D-9110-419BBC7AE061}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="ResuiltsDir">
+      <DTS:VariableValue
+        DTS:DataType="8">D:\SSIS\Import\HCHBPayrollExportFile\ResultsFile\</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{7601A047-4BEA-4685-B9EA-44C8F383E7E5}"
+      DTS:EvaluateAsExpression="True"
+      DTS:Expression="&quot;exec HumanResources.dbo.usp_HCHBPayrollExportFileCompressed @EtlLoadID= &quot; + (DT_STR, 50, 1252)  @[User::EtlLoadId] +&quot;, @FileProcessID= &quot;+ (DT_STR, 50, 1252) @[User::FileProcessID]"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="SQLExport">
+      <DTS:VariableValue
+        DTS:DataType="8">exec HumanResources.dbo.usp_HCHBPayrollExportFileCompressed @EtlLoadID= 0, @FileProcessID= </DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{A04782CA-D019-4738-9070-C4644BA903EE}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="TaskDescription">
+      <DTS:VariableValue
+        DTS:DataType="8">EHHCHBPayrollExportFileImport</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{CFE15A23-F29E-448C-8146-03BCB3024291}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="today">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{FAD26BD4-0027-4E00-8753-A89068B9FB34}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="ValidationFailure">
+      <DTS:VariableValue
+        DTS:DataType="3">0</DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Loop Through and append Date to filename"
+      DTS:CreationName="STOCK:FOREACHLOOP"
+      DTS:DelayValidation="True"
+      DTS:Description="Foreach Loop Container"
+      DTS:DTSID="{19626BDE-8008-4927-AB22-27D33F87EA90}"
+      DTS:ExecutableType="STOCK:FOREACHLOOP"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Loop Through and append Date to filename">
+      <DTS:ForEachEnumerator
+        DTS:CreationName="Microsoft.ForEachFileEnumerator"
+        DTS:DTSID="{77EB3B6D-F9F2-42DA-94C0-7AD8702E51CA}"
+        DTS:ObjectName="{2021B4B8-E2B5-441F-AC09-43FFC7D31263}">
+        <DTS:PropertyExpression
+          DTS:Name="Directory">@[User::FileLocation]</DTS:PropertyExpression>
+        <DTS:ObjectData>
+          <ForEachFileEnumeratorProperties>
+            <FEFEProperty
+              Folder="D:\SSIS\Import\HCHBPayrollExportFile\" />
+            <FEFEProperty
+              FileSpec="*.csv" />
+            <FEFEProperty
+              FileNameRetrievalType="1" />
+            <FEFEProperty
+              Recurse="0" />
+          </ForEachFileEnumeratorProperties>
+        </DTS:ObjectData>
+      </DTS:ForEachEnumerator>
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Loop Through and append Date to filename\File System Task"
+          DTS:CreationName="Microsoft.FileSystemTask"
+          DTS:DelayValidation="True"
+          DTS:Description="File System Task"
+          DTS:DTSID="{87C92533-5CBE-48DA-87F2-17F5BBB587C1}"
+          DTS:ExecutableType="Microsoft.FileSystemTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="File System Task"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <FileSystemData
+              TaskOperationType="RenameFile"
+              TaskSourcePath="User::FullFileName"
+              TaskIsSourceVariable="True"
+              TaskDestinationPath="User::NewFullFilename"
+              TaskIsDestinationVariable="True" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:ForEachVariableMappings>
+        <DTS:ForEachVariableMapping
+          DTS:CreationName=""
+          DTS:DTSID="{1EEA2E1D-52C1-4AD1-8F26-60B7426BE564}"
+          DTS:ObjectName="{1EEA2E1D-52C1-4AD1-8F26-60B7426BE564}"
+          DTS:ValueIndex="0"
+          DTS:VariableName="User::FileName" />
+      </DTS:ForEachVariableMappings>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Loop Through and import Leads tab"
+      DTS:CreationName="STOCK:FOREACHLOOP"
+      DTS:DelayValidation="True"
+      DTS:Description="Foreach Loop Container"
+      DTS:DTSID="{7ECF0083-41B1-43A4-BE92-AD1C0D6D89CA}"
+      DTS:ExecutableType="STOCK:FOREACHLOOP"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Loop Through and import Leads tab">
+      <DTS:ForEachEnumerator
+        DTS:CreationName="Microsoft.ForEachFileEnumerator"
+        DTS:DTSID="{654097B8-6FC8-449B-B0CE-38F4CE93EAE9}"
+        DTS:ObjectName="{654097B8-6FC8-449B-B0CE-38F4CE93EAE9}">
+        <DTS:PropertyExpression
+          DTS:Name="Directory">@[User::FileLocation]</DTS:PropertyExpression>
+        <DTS:ObjectData>
+          <ForEachFileEnumeratorProperties>
+            <FEFEProperty
+              Folder="D:\SSIS\Import\HCHBPayrollExportFile\" />
+            <FEFEProperty
+              FileSpec="*.csv" />
+            <FEFEProperty
+              FileNameRetrievalType="1" />
+            <FEFEProperty
+              Recurse="0" />
+          </ForEachFileEnumeratorProperties>
+        </DTS:ObjectData>
+      </DTS:ForEachEnumerator>
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Loop Through and import Leads tab\Archive File"
+          DTS:CreationName="Microsoft.FileSystemTask"
+          DTS:Description="File System Task"
+          DTS:DTSID="{CBFE3B0D-FDA8-4229-A6E7-C7814D84EACF}"
+          DTS:ExecutableType="Microsoft.FileSystemTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Archive File"
+          DTS:TaskContact="File System Task;Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <FileSystemData
+              TaskOperationType="MoveFile"
+              TaskOverwriteDestFile="True"
+              TaskSourcePath="User::FullFileName"
+              TaskIsSourceVariable="True"
+              TaskDestinationPath="User::BackupDir"
+              TaskIsDestinationVariable="True" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Loop Through and import Leads tab\Create compressed file"
+          DTS:CreationName="Microsoft.Pipeline"
+          DTS:Description="Data Flow Task"
+          DTS:DTSID="{23FFA3A3-5B37-4C35-A316-2F335C78ADF6}"
+          DTS:ExecutableType="Microsoft.Pipeline"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Create compressed file"
+          DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <pipeline
+              version="1">
+              <components>
+                <component
+                  refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination"
+                  componentClassID="Microsoft.FlatFileDestination"
+                  contactInfo="Flat File Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+                  description="Flat File Destination"
+                  localeId="1033"
+                  name="Flat File Destination">
+                  <properties>
+                    <property
+                      dataType="System.Boolean"
+                      description="Specifies whether the data will overwrite or append to the destination file."
+                      name="Overwrite">true</property>
+                    <property
+                      dataType="System.Null"
+                      description="Specifies the text to write to the destination file before any data is written."
+                      expressionType="Notify"
+                      name="Header" />
+                    <property
+                      dataType="System.Boolean"
+                      description="When text qualifier is enabled, specifies whether the text qualifier in the data written to the destination file will be escaped or not."
+                      name="EscapeQualifier">false</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Connections[FlatFileConnection]"
+                      connectionManagerID="Package.ConnectionManagers[ResultsFile]"
+                      connectionManagerRefId="Package.ConnectionManagers[ResultsFile]"
+                      name="FlatFileConnection" />
+                  </connections>
+                  <inputs>
+                    <input
+                      refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input]"
+                      hasSideEffects="true"
+                      name="Flat File Destination Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].Columns[CO CODE]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="10"
+                          cachedName="CO CODE"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[CO CODE]"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[CO CODE]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].Columns[BATCH ID]"
+                          cachedDataType="i4"
+                          cachedName="BATCH ID"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[BATCH ID]"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[BATCH ID]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].Columns[File #]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="File #"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[File #]"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[File #]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].Columns[REG HOURS]"
+                          cachedDataType="numeric"
+                          cachedName="REG HOURS"
+                          cachedPrecision="38"
+                          cachedScale="2"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[REG HOURS]"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[REG HOURS]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].Columns[Reg Earnings]"
+                          cachedDataType="numeric"
+                          cachedName="Reg Earnings"
+                          cachedPrecision="38"
+                          cachedScale="2"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Reg Earnings]"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[Reg Earnings]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].Columns[O/T HOURS]"
+                          cachedDataType="numeric"
+                          cachedName="O/T HOURS"
+                          cachedPrecision="38"
+                          cachedScale="2"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[O/T HOURS]"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[O/T HOURS]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].Columns[Hours 3 Code]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="10"
+                          cachedName="Hours 3 Code"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Hours 3 Code]"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[Hours 3 Code]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].Columns[Hours 3 Amount]"
+                          cachedDataType="numeric"
+                          cachedName="Hours 3 Amount"
+                          cachedPrecision="38"
+                          cachedScale="2"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Hours 3 Amount]"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[Hours 3 Amount]" />
+                      </inputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[CO CODE]"
+                          codePage="1252"
+                          dataType="str"
+                          length="10"
+                          name="CO CODE" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[BATCH ID]"
+                          dataType="i4"
+                          name="BATCH ID" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[File #]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="File #" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[REG HOURS]"
+                          dataType="numeric"
+                          name="REG HOURS"
+                          precision="38"
+                          scale="2" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Reg Earnings]"
+                          dataType="numeric"
+                          name="Reg Earnings"
+                          precision="38"
+                          scale="2" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[O/T HOURS]"
+                          dataType="numeric"
+                          name="O/T HOURS"
+                          precision="38"
+                          scale="2" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Hours 3 Code]"
+                          codePage="1252"
+                          dataType="str"
+                          length="10"
+                          name="Hours 3 Code" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Hours 3 Amount]"
+                          dataType="numeric"
+                          name="Hours 3 Amount"
+                          precision="38"
+                          scale="2" />
+                      </externalMetadataColumns>
+                    </input>
+                  </inputs>
+                </component>
+                <component
+                  refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source"
+                  componentClassID="Microsoft.OLEDBSource"
+                  contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+                  description="OLE DB Source"
+                  name="OLE DB Source"
+                  usesDispositions="true"
+                  version="7">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset"></property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">exec HumanResources.dbo.usp_HCHBPayrollExportFileCompressed @EtlLoadID= ?</property>
+                    <property
+                      dataType="System.String"
+                      description="The variable that contains the SQL command to be executed."
+                      name="SqlCommandVariable">User::SQLExport</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the column code page to use when code page information is unavailable from the data source."
+                      name="DefaultCodePage">1252</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Forces the use of the DefaultCodePage property value when describing character data."
+                      name="AlwaysUseDefaultCodePage">false</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">3</property>
+                    <property
+                      dataType="System.String"
+                      description="The mappings between the parameters in the SQL command and variables."
+                      name="ParameterMapping">"Parameter0:Input",{3017AC3B-5BBE-46A1-AE66-4D3B19351758};</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Connections[OleDbConnection]"
+                      connectionManagerID="Package.ConnectionManagers[SQLVM.HumanResourcesStaging]"
+                      connectionManagerRefId="Package.ConnectionManagers[SQLVM.HumanResourcesStaging]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <outputs>
+                    <output
+                      refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output]"
+                      name="OLE DB Source Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[CO CODE]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[CO CODE]"
+                          length="10"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[CO CODE]"
+                          name="CO CODE"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[BATCH ID]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[BATCH ID]"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[BATCH ID]"
+                          name="BATCH ID"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[File #]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[File #]"
+                          length="50"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[File #]"
+                          name="File #"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[REG HOURS]"
+                          dataType="numeric"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[REG HOURS]"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[REG HOURS]"
+                          name="REG HOURS"
+                          precision="38"
+                          scale="2"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[Reg Earnings]"
+                          dataType="numeric"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Reg Earnings]"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[Reg Earnings]"
+                          name="Reg Earnings"
+                          precision="38"
+                          scale="2"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[O/T HOURS]"
+                          dataType="numeric"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[O/T HOURS]"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[O/T HOURS]"
+                          name="O/T HOURS"
+                          precision="38"
+                          scale="2"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[Hours 3 Code]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Hours 3 Code]"
+                          length="10"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[Hours 3 Code]"
+                          name="Hours 3 Code"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[Hours 3 Amount]"
+                          dataType="numeric"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Hours 3 Amount]"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].Columns[Hours 3 Amount]"
+                          name="Hours 3 Amount"
+                          precision="38"
+                          scale="2"
+                          truncationRowDisposition="FailComponent" />
+                      </outputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[CO CODE]"
+                          codePage="1252"
+                          dataType="str"
+                          length="10"
+                          name="CO CODE" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[BATCH ID]"
+                          dataType="i4"
+                          name="BATCH ID" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[File #]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="File #" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[REG HOURS]"
+                          dataType="numeric"
+                          name="REG HOURS"
+                          precision="38"
+                          scale="2" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Reg Earnings]"
+                          dataType="numeric"
+                          name="Reg Earnings"
+                          precision="38"
+                          scale="2" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[O/T HOURS]"
+                          dataType="numeric"
+                          name="O/T HOURS"
+                          precision="38"
+                          scale="2" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Hours 3 Code]"
+                          codePage="1252"
+                          dataType="str"
+                          length="10"
+                          name="Hours 3 Code" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[Hours 3 Amount]"
+                          dataType="numeric"
+                          name="Hours 3 Amount"
+                          precision="38"
+                          scale="2" />
+                      </externalMetadataColumns>
+                    </output>
+                    <output
+                      refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output]"
+                      isErrorOut="true"
+                      name="OLE DB Source Error Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[CO CODE]"
+                          codePage="1252"
+                          dataType="str"
+                          length="10"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[CO CODE]"
+                          name="CO CODE" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[BATCH ID]"
+                          dataType="i4"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[BATCH ID]"
+                          name="BATCH ID" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[File #]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[File #]"
+                          name="File #" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[REG HOURS]"
+                          dataType="numeric"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[REG HOURS]"
+                          name="REG HOURS"
+                          precision="38"
+                          scale="2" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Reg Earnings]"
+                          dataType="numeric"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Reg Earnings]"
+                          name="Reg Earnings"
+                          precision="38"
+                          scale="2" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[O/T HOURS]"
+                          dataType="numeric"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[O/T HOURS]"
+                          name="O/T HOURS"
+                          precision="38"
+                          scale="2" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Hours 3 Code]"
+                          codePage="1252"
+                          dataType="str"
+                          length="10"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Hours 3 Code]"
+                          name="Hours 3 Code" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Hours 3 Amount]"
+                          dataType="numeric"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[Hours 3 Amount]"
+                          name="Hours 3 Amount"
+                          precision="38"
+                          scale="2" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+              </components>
+              <paths>
+                <path
+                  refId="Package\Loop Through and import Leads tab\Create compressed file.Paths[OLE DB Source Output]"
+                  endId="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination.Inputs[Flat File Destination Input]"
+                  name="OLE DB Source Output"
+                  startId="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source.Outputs[OLE DB Source Output]" />
+              </paths>
+            </pipeline>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Loop Through and import Leads tab\Gert File Process ID"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{4375AE06-A545-471C-8491-4C43FBC4FAE8}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Gert File Process ID"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{C1B511F8-25DE-4A6D-A2F1-B7106073FB2F}"
+              SQLTask:SqlStatementSource="SELECT FileProcessedId&#xA;  FROM [dbo].[FilesProcessed] &#xA;  WHERE EtlLoadId=?&#xA;  AND FileName=?"
+              SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ResultBinding
+                SQLTask:ResultName="0"
+                SQLTask:DtsVariableName="User::FileProcessID" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="User::EtlLoadId"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="1"
+                SQLTask:DtsVariableName="User::FileName"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Loop Through and import Leads tab\Import File"
+          DTS:CreationName="Microsoft.Pipeline"
+          DTS:DelayValidation="True"
+          DTS:Description="Data Flow Task"
+          DTS:DTSID="{BA3D9BFF-E336-4BF4-99BC-7EE4CDB97C5A}"
+          DTS:ExecutableType="Microsoft.Pipeline"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Import File"
+          DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server v10; (C) 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <pipeline
+              BLOBTempStoragePath=""
+              bufferTempStoragePath=""
+              version="1">
+              <components>
+                <component
+                  refId="Package\Loop Through and import Leads tab\Import File\Derived Column"
+                  componentClassID="Microsoft.DerivedColumn"
+                  contactInfo="Derived Column;Microsoft Corporation; Microsoft SqlServer v10; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+                  description="Updates column values using expressions"
+                  name="Derived Column"
+                  usesDispositions="true">
+                  <inputs>
+                    <input
+                      refId="Package\Loop Through and import Leads tab\Import File\Derived Column.Inputs[Derived Column Input]"
+                      description="Input to the Derived Column Transformation"
+                      name="Derived Column Input">
+                      <externalMetadataColumns />
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Loop Through and import Leads tab\Import File\Derived Column.Outputs[Derived Column Output]"
+                      description="Default Output of the Derived Column Transformation"
+                      exclusionGroup="1"
+                      name="Derived Column Output"
+                      synchronousInputId="Package\Loop Through and import Leads tab\Import File\Derived Column.Inputs[Derived Column Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Derived Column.Outputs[Derived Column Output].Columns[EtlLoadId]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Computation"
+                          errorRowDisposition="FailComponent"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Derived Column.Outputs[Derived Column Output].Columns[EtlLoadId]"
+                          name="EtlLoadId"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Expression"
+                              name="Expression">(DT_I4)@[User::EtlLoadId]</property>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Friendly Expression"
+                              expressionType="Notify"
+                              name="FriendlyExpression">(DT_I4)@[User::EtlLoadId]</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Derived Column.Outputs[Derived Column Output].Columns[FileProcessID]"
+                          dataType="i4"
+                          errorOrTruncationOperation="Computation"
+                          errorRowDisposition="FailComponent"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Derived Column.Outputs[Derived Column Output].Columns[FileProcessID]"
+                          name="FileProcessID"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Expression"
+                              name="Expression">(DT_I4)@[User::FileProcessID]</property>
+                            <property
+                              containsID="true"
+                              dataType="System.String"
+                              description="Derived Column Friendly Expression"
+                              expressionType="Notify"
+                              name="FriendlyExpression">(DT_I4)@[User::FileProcessID]</property>
+                          </properties>
+                        </outputColumn>
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                    <output
+                      refId="Package\Loop Through and import Leads tab\Import File\Derived Column.Outputs[Derived Column Error Output]"
+                      description="Error Output of the Derived Column Transformation"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="Derived Column Error Output"
+                      synchronousInputId="Package\Loop Through and import Leads tab\Import File\Derived Column.Inputs[Derived Column Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Derived Column.Outputs[Derived Column Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Loop Through and import Leads tab\Import File\Flat File Source"
+                  componentClassID="Microsoft.FlatFileSource"
+                  contactInfo="Flat File Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;1"
+                  description="Flat File Source"
+                  localeId="1033"
+                  name="Flat File Source"
+                  usesDispositions="true"
+                  version="1">
+                  <properties>
+                    <property
+                      dataType="System.Boolean"
+                      description="Specifies whether zero-length columns are treated as null."
+                      name="RetainNulls">false</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of an output column containing the file name. If no name is specified, no output column containing the file name will be generated."
+                      name="FileNameColumnName"></property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Connections[FlatFileConnection]"
+                      connectionManagerID="Package.ConnectionManagers[BatchFile]"
+                      connectionManagerRefId="Package.ConnectionManagers[BatchFile]"
+                      name="FlatFileConnection" />
+                  </connections>
+                  <outputs>
+                    <output
+                      refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output]"
+                      name="Flat File Source Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[Employee Name]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Employee Name]"
+                          length="50"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[Employee Name]"
+                          name="Employee Name"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[ Activity Date]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[ Activity Date]"
+                          length="50"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[ Activity Date]"
+                          name=" Activity Date"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[CO CODE]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[CO CODE]"
+                          length="50"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[CO CODE]"
+                          name="CO CODE"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[BATCH ID]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[BATCH ID]"
+                          length="50"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[BATCH ID]"
+                          name="BATCH ID"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[File #]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[File #]"
+                          length="50"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[File #]"
+                          name="File #"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[REG HOURS]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[REG HOURS]"
+                          length="50"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[REG HOURS]"
+                          name="REG HOURS"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[Reg Earnings]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Reg Earnings]"
+                          length="50"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[Reg Earnings]"
+                          name="Reg Earnings"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[O T HOURS]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[O T HOURS]"
+                          length="50"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[O T HOURS]"
+                          name="O T HOURS"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[Hours 3 Code]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Hours 3 Code]"
+                          length="50"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[Hours 3 Code]"
+                          name="Hours 3 Code"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[Hours 3 Amount]"
+                          codePage="1252"
+                          dataType="str"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Hours 3 Amount]"
+                          length="50"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[Hours 3 Amount]"
+                          name="Hours 3 Amount"
+                          truncationRowDisposition="FailComponent">
+                          <properties>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the column uses the faster, locale-neutral parsing routines."
+                              name="FastParse">false</property>
+                            <property
+                              dataType="System.Boolean"
+                              description="Indicates whether the data is in binary format."
+                              name="UseBinaryFormat">false</property>
+                          </properties>
+                        </outputColumn>
+                      </outputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Employee Name]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="Employee Name" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[ Activity Date]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name=" Activity Date" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[CO CODE]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="CO CODE" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[BATCH ID]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="BATCH ID" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[File #]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="File #" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[REG HOURS]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="REG HOURS" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Reg Earnings]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="Reg Earnings" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[O T HOURS]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="O T HOURS" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Hours 3 Code]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="Hours 3 Code" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].ExternalColumns[Hours 3 Amount]"
+                          codePage="1252"
+                          dataType="str"
+                          length="50"
+                          name="Hours 3 Amount" />
+                      </externalMetadataColumns>
+                    </output>
+                    <output
+                      refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Error Output]"
+                      isErrorOut="true"
+                      name="Flat File Source Error Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Error Output].Columns[Flat File Source Error Output Column]"
+                          codePage="1252"
+                          dataType="text"
+                          description="Flat File Source Error Output Column"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Error Output].Columns[Flat File Source Error Output Column]"
+                          name="Flat File Source Error Output Column" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination"
+                  componentClassID="Microsoft.OLEDBDestination"
+                  contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+                  description="OLE DB Destination"
+                  name="OLE DB Destination"
+                  usesDispositions="true"
+                  version="4">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset">[dbo].[HCHBPayrollExportFileStaging]</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=16.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the column code page to use when code page information is unavailable from the data source."
+                      name="DefaultCodePage">1252</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Forces the use of the DefaultCodePage property value when describing character data."
+                      name="AlwaysUseDefaultCodePage">false</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">3</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepIdentity">false</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepNulls">true</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                      name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS,ROWS_PER_BATCH = 2000</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                      name="FastLoadMaxInsertCommitSize">10000</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Connections[OleDbConnection]"
+                      connectionManagerID="Package.ConnectionManagers[SQLVM.HumanResourcesStaging]"
+                      connectionManagerRefId="Package.ConnectionManagers[SQLVM.HumanResourcesStaging]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <inputs>
+                    <input
+                      refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                      errorOrTruncationOperation="Insert"
+                      errorRowDisposition="FailComponent"
+                      hasSideEffects="true"
+                      name="OLE DB Destination Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Employee Name]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="Employee Name"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Employee Name]"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[Employee Name]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[CO CODE]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="CO CODE"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CO CODE]"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[CO CODE]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[BATCH ID]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="BATCH ID"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[BATCH ID]"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[BATCH ID]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[File #]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="File #"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[File #]"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[File #]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[REG HOURS]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="REG HOURS"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[REG HOURS]"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[REG HOURS]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Reg Earnings]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="Reg Earnings"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Reg Earnings]"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[Reg Earnings]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Hours 3 Code]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="Hours 3 Code"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Hours 3 Code]"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[Hours 3 Code]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Hours 3 Amount]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="Hours 3 Amount"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Hours 3 Amount]"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[Hours 3 Amount]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[EtlLoadId]"
+                          cachedDataType="i4"
+                          cachedName="EtlLoadId"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EtlLoadID]"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Derived Column.Outputs[Derived Column Output].Columns[EtlLoadId]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[O T HOURS]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName="O T HOURS"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[O/T HOURS]"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[O T HOURS]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ Activity Date]"
+                          cachedCodepage="1252"
+                          cachedDataType="str"
+                          cachedLength="50"
+                          cachedName=" Activity Date"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Activity Date]"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output].Columns[ Activity Date]" />
+                        <inputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[FileProcessID]"
+                          cachedDataType="i4"
+                          cachedName="FileProcessID"
+                          externalMetadataColumnId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FileProcessID]"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\Derived Column.Outputs[Derived Column Output].Columns[FileProcessID]" />
+                      </inputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Employee Name]"
+                          codePage="1252"
+                          dataType="str"
+                          length="255"
+                          name="Employee Name" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Activity Date]"
+                          codePage="1252"
+                          dataType="str"
+                          length="255"
+                          name="Activity Date" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[CO CODE]"
+                          codePage="1252"
+                          dataType="str"
+                          length="255"
+                          name="CO CODE" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[BATCH ID]"
+                          codePage="1252"
+                          dataType="str"
+                          length="255"
+                          name="BATCH ID" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[File #]"
+                          codePage="1252"
+                          dataType="str"
+                          length="255"
+                          name="File #" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[REG HOURS]"
+                          codePage="1252"
+                          dataType="str"
+                          length="255"
+                          name="REG HOURS" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Reg Earnings]"
+                          codePage="1252"
+                          dataType="str"
+                          length="255"
+                          name="Reg Earnings" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[O/T HOURS]"
+                          codePage="1252"
+                          dataType="str"
+                          length="255"
+                          name="O/T HOURS" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Hours 3 Code]"
+                          codePage="1252"
+                          dataType="str"
+                          length="255"
+                          name="Hours 3 Code" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Hours 3 Amount]"
+                          codePage="1252"
+                          dataType="str"
+                          length="255"
+                          name="Hours 3 Amount" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[EtlLoadID]"
+                          dataType="i4"
+                          name="EtlLoadID" />
+                        <externalMetadataColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FileProcessID]"
+                          dataType="i4"
+                          name="FileProcessID" />
+                      </externalMetadataColumns>
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Outputs[OLE DB Destination Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="OLE DB Destination Error Output"
+                      synchronousInputId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Loop Through and import Leads tab\Import File\Row Count"
+                  componentClassID="Microsoft.RowCount"
+                  contactInfo="Row Count;Microsoft Corporation; Microsoft SqlServer v10; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+                  description="Counts the rows in a dataset."
+                  localeId="1033"
+                  name="Row Count">
+                  <properties>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable to hold the row count."
+                      name="VariableName">User::FileProcessedRowCount</property>
+                  </properties>
+                  <inputs>
+                    <input
+                      refId="Package\Loop Through and import Leads tab\Import File\Row Count.Inputs[Row Count Input 1]"
+                      hasSideEffects="true"
+                      name="Row Count Input 1">
+                      <externalMetadataColumns />
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Loop Through and import Leads tab\Import File\Row Count.Outputs[Row Count Output 1]"
+                      name="Row Count Output 1"
+                      synchronousInputId="Package\Loop Through and import Leads tab\Import File\Row Count.Inputs[Row Count Input 1]">
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+              </components>
+              <paths>
+                <path
+                  refId="Package\Loop Through and import Leads tab\Import File.Paths[Derived Column Output]"
+                  endId="Package\Loop Through and import Leads tab\Import File\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                  name="Derived Column Output"
+                  startId="Package\Loop Through and import Leads tab\Import File\Derived Column.Outputs[Derived Column Output]" />
+                <path
+                  refId="Package\Loop Through and import Leads tab\Import File.Paths[Flat File Source Output]"
+                  endId="Package\Loop Through and import Leads tab\Import File\Row Count.Inputs[Row Count Input 1]"
+                  name="Flat File Source Output"
+                  startId="Package\Loop Through and import Leads tab\Import File\Flat File Source.Outputs[Flat File Source Output]" />
+                <path
+                  refId="Package\Loop Through and import Leads tab\Import File.Paths[Row Count Output 1]"
+                  endId="Package\Loop Through and import Leads tab\Import File\Derived Column.Inputs[Derived Column Input]"
+                  name="Row Count Output 1"
+                  startId="Package\Loop Through and import Leads tab\Import File\Row Count.Outputs[Row Count Output 1]" />
+              </paths>
+            </pipeline>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Loop Through and import Leads tab\Insert FilesProcessed Table"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{B0F8CD5F-8042-48DA-B7A9-3F5A5956324F}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Insert FilesProcessed Table"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{C1B511F8-25DE-4A6D-A2F1-B7106073FB2F}"
+              SQLTask:SqlStatementSource="DECLARE @return INT&#xA;EXEC Logging.dbo.InsetFilesProcessed @EtlLoadId=?, @TaskDescription=?, @FileName=?, @ResulsValue=@return OUTPUT&#xA;&#xA;SELECT @return "
+              SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ResultBinding
+                SQLTask:ResultName="0"
+                SQLTask:DtsVariableName="User::DuplicateFile" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="User::EtlLoadId"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="1"
+                SQLTask:DtsVariableName="User::TaskDescription"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="2"
+                SQLTask:DtsVariableName="User::FileName"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Loop Through and import Leads tab\Insert FInal Table"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{0A97E3A9-9427-4C8D-B9B4-FE580DA85816}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Insert FInal Table"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{6DDE10B2-95EE-4025-851E-2347E4BB9D40}"
+              SQLTask:SqlStatementSource="exec HumanResources.dbo.usp_InsertHCHBPayrollExportFile ?, ?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="User::EtlLoadId"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="1"
+                SQLTask:DtsVariableName="User::FileProcessID"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Loop Through and import Leads tab\TRUNCATE Import TABLE"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{D8AB6299-A965-4862-A86A-3F586AE2535D}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="TRUNCATE Import TABLE"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{6DDE10B2-95EE-4025-851E-2347E4BB9D40}"
+              SQLTask:SqlStatementSource="TRUNCATE TABLE HCHBPayrollExportFileStaging" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Loop Through and import Leads tab\Update Row Count FilesProcessed Table"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{5DCE6797-A146-4A4C-A16D-F12F2367B91C}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update Row Count FilesProcessed Table"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{C1B511F8-25DE-4A6D-A2F1-B7106073FB2F}"
+              SQLTask:SqlStatementSource="EXEC Logging.dbo.UpdateFilesProcessed @EtlLoadId=?, @TaskDescription=?, @FileName=?, @RowCount=?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="User::EtlLoadId"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="1"
+                SQLTask:DtsVariableName="User::TaskDescription"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="2"
+                SQLTask:DtsVariableName="User::FileName"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="129"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="3"
+                SQLTask:DtsVariableName="User::FileProcessedRowCount"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="3"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{2BE0F647-6DBA-4E20-A659-47E7054E89B6}"
+          DTS:From="Package\Loop Through and import Leads tab\Insert FilesProcessed Table"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\Loop Through and import Leads tab\Gert File Process ID" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 1]"
+          DTS:CreationName=""
+          DTS:DTSID="{B382A034-AC8F-4E1C-BEE3-6D0F6C343577}"
+          DTS:From="Package\Loop Through and import Leads tab\TRUNCATE Import TABLE"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 1"
+          DTS:To="Package\Loop Through and import Leads tab\Import File" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 10]"
+          DTS:CreationName=""
+          DTS:DTSID="{C2229D58-3BEE-4674-BB36-9CCAEB8FD953}"
+          DTS:From="Package\Loop Through and import Leads tab\Update Row Count FilesProcessed Table"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 10"
+          DTS:To="Package\Loop Through and import Leads tab\Archive File" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 2]"
+          DTS:CreationName=""
+          DTS:DTSID="{F5675760-C0CA-4E38-838A-17EC10214957}"
+          DTS:From="Package\Loop Through and import Leads tab\Insert FInal Table"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 2"
+          DTS:To="Package\Loop Through and import Leads tab\Update Row Count FilesProcessed Table" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 3]"
+          DTS:CreationName=""
+          DTS:DTSID="{16061215-CDDB-4CC9-B5D9-66E0851AFCD5}"
+          DTS:From="Package\Loop Through and import Leads tab\Import File"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 3"
+          DTS:To="Package\Loop Through and import Leads tab\Insert FInal Table" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 4]"
+          DTS:CreationName=""
+          DTS:DTSID="{FDE21E28-8DA0-430A-8D64-1708AB05F71F}"
+          DTS:From="Package\Loop Through and import Leads tab\Archive File"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 4"
+          DTS:To="Package\Loop Through and import Leads tab\Create compressed file" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 5]"
+          DTS:CreationName=""
+          DTS:DTSID="{8D6EFF7B-9943-4548-AC71-5A969DBE00A8}"
+          DTS:From="Package\Loop Through and import Leads tab\Gert File Process ID"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 5"
+          DTS:To="Package\Loop Through and import Leads tab\TRUNCATE Import TABLE" />
+      </DTS:PrecedenceConstraints>
+      <DTS:ForEachVariableMappings>
+        <DTS:ForEachVariableMapping
+          DTS:CreationName=""
+          DTS:DTSID="{4CC0B3B9-0E73-4757-8619-25D7044CC66B}"
+          DTS:ObjectName="{4CC0B3B9-0E73-4757-8619-25D7044CC66B}"
+          DTS:ValueIndex="0"
+          DTS:VariableName="User::FileName" />
+      </DTS:ForEachVariableMappings>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\PostExecute"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{C6E96159-1040-4DCB-9D25-A2A37C37B752}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="PostExecute"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:LoggingOptions
+        DTS:FilterKind="0" />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{C1B511F8-25DE-4A6D-A2F1-B7106073FB2F}"
+          SQLTask:SqlStatementSource="DECLARE @NextEtlLoadId varchar(20)&#xA;EXEC Logging.dbo.SSISPostExecute @EtlLoadId=?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="User::EtlLoadId"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="129"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\PreExecute"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:DelayValidation="True"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{86B258BD-57DD-4FF0-A6C8-8A184132FC9B}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="PreExecute"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; Microsoft SQL Server 2008 R2; © 2007 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:LoggingOptions
+        DTS:FilterKind="0" />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{C1B511F8-25DE-4A6D-A2F1-B7106073FB2F}"
+          SQLTask:SqlStatementSource="DECLARE @NextEtlLoadId INT&#xA;EXEC Logging.dbo.SSISPreExecute @PackageName=?,@Servername=?,@EtlLoadId = @NextEtlLoadId"
+          SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="0"
+            SQLTask:DtsVariableName="User::EtlLoadId" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="0"
+            SQLTask:DtsVariableName="System::PackageName"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="129"
+            SQLTask:ParameterSize="-1" />
+          <SQLTask:ParameterBinding
+            SQLTask:ParameterName="1"
+            SQLTask:DtsVariableName="System::MachineName"
+            SQLTask:ParameterDirection="Input"
+            SQLTask:DataType="129"
+            SQLTask:ParameterSize="-1" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Set Today Variable"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{E9DE92F4-6E2B-4B5E-A23C-6724BF09B2D8}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Set Today Variable"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{C1B511F8-25DE-4A6D-A2F1-B7106073FB2F}"
+          SQLTask:SqlStatementSource="SELECT FORMAT(getdate(),'yyyyMMddhhmmss')"
+          SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="0"
+            SQLTask:DtsVariableName="User::today" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{9FBA9344-2270-4582-9EEC-A325EE3F0860}"
+      DTS:From="Package\PreExecute"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\Set Today Variable" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
+      DTS:CreationName=""
+      DTS:DTSID="{98176AB3-2AA3-4BC6-924D-A065A97480C4}"
+      DTS:From="Package\Set Today Variable"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 1"
+      DTS:To="Package\Loop Through and append Date to filename" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
+      DTS:CreationName=""
+      DTS:DTSID="{B81B8CC4-2187-4F35-80A6-3522B82F5AE6}"
+      DTS:From="Package\Loop Through and import Leads tab"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 2"
+      DTS:To="Package\PostExecute" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 3]"
+      DTS:CreationName=""
+      DTS:DTSID="{9751A098-7447-403A-A13B-DFEB657FB824}"
+      DTS:From="Package\Loop Through and append Date to filename"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 3"
+      DTS:To="Package\Loop Through and import Leads tab" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="32" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="163,42"
+          Id="Package\Loop Through and append Date to filename\File System Task"
+          TopLeft="149,37" />
+        <ContainerLayout
+          HeaderHeight="43.924528301886795"
+          IsExpanded="True"
+          PanelSize="467,134"
+          Size="467,178"
+          Id="Package\Loop Through and append Date to filename"
+          TopLeft="206.388888888889,230.91666666667" />
+        <NodeLayout
+          Size="169,51"
+          Id="Package\Loop Through and import Leads tab\Archive File"
+          TopLeft="130.75,534.75" />
+        <NodeLayout
+          Size="131,42"
+          Id="Package\Loop Through and import Leads tab\Import File"
+          TopLeft="156.388888888889,258.41666666667" />
+        <NodeLayout
+          Size="189,44"
+          Id="Package\Loop Through and import Leads tab\Insert FilesProcessed Table"
+          TopLeft="128.5,26.5" />
+        <NodeLayout
+          Size="164,42"
+          Id="Package\Loop Through and import Leads tab\Insert FInal Table"
+          TopLeft="131.75,352.75" />
+        <NodeLayout
+          Size="251,44"
+          Id="Package\Loop Through and import Leads tab\Update Row Count FilesProcessed Table"
+          TopLeft="88.75,439.75" />
+        <EdgeLayout
+          Id="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 10]"
+          TopLeft="214.75,483.75">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,51"
+              Start="0,0"
+              End="0,43.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,43.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 2]"
+          TopLeft="214,394.75">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,45"
+              Start="0,0"
+              End="0,37.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,37.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="179,44"
+          Id="Package\Loop Through and import Leads tab\TRUNCATE Import TABLE"
+          TopLeft="137,173" />
+        <EdgeLayout
+          Id="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 1]"
+          TopLeft="224.194444444445,217">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,41.41666666667"
+              Start="0,0"
+              End="0,33.91666666667">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,33.91666666667" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 3]"
+          TopLeft="221.888888888889,300.41666666667">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-8.13888888888903,52.33333333333"
+              Start="0,0"
+              End="-8.13888888888903,44.83333333333">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,22.166666666665" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,22.166666666665"
+                    Point2="0,26.166666666665"
+                    Point3="-4,26.166666666665" />
+                  <mssgle:LineSegment
+                    End="-4.13888888888903,26.166666666665" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-4.13888888888903,26.166666666665"
+                    Point2="-8.13888888888903,26.166666666665"
+                    Point3="-8.13888888888903,30.166666666665" />
+                  <mssgle:LineSegment
+                    End="-8.13888888888903,44.83333333333" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="192,42"
+          Id="Package\Loop Through and import Leads tab\Create compressed file"
+          TopLeft="135,635" />
+        <EdgeLayout
+          Id="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 4]"
+          TopLeft="215.25,585.75">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="15.75,49.25"
+              Start="0,0"
+              End="15.75,41.75">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.625" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,20.625"
+                    Point2="0,24.625"
+                    Point3="4,24.625" />
+                  <mssgle:LineSegment
+                    End="11.75,24.625" />
+                  <mssgle:CubicBezierSegment
+                    Point1="11.75,24.625"
+                    Point2="15.75,24.625"
+                    Point3="15.75,28.625" />
+                  <mssgle:LineSegment
+                    End="15.75,41.75" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="178,42"
+          Id="Package\Loop Through and import Leads tab\Gert File Process ID"
+          TopLeft="131,103" />
+        <EdgeLayout
+          Id="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint]"
+          TopLeft="221.5,70.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,32.5"
+              Start="0,0"
+              End="0,25">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,25" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Loop Through and import Leads tab.PrecedenceConstraints[Constraint 5]"
+          TopLeft="223.25,145">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28"
+              Start="0,0"
+              End="0,20.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43.924528301886795"
+          IsExpanded="True"
+          PanelSize="478,766"
+          Size="478,810"
+          Id="Package\Loop Through and import Leads tab"
+          TopLeft="201.388888888889,489.238095238095" />
+        <NodeLayout
+          Size="141,42"
+          Id="Package\PostExecute"
+          TopLeft="351.751082251082,1393.55555555555" />
+        <NodeLayout
+          Size="157,42"
+          Id="Package\PreExecute"
+          TopLeft="360.973304473304,60.7575757575758" />
+        <NodeLayout
+          Size="172,42"
+          Id="Package\Set Today Variable"
+          TopLeft="351.055555555556,141.750000000003" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="438.26443001443,102.757575757576">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,38.9924242424272"
+              Start="0,0"
+              End="0,31.4924242424272">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,31.4924242424272" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 3]"
+          TopLeft="440.138888888889,408.91666666667">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,80.3214285714249"
+              Start="0,0"
+              End="0,72.8214285714249">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,72.8214285714249" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="438.472222222223,183.750000000003">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,47.166666666667"
+              Start="0,0"
+              End="0,39.666666666667">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,39.666666666667" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="440.388888888889,1299.23809523809">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-18.137806637807,94.317460317455"
+              Start="0,0"
+              End="-18.137806637807,86.817460317455">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,43.1587301587275" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,43.1587301587275"
+                    Point2="0,47.1587301587275"
+                    Point3="-4,47.1587301587275" />
+                  <mssgle:LineSegment
+                    End="-14.137806637807,47.1587301587275" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-14.137806637807,47.1587301587275"
+                    Point2="-18.137806637807,47.1587301587275"
+                    Point3="-18.137806637807,51.1587301587275" />
+                  <mssgle:LineSegment
+                    End="-18.137806637807,86.817460317455" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\Loop Through and import Leads tab\Import File">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="133,42"
+          Id="Package\Loop Through and import Leads tab\Import File\Row Count"
+          TopLeft="62.5,107.5" />
+        <NodeLayout
+          Size="158,42"
+          Id="Package\Loop Through and import Leads tab\Import File\Derived Column"
+          TopLeft="50,209.5" />
+        <EdgeLayout
+          Id="Package\Loop Through and import Leads tab\Import File.Paths[Row Count Output 1]"
+          TopLeft="129,149.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="156,42"
+          Id="Package\Loop Through and import Leads tab\Import File\Flat File Source"
+          TopLeft="57,12" />
+        <EdgeLayout
+          Id="Package\Loop Through and import Leads tab\Import File.Paths[Flat File Source Output]"
+          TopLeft="132,54">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,53.5"
+              Start="0,0"
+              End="0,46">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,46" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="177,42"
+          Id="Package\Loop Through and import Leads tab\Import File\OLE DB Destination"
+          TopLeft="47,351" />
+        <EdgeLayout
+          Id="Package\Loop Through and import Leads tab\Import File.Paths[Derived Column Output]"
+          TopLeft="132.25,251.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,99.5"
+              Start="0,0"
+              End="0,92">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,92" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Loop Through and import Leads tab\Import File\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\Loop Through and import Leads tab\Create compressed file">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="157,42"
+          Id="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source"
+          TopLeft="277,129" />
+        <NodeLayout
+          Size="176,42"
+          Id="Package\Loop Through and import Leads tab\Create compressed file\Flat File Destination"
+          TopLeft="273,240" />
+        <EdgeLayout
+          Id="Package\Loop Through and import Leads tab\Create compressed file.Paths[OLE DB Source Output]"
+          TopLeft="358.25,171">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,69"
+              Start="0,0"
+              End="0,61.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,61.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Loop Through and import Leads tab\Create compressed file\OLE DB Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>

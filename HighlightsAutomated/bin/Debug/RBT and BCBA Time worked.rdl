@@ -5167,9 +5167,16 @@ SELECT CONVERT(varchar(10),@StartDate,101) StartDate,CONVERT(varchar(10),dateadd
             <Filters>
               <Filter>
                 <FilterExpression>=Fields!ABAJobCategoryGroup.Value</FilterExpression>
-                <Operator>Equal</Operator>
+                <Operator>NotEqual</Operator>
                 <FilterValues>
-                  <FilterValue>Support Center</FilterValue>
+                  <FilterValue>BCBA</FilterValue>
+                </FilterValues>
+              </Filter>
+              <Filter>
+                <FilterExpression>=Fields!ABAJobCategoryGroup.Value</FilterExpression>
+                <Operator>NotEqual</Operator>
+                <FilterValues>
+                  <FilterValue>Tech</FilterValue>
                 </FilterValues>
               </Filter>
             </Filters>
