@@ -51,8 +51,19 @@
 					WHERE ServiceDate&gt;=@StartDate
 					and ServiceDate&lt;@EndDate
 					GROUP BY Branch_code
-					--UNION ALL
-					--SELECT 'ENW',0
+					UNION ALL
+					SELECT Branchcode,0
+					FROM Reference.dbo.BranchData
+					WHERE LOB='Empyrean'
+					and BranchStatus='Active'
+					and BranchCode NOT IN(
+						SELECT DISTINCT Branch_code
+						FROM wh_patientdays
+						WHERE ServiceDate&gt;=@StartDate
+						and ServiceDate&lt;@EndDate
+						)
+						
+
 
 					--census
 					IF OBJECT_ID('tempdb..#census') IS NOT NULL DROP TABLE #census

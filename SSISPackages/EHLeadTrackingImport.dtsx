@@ -13,8 +13,8 @@
   DTS:ObjectName="EHLeadTrackingImport"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="366"
-  DTS:VersionGUID="{312E0E28-91ED-4215-8540-6953AAB54F68}">
+  DTS:VersionBuild="370"
+  DTS:VersionGUID="{322FA7E1-5F5C-47C3-A524-FE03F2E296AB}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -546,10 +546,11 @@
                       <outputColumns>
                         <outputColumn
                           refId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F1]"
-                          dataType="date"
+                          dataType="wstr"
                           errorOrTruncationOperation="Conversion"
                           errorRowDisposition="FailComponent"
                           externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].ExternalColumns[F1]"
+                          length="255"
                           lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F1]"
                           name="F1"
                           truncationRowDisposition="FailComponent" />
@@ -795,7 +796,8 @@
                           lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Derived Column.Outputs[Derived Column Output].Columns[EtlLoadId]" />
                         <inputColumn
                           refId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[F1]"
-                          cachedDataType="date"
+                          cachedDataType="wstr"
+                          cachedLength="255"
                           cachedName="F1"
                           externalMetadataColumnId="Package\Loop Through and import Call tracking tab\Import excel sheet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ActivityDate]"
                           lineageId="Package\Loop Through and import Call tracking tab\Import excel sheet\Excel Source.Outputs[Excel Source Output].Columns[F1]" />
@@ -1164,7 +1166,7 @@
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
               SQLTask:Connection="{E342B3F8-1883-4797-97DD-6D9CCA2CF6D3}"
-              SQLTask:SqlStatementSource="DECLARE @filename varchar(1000)&#xA;SET @filename =?--'file.csv'&#xA;&#xA;IF EXISTS(&#xA;&#x9;SELECT * FROM EHClinicalStaging.dbo.SalesLeadTracking&#xA;&#x9;WHERE activityDate IS NOT NULL&#xA;&#x9;AND ISDATE(activityDate )=0&#xA;)&#xA;BEGIN &#xA;&#x9;RAISERROR (N'Deleting records that are likely good records with a bad activityDate.  Review file &quot;%s&quot;', -- Message text.&#xA;           18, -- Severity,&#xA;           1,--stage&#xA;&#x9;&#x9;   @filename)&#xA;END&#xA;ELSE&#xA;BEGIN&#xA;&#x9;DELETE FROM EHClinicalStaging.dbo.SalesLeadTracking&#xA;&#x9;WHERE activityDate IS NULL&#xA;&#x9;OR ISDATE(activityDate )=0&#xA;END" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              SQLTask:SqlStatementSource="DECLARE @filename varchar(1000)&#xA;SET @filename =?--'file.csv'&#xA;&#xA;DELETE FROM EHClinicalStaging.dbo.SalesLeadTracking&#xA;WHERE activityDate ='Activity Date'&#xA;&#xA;IF EXISTS(&#xA;&#x9;SELECT * FROM EHClinicalStaging.dbo.SalesLeadTracking&#xA;&#x9;WHERE activityDate IS NOT NULL&#xA;&#x9;AND ISDATE(activityDate )=0&#xA;)&#xA;BEGIN &#xA;&#x9;RAISERROR (N'Deleting records that are likely good records with a bad activityDate.  Review file &quot;%s&quot;', -- Message text.&#xA;           18, -- Severity,&#xA;           1,--stage&#xA;&#x9;&#x9;   @filename)&#xA;END&#xA;ELSE&#xA;BEGIN&#xA;&#x9;DELETE FROM EHClinicalStaging.dbo.SalesLeadTracking&#xA;&#x9;WHERE activityDate IS NULL&#xA;&#x9;OR ISDATE(activityDate )=0&#xA;END" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
               <SQLTask:ParameterBinding
                 SQLTask:ParameterName="0"
                 SQLTask:DtsVariableName="User::FullFileName"
@@ -2193,6 +2195,10 @@
       <GraphLayout
         Capacity="64" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
+          Size="191,42"
+          Id="Package\Insert Call Tracking Final table"
+          TopLeft="877.75,1294.75" />
+        <NodeLayout
           Size="163,42"
           Id="Package\Loop Through and append Date to filename\File System Task"
           TopLeft="149,37" />
@@ -2224,6 +2230,28 @@
           Id="Package\Loop Through and import Call tracking tab\Update Row Count FilesProcessed Table"
           TopLeft="105.75,387.75" />
         <EdgeLayout
+          Id="Package\Loop Through and import Call tracking tab.PrecedenceConstraints[Constraint]"
+          TopLeft="230.944444444445,159.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,45.91666666667"
+              Start="0,0"
+              End="0,38.41666666667">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,38.41666666667" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
           Id="Package\Loop Through and import Call tracking tab.PrecedenceConstraints[Constraint 10]"
           TopLeft="243,429.75">
           <EdgeLayout.Curve>
@@ -2237,28 +2265,6 @@
                   Capacity="5">
                   <mssgle:LineSegment
                     End="0,54.5" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Loop Through and import Call tracking tab.PrecedenceConstraints[Constraint 3]"
-          TopLeft="226.444444444445,247.41666666667">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,60.58333333333"
-              Start="0,0"
-              End="0,53.08333333333">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,53.08333333333" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -2302,19 +2308,19 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Loop Through and import Call tracking tab.PrecedenceConstraints[Constraint]"
-          TopLeft="230.944444444445,159.5">
+          Id="Package\Loop Through and import Call tracking tab.PrecedenceConstraints[Constraint 3]"
+          TopLeft="226.444444444445,247.41666666667">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,45.91666666667"
+              EndConnector="0,60.58333333333"
               Start="0,0"
-              End="0,38.41666666667">
+              End="0,53.08333333333">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,38.41666666667" />
+                    End="0,53.08333333333" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -2549,6 +2555,10 @@
           Size="179,44"
           Id="Package\TRUNCATE Import TABLE"
           TopLeft="348,150" />
+        <NodeLayout
+          Size="221,42"
+          Id="Package\Truncate Staging Calls Table"
+          TopLeft="822.5,453.5" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
           TopLeft="446.76443001443,42.7575757575758">
@@ -2563,6 +2573,28 @@
                   Capacity="5">
                   <mssgle:LineSegment
                     End="0,25.4924242424272" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="971.750541125541,1336.75">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,35.80555555555"
+              Start="0,0"
+              End="0,28.30555555555">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,28.30555555555" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -2649,24 +2681,32 @@
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <NodeLayout
-          Size="191,42"
-          Id="Package\Insert Call Tracking Final table"
-          TopLeft="877.75,1294.75" />
         <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 1]"
-          TopLeft="971.750541125541,1336.75">
+          Id="Package.PrecedenceConstraints[Constraint 5]"
+          TopLeft="679.388888888889,847.738095238095">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,35.80555555555"
+              EndConnector="143.111111111111,-373.238095238095"
               Start="0,0"
-              End="0,28.30555555555">
+              End="135.611111111111,-373.238095238095">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,28.30555555555" />
+                    End="67.5555555555555,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="67.5555555555555,0"
+                    Point2="71.5555555555555,0"
+                    Point3="71.5555555555555,-4" />
+                  <mssgle:LineSegment
+                    End="71.5555555555555,-369.238095238095" />
+                  <mssgle:CubicBezierSegment
+                    Point1="71.5555555555555,-369.238095238095"
+                    Point2="71.5555555555555,-373.238095238095"
+                    Point3="75.5555555555555,-373.238095238095" />
+                  <mssgle:LineSegment
+                    End="135.611111111111,-373.238095238095" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -2701,44 +2741,6 @@
                     Point3="-27.4722222222219,28.9305555555554" />
                   <mssgle:LineSegment
                     End="-27.4722222222219,42.3611111111109" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <NodeLayout
-          Size="221,42"
-          Id="Package\Truncate Staging Calls Table"
-          TopLeft="822.5,453.5" />
-        <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 5]"
-          TopLeft="679.388888888889,847.738095238095">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="143.111111111111,-373.238095238095"
-              Start="0,0"
-              End="135.611111111111,-373.238095238095">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="67.5555555555555,0" />
-                  <mssgle:CubicBezierSegment
-                    Point1="67.5555555555555,0"
-                    Point2="71.5555555555555,0"
-                    Point3="71.5555555555555,-4" />
-                  <mssgle:LineSegment
-                    End="71.5555555555555,-369.238095238095" />
-                  <mssgle:CubicBezierSegment
-                    Point1="71.5555555555555,-369.238095238095"
-                    Point2="71.5555555555555,-373.238095238095"
-                    Point3="75.5555555555555,-373.238095238095" />
-                  <mssgle:LineSegment
-                    End="135.611111111111,-373.238095238095" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>

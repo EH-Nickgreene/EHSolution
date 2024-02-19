@@ -26,7 +26,7 @@
           </QueryParameter>
         </QueryParameters>
         <CommandText>
-SELECT * FROM CancelratesbyBranch
+SELECT *,CONVERT(date,LEFT(WeekOfyear,10)) WeekStartDate FROM CancelratesbyBranch
 WHERE Location=@LocationName
 and WeeksBack&lt;=@WeeksBack</CommandText>
       </Query>
@@ -66,6 +66,10 @@ and WeeksBack&lt;=@WeeksBack</CommandText>
         <Field Name="ImpactHours">
           <DataField>ImpactHours</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="WeekStartDate">
+          <DataField>WeekStartDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -117,7 +121,7 @@ ORDER BY BranchName</CommandText>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!WeekOfYear.Value</Value>
+                      <Value>=Fields!WeekStartDate.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <Label>=Fields!WeekOfYear.Value</Label>
@@ -836,7 +840,7 @@ ORDER BY BranchName</CommandText>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!WeekOfYear.Value</Value>
+                      <Value>=Fields!WeekStartDate.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>

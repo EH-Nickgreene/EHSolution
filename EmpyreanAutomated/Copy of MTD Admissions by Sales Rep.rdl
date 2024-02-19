@@ -16,7 +16,7 @@
         <CommandText>
 DECLARE @monthInt INT
 
-SELECT @monthInt =202312
+SELECT @monthInt =202401
 
 IF OBJECT_ID('tempdb..#temp') IS NOT NULL DROP TABLE #temp
 SELECT

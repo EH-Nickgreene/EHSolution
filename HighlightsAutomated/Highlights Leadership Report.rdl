@@ -489,7 +489,7 @@ GROUP BY bdp.BranchName
 							--INSERT CURRENT ScheduledHours into temp table
 							--ALSO THE UPPER RANGE OF THE OF THE SCHEDULED HOSR
 							INSERT INTO #scheduledHours
-							SELECT 
+							SELECT DISTINCT
 								e.associateID,
 								ISNULL(e.ScheduledHours,0)ScheduledHours,
 								e.JobTitleCode,
@@ -510,7 +510,7 @@ GROUP BY bdp.BranchName
 
 							--INSERT THE LOWER RANGE OF THE OF THE SCHEDULED HOSR
 							INSERT INTO #scheduledHours
-							SELECT 
+							SELECT DISTINCT
 								e.associateID,
 								ISNULL(e.ScheduledHours,0)ScheduledHours,
 								e.jobTitleCode,
@@ -1181,7 +1181,8 @@ FULL JOIN CteTerms term on hire.BranchName=term.BranchName and hire.Recruiter=te
             <Value>=Parameters!EndDate.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>SELECT 
+        <CommandText>
+SELECT 
 ROW_NUMBER() OVER(ORDER BY e.TerminationDate ) Rowid,
 bdp.BranchName,
 e.LegalFirstName+' ' +e.LegalLastName EmployeeName,
@@ -1189,13 +1190,12 @@ e.HireDate,
 e.TerminationDate,
 e.JobTitleCode,
 e.WorkerCategoryDescription,
-md.FieldValue
+e.hiresource FieldValue--kept old field name for compatability purposes
 
 FROM v_employee e
 LEFT JOIN Reference.dbo.branchdata bd ON e.HomeDepartmentCode=bd.ADPHomeDepartmentCode
 LEFT JOIN Reference.dbo.branchdata bdp ON bd.ParentBranchCode=bdp.BranchCode
-LEFT JOIN Centralreach.insights.employee ei on e.EmployeeNumber=ei.EmployeePayrollReference
-LEFT JOIN Centralreach.insights.ContactCustomField md on md.ContactId=ei.employeeid and md.fieldname = 'recruiter'
+
 WHERE PayrollCompanyCode='K86'
 and e.TerminationDate&gt;=@StartDate
 and e.TerminationDate&lt;dateadd(dd,1,@EndDate)
@@ -1465,7 +1465,8 @@ ORDER BY e.TerminationDate </CommandText>
             <Value>=Parameters!StartDate.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>DECLARE @CurrentWeekStart date,@CurrentWeekEnd date
+        <CommandText>
+DECLARE @CurrentWeekStart date,@CurrentWeekEnd date
 
 SET @CurrentWeekStart =(
 			SELECT MAX(date) 
@@ -1490,55 +1491,21 @@ SELECT @CustomStartDate=MIN(date)
 
 	   
 IF OBJECT_ID('tempdb..#recruiters') IS NOT NULL DROP TABLE #recruiters
-SELECT LegalFirstName+' ' + Legallastname recruiter
+SELECT RecruiterName recruiter
 INTO #recruiters
-FROM v_employee
-WHERE 
-PayrollCompanyCode='K86'
-AND JobTitleCode='RCR' 
-and PositionStatus='Active'
-and (LegalFirstName+' ' + Legallastname&lt;&gt;'Rodney Pringle' OR EmployeeNumber='010042')
-UNION 
-SELECT 'Robert Cuevas'
-UNION 
-SELECT 'Shannon Conroy'
+FROM RecruiterADPHireSource
+WHERE IsActive=1
+and [ShowOnLeadershipReport]=1
 
-IF OBJECT_ID('tempdb..#CR_Employee') IS NOT NULL DROP TABLE #CR_Employee
-SELECT e.EmployeeFirstName,e.EmployeeLastName,Employeeid,cc.fieldvalue MetaPayrollNumber,EmployeePayrollReference
-INTO #CR_Employee
-FROM Centralreach.insights.employee e
-LEFT JOIN [CentralReach].[insights].[ContactCustomField] cc on e.EmployeeId=cc.contactID AND Fieldname='Payroll Number'
-UNION
---EMPLOYEE RECORD ISN'T ALWAYS CREATED IN TIME, SO TO GET A FULL LISTING WE PULL FROM THE PROVIDER TABLE TOO.
-SELECT e.ProviderFirstName,e.ProviderLastName,e.providerID,cc.fieldvalue MetaPayrollNumber,''
-FROM Centralreach.insights.Provider e
-LEFT JOIN [CentralReach].[insights].[ContactCustomField] cc on e.ProviderId=cc.contactID AND Fieldname='Payroll Number'
-WHERE ISNULL(fieldvalue,'')&lt;&gt;''
 
-IF OBJECT_ID('tempdb..#CR_EmployeeDeDup') IS NOT NULL DROP TABLE #CR_EmployeeDeDup
-SELECT *,
-CASE WHEN ISNULL(EmployeePayrollReference,'')='' THEN MetaPayrollNumber ELSE EmployeePayrollReference END EmployeeNumber,
-Row_number() OVER(PARTITION BY EmployeeID ORDER BY EmployeeID,CASE WHEN ISNULL(EmployeePayrollReference,'')='' THEN MetaPayrollNumber ELSE EmployeePayrollReference END desc ) RowID
-INTO #CR_EmployeeDeDup
-FROM #CR_Employee 
+
 
 
 ;With CteHires as (
 SELECT 
 @CustomStartDate StartDate,
 bdp.BranchName,
-ISNULL(
-	CASE
-		WHEN md.FieldValue IN ('Amanda Jacaobs') THEN 'Amanda Jacobs'
-		WHEN md.FieldValue IN ('Samantha','Samantha Drsicoll') THEN 'Samantha Driscoll'
-		WHEN md.FieldValue LIKE 'Samantha%' THEN 'Samantha Driscoll'
-		WHEN md.FieldValue LIKE 'Amanda%' THEN 'Amanda Jacobs'
-		WHEN md.FieldValue LIKE 'Robert%' THEN 'Robert Cuevas'
-		WHEN md.FieldValue LIKE 'Shannon%' THEN 'Shannon Conroy'
-		WHEN md.FieldValue LIKE 'Shanon%' THEN 'Shannon Conroy'
-		ELSE md.FieldValue
-	END
-	,'unknown') Recruiter,
+e.HireSource Recruiter,
 COUNT(*) HIres,
 @CurrentWeekStart WeekStart,
 @CurrentWeekEnd WeekEnd
@@ -1546,53 +1513,26 @@ COUNT(*) HIres,
 FROM v_employee e
 LEFT JOIN Reference.dbo.branchdata bd ON e.HomeDepartmentCode=bd.ADPHomeDepartmentCode
 LEFT JOIN Reference.dbo.branchdata bdp ON bd.ParentBranchCode=bdp.BranchCode
-LEFT JOIN #CR_EmployeeDeDup ei on e.EmployeeNumber=CASE WHEN ISNULL(ei.EmployeePayrollReference,'')='' THEN MetaPayrollNumber ELSE ei.EmployeePayrollReference END
-LEFT JOIN Centralreach.insights.ContactCustomField md on md.ContactId=ei.employeeid and md.fieldname = 'recruiter'
 WHERE e.hiredate&gt;=@CurrentWeekStart
 and e.hireDate&lt;dateadd(dd,1,@CurrentWeekEnd)
 --and bdp.BranchStatus='Active'
 AND PayrollCompanyCode IN('K86','ODJ')
 AND HomeDepartmentDescription NOT IN ('Support Center','Support Center- Other','Corporate Employee')
-AND ei.rowid=1
 GROUP BY 
 	bdp.BranchName,
-	ISNULL(
-	CASE
-		WHEN md.FieldValue IN ('Amanda Jacaobs') THEN 'Amanda Jacobs'
-		WHEN md.FieldValue IN ('Samantha','Samantha Drsicoll') THEN 'Samantha Driscoll'
-		WHEN md.FieldValue LIKE 'Samantha%' THEN 'Samantha Driscoll'
-		WHEN md.FieldValue LIKE 'Amanda%' THEN 'Amanda Jacobs'
-		WHEN md.FieldValue LIKE 'Robert%' THEN 'Robert Cuevas'
-		WHEN md.FieldValue LIKE 'Shannon%' THEN 'Shannon Conroy'
-		WHEN md.FieldValue LIKE 'Shanon%' THEN 'Shannon Conroy'
-		ELSE md.FieldValue
-	END
-	,'unknown')
+	e.HireSource
 )
 
 , CteTerms as (
 SELECT 
 @CustomStartDate StartDate,
 bdp.BranchName,
-ISNULL(
-	CASE
-		WHEN md.FieldValue IN ('Amanda Jacaobs') THEN 'Amanda Jacobs'
-		WHEN md.FieldValue IN ('Samantha','Samantha Drsicoll') THEN 'Samantha Driscoll'
-		WHEN md.FieldValue LIKE 'Samantha%' THEN 'Samantha Driscoll'
-		WHEN md.FieldValue LIKE 'Amanda%' THEN 'Amanda Jacobs'
-		WHEN md.FieldValue LIKE 'Robert%' THEN 'Robert Cuevas'
-		WHEN md.FieldValue LIKE 'Shannon%' THEN 'Shannon Conroy'
-		WHEN md.FieldValue LIKE 'Shanon%' THEN 'Shannon Conroy'
-		ELSE md.FieldValue
-	END
-	,'unknown') Recruiter,
+e.HireSource Recruiter,
 COUNT(*) Terms
 
 FROM v_employee e
 LEFT JOIN Reference.dbo.branchdata bd ON e.HomeDepartmentCode=bd.ADPHomeDepartmentCode
 LEFT JOIN Reference.dbo.branchdata bdp ON bd.ParentBranchCode=bdp.BranchCode
-LEFT JOIN Centralreach.insights.employee ei on e.EmployeeNumber=ei.EmployeePayrollReference
-LEFT JOIN Centralreach.insights.ContactCustomField md on md.ContactId=ei.employeeid and md.fieldname = 'recruiter'
 WHERE e.TerminationDate&gt;=@StartDate
 and e.HireDate&gt;='2023-6-5'
 and e.TerminationDate&lt;dateadd(dd,1,@EndDate)
@@ -1601,18 +1541,7 @@ AND PayrollCompanyCode IN('K86','ODJ')
 AND HomeDepartmentDescription NOT IN ('Support Center','Support Center- Other','Corporate Employee')
 GROUP BY 
 	bdp.BranchName,
-	ISNULL(
-	CASE
-		WHEN md.FieldValue IN ('Amanda Jacaobs') THEN 'Amanda Jacobs'
-		WHEN md.FieldValue IN ('Samantha','Samantha Drsicoll') THEN 'Samantha Driscoll'
-		WHEN md.FieldValue LIKE 'Samantha%' THEN 'Samantha Driscoll'
-		WHEN md.FieldValue LIKE 'Amanda%' THEN 'Amanda Jacobs'
-		WHEN md.FieldValue LIKE 'Robert%' THEN 'Robert Cuevas'
-		WHEN md.FieldValue LIKE 'Shannon%' THEN 'Shannon Conroy'
-		WHEN md.FieldValue LIKE 'Shanon%' THEN 'Shannon Conroy'
-		ELSE md.FieldValue
-	END
-	,'unknown')
+	e.HireSource
 )
 
 
@@ -1935,44 +1864,23 @@ GROUP BY [dbo].[Age](ClientBirthDate,GETDATE()),
           <QueryParameter Name="@StartDate">
             <Value>=Parameters!StartDate.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@EndDate">
+            <Value>=Parameters!EndDate.Value</Value>
+          </QueryParameter>
         </QueryParameters>
         <CommandText>DECLARE @AdjustedStartDate date,@AdjustedEndDate date
 
 
-
---DECLARE @CurrentWeekStart date,@CurrentWeekEnd date
-
---SET @CurrentWeekStart =(
---			SELECT MAX(date) 
---			FROM Reference.dbo.dimdate 
---			WHERE date&lt;GETDATE()
---			and Day='Sunday'
---			)
-
---SET @CurrentWeekEnd=dateadd(dd,6,@CurrentWeekStart)
-
-
+--THIS IS NEEDED BECUASE WE COMPARE THE WEEKS hire to term of the prior week
 SET @AdjustedStartDate =DATEADD(dd,-28,@StartDate)
 SET @AdjustedEndDate=DATEADD(dd,14,@StartDate)
 
 
-
---DECLARE @CustomStartDate date
-
---SELECT @CustomStartDate=MIN(date)
---	FROM (
---		SELECT TOP 23 date 
---		FROM Reference.dbo.dimdate 
---		WHERE date&lt;@EndDate
---		and day='Monday'
---		ORDER BY date desc
---	)a
-
-
---SELECT @AdjustedStartDate,@AdjustedEndDate
-
+--BUILD TABLE OF DATES WE CARE ABOUT
+--SET TERM DATE back 1 weeks to account for offset
+--this allows us to do simple joins later and make the logic easier to understand
 IF OBJECT_ID('tempdb..#dates') IS NOT NULL DROP TABLE #dates
-SELECT date,date HireDate,Dateadd(dd,-7,date) TermDate,WeekOfYearDisplay,WeekStartDate 
+SELECT date,date HireDate,Dateadd(dd,-7,date) TermDate,WeekOfYearDisplay,WeekStartDate
 INTO #dates
 FROm Reference.dbo.dimdate dd
 WHERE date&gt;=@AdjustedStartDate
@@ -1980,118 +1888,120 @@ and date&lt;@AdjustedEndDate
 
 --SELECT * FROm #dates ORDER BY date
 
+--SELECT * FROM RecruiterADPHireSource
 
-	   
+
+--BUILD TABLE OF RECRUITERS WHO SHOULD BE ON REPORT
 IF OBJECT_ID('tempdb..#recruiters') IS NOT NULL DROP TABLE #recruiters
-SELECT LegalFirstName+' ' + Legallastname recruiter
+SELECT RecruiterName recruiter
 INTO #recruiters
-FROM v_employee
-WHERE 
-PayrollCompanyCode='K86'
-AND JobTitleCode='RCR' 
-and PositionStatus='Active'
-and (LegalFirstName+' ' + Legallastname&lt;&gt;'Rodney Pringle' OR EmployeeNumber='010042')
-UNION 
-SELECT 'Robert Cuevas'
-UNION 
-SELECT 'Shannon Conroy'
-
-
-IF OBJECT_ID('tempdb..#recruitersWithWeeks') IS NOT NULL DROP TABLE #recruitersWithWeeks
-SELECT r.recruiter,d.WeekOfYearDisplay,d.WeekStartDate
-INTO #recruitersWithWeeks
-FROm #recruiters r
-CROSS JOIN (
-	SELECT DISTINCT WeekofyearDisplay,WeekStartDate
-	FROM #dates
-	) d 
+FROM RecruiterADPHireSource
+WHERE IsActive=1
+and [ShowOnLeadershipReport]=1
 
 
 
-IF OBJECT_ID('tempdb..#CR_Employee') IS NOT NULL DROP TABLE #CR_Employee
-SELECT e.EmployeeFirstName,e.EmployeeLastName,Employeeid,cc.fieldvalue MetaPayrollNumber,EmployeePayrollReference
-INTO #CR_Employee
-FROM Centralreach.insights.employee e
-LEFT JOIN [CentralReach].[insights].[ContactCustomField] cc on e.EmployeeId=cc.contactID AND Fieldname='Payroll Number'
-UNION
---EMPLOYEE RECORD ISN'T ALWAYS CREATED IN TIME, SO TO GET A FULL LISTING WE PULL FROM THE PROVIDER TABLE TOO.
-SELECT e.ProviderFirstName,e.ProviderLastName,e.providerID,cc.fieldvalue MetaPayrollNumber,''
-FROM Centralreach.insights.Provider e
-LEFT JOIN [CentralReach].[insights].[ContactCustomField] cc on e.ProviderId=cc.contactID AND Fieldname='Payroll Number'
-WHERE ISNULL(fieldvalue,'')&lt;&gt;''
+--GET ANY ONBOARDING EMPLOYEES WHO HAVENT OFFICIALLY STARTED YET
+		IF OBJECT_ID('tempdb..#OnBoarding') IS NOT NULL DROP TABLE #OnBoarding
+		SELECT
+			'Candidates Onboarding' Recruiter,
+			COUNT(*) Hires,
+			dd.WeekOfYearDisplay,
+			dd.WeekStartDate
+		INTO #OnBoarding
+		FROM ADPOnboarding ao
+		--LEFT JOIN #ManagerToBranch mb on ao.Manager=mb.Manager
+		LEFT JOIN v_Employee e on ao.Email=e.PersonalContactPersonalEmail
+		LEFT JOIN Reference.dbo.DimDate dd on dd.date=ao.hiredate
+		LEFT JOIN JobCodes jc on jc.JobCode=e.JobTitleCode
+		WHERE e.AssociateID IS NULL
+		and ao.experience IN ('Clinician- BCBA Full-Time','Clinician- BT','Clinician- RBT','Highlights Healthcare-Corporate','Clinician- Director of Ops.')
+		and ao.hiredate&gt;=dateadd(dd,7,@StartDate)
+		and ao.hiredate&lt;=dateadd(dd,7,@EndDate)
+		GROUP BY 
+			dd.WeekOfYearDisplay,
+			dd.WeekStartDate
+
+
+		IF EXISTS(SELECT * FROM #OnBoarding)
+		BEGIN
+			INSERT INTO #recruiters
+			SELECT 'Candidates Onboarding'
+
+		END
+
+
+--NOW BUILD TABLE ALONG WITH WEEKS TO INCLUE
+	IF OBJECT_ID('tempdb..#recruitersWithWeeks') IS NOT NULL DROP TABLE #recruitersWithWeeks
+	SELECT r.recruiter,d.WeekOfYearDisplay,d.WeekStartDate
+	INTO #recruitersWithWeeks
+	FROm #recruiters r
+	CROSS JOIN (
+		SELECT DISTINCT WeekofyearDisplay,WeekStartDate
+		FROM #dates
+		) d 
 
 
 
-IF OBJECT_ID('tempdb..#CR_EmployeeDeDup') IS NOT NULL DROP TABLE #CR_EmployeeDeDup
-SELECT *,
-CASE WHEN ISNULL(EmployeePayrollReference,'')='' THEN MetaPayrollNumber ELSE EmployeePayrollReference END EmployeeNumber,
-Row_number() OVER(PARTITION BY EmployeeID ORDER BY EmployeeID,CASE WHEN ISNULL(EmployeePayrollReference,'')='' THEN MetaPayrollNumber ELSE EmployeePayrollReference END desc ) RowID
-INTO #CR_EmployeeDeDup
-FROM #CR_Employee 
+----CREATE TABLE OF EMPLOYEES.  THIS IS STEP ALLOWS US TO FIRST TRY THE EMPLOYEE Payroll Number.  IF that
+----doesnt exist, we then go to the metadatafield payroll number
+--		IF OBJECT_ID('tempdb..#CR_Employee') IS NOT NULL DROP TABLE #CR_Employee
+--		SELECT e.EmployeeFirstName,e.EmployeeLastName,Employeeid,cc.fieldvalue MetaPayrollNumber,EmployeePayrollReference
+--		INTO #CR_Employee
+--		FROM Centralreach.insights.employee e
+--		LEFT JOIN [CentralReach].[insights].[ContactCustomField] cc on e.EmployeeId=cc.contactID AND Fieldname='Payroll Number'
+--		UNION
+--		--EMPLOYEE RECORD ISN'T ALWAYS CREATED IN TIME, SO TO GET A FULL LISTING WE PULL FROM THE PROVIDER TABLE TOO.
+--		SELECT e.ProviderFirstName,e.ProviderLastName,e.providerID,cc.fieldvalue MetaPayrollNumber,''
+--		FROM Centralreach.insights.Provider e
+--		LEFT JOIN [CentralReach].[insights].[ContactCustomField] cc on e.ProviderId=cc.contactID AND Fieldname='Payroll Number'
+--		WHERE ISNULL(fieldvalue,'')&lt;&gt;''
+
+
+--		--DEDUP rows
+--		IF OBJECT_ID('tempdb..#CR_EmployeeDeDup') IS NOT NULL DROP TABLE #CR_EmployeeDeDup
+--		SELECT *,
+--		CASE WHEN ISNULL(EmployeePayrollReference,'')='' THEN MetaPayrollNumber ELSE EmployeePayrollReference END EmployeeNumber,
+--		Row_number() OVER(PARTITION BY EmployeeID ORDER BY EmployeeID,CASE WHEN ISNULL(EmployeePayrollReference,'')='' THEN MetaPayrollNumber ELSE EmployeePayrollReference END desc ) RowID
+--		INTO #CR_EmployeeDeDup
+--		FROM #CR_Employee 
+
 
 ;With CteHires as (
 SELECT 
 --@CustomStartDate StartDate,
-ISNULL(
-	CASE
-		WHEN md.FieldValue IN ('Amanda Jacaobs') THEN 'Amanda Jacobs'
-		WHEN md.FieldValue IN ('Samantha','Samantha Drsicoll') THEN 'Samantha Driscoll'
-		WHEN md.FieldValue LIKE 'Samantha%' THEN 'Samantha Driscoll'
-		WHEN md.FieldValue LIKE 'Amanda%' THEN 'Amanda Jacobs'
-		WHEN md.FieldValue LIKE 'Robert%' THEN 'Robert Cuevas'
-		WHEN md.FieldValue LIKE 'Shannon%' THEN 'Shannon Conroy'
-		WHEN md.FieldValue LIKE 'Shanon%' THEN 'Shannon Conroy'
-		ELSE md.FieldValue
-	END
-	,'unknown') Recruiter,
+e.HireSource Recruiter,
 COUNT(*) HIres,
 --@CurrentWeekStart WeekStart,
 --@CurrentWeekEnd WeekEnd,
 dd.WeekOfYearDisplay,
 dd.WeekStartDate
-
 FROM v_employee e
 LEFT JOIN Reference.dbo.branchdata bd ON e.HomeDepartmentCode=bd.ADPHomeDepartmentCode
 LEFT JOIN Reference.dbo.branchdata bdp ON bd.ParentBranchCode=bdp.BranchCode
-LEFT JOIN #CR_EmployeeDeDup ei on e.EmployeeNumber=CASE WHEN ISNULL(ei.EmployeePayrollReference,'')='' THEN MetaPayrollNumber ELSE ei.EmployeePayrollReference END
-LEFT JOIN Centralreach.insights.ContactCustomField md on md.ContactId=ei.employeeid and md.fieldname = 'recruiter'
 LEFT JOIN #dates dd on dd.HireDate=e.HireDate
 WHERE 
 PayrollCompanyCode IN('K86','ODJ')
 AND HomeDepartmentDescription NOT IN ('Support Center','Support Center- Other','Corporate Employee')
-AND ei.rowid=1
+--AND ei.rowid=1
 GROUP BY 
-ISNULL(
-	CASE
-		WHEN md.FieldValue IN ('Amanda Jacaobs') THEN 'Amanda Jacobs'
-		WHEN md.FieldValue IN ('Samantha','Samantha Drsicoll') THEN 'Samantha Driscoll'
-		WHEN md.FieldValue LIKE 'Samantha%' THEN 'Samantha Driscoll'
-		WHEN md.FieldValue LIKE 'Amanda%' THEN 'Amanda Jacobs'
-		WHEN md.FieldValue LIKE 'Robert%' THEN 'Robert Cuevas'
-		WHEN md.FieldValue LIKE 'Shannon%' THEN 'Shannon Conroy'
-		WHEN md.FieldValue LIKE 'Shanon%' THEN 'Shannon Conroy'
-		ELSE md.FieldValue
-	END
-	,'unknown') ,
+	e.HireSource ,
 	dd.WeekOfYearDisplay,
 	dd.WeekStartDate
+UNION ALL
+
+SELECT
+	Recruiter,
+	Hires,
+	WeekOfYearDisplay,
+	WeekStartDate
+FROM #OnBoarding
 )
 
 , CteTerms as (
 SELECT 
 --@CustomStartDate StartDate,
-ISNULL(
-	CASE
-		WHEN md.FieldValue IN ('Amanda Jacaobs') THEN 'Amanda Jacobs'
-		WHEN md.FieldValue IN ('Samantha','Samantha Drsicoll') THEN 'Samantha Driscoll'
-		WHEN md.FieldValue LIKE 'Samantha%' THEN 'Samantha Driscoll'
-		WHEN md.FieldValue LIKE 'Amanda%' THEN 'Amanda Jacobs'
-		WHEN md.FieldValue LIKE 'Robert%' THEN 'Robert Cuevas'
-		WHEN md.FieldValue LIKE 'Shannon%' THEN 'Shannon Conroy'
-		WHEN md.FieldValue LIKE 'Shanon%' THEN 'Shannon Conroy'
-		ELSE md.FieldValue
-	END
-	,'unknown') Recruiter,
+e.HireSource Recruiter,
 COUNT(*) Terms,
 dd.WeekOfYearDisplay,
 dd.WeekStartDate
@@ -2099,40 +2009,20 @@ dd.WeekStartDate
 FROM v_employee e
 LEFT JOIN Reference.dbo.branchdata bd ON e.HomeDepartmentCode=bd.ADPHomeDepartmentCode
 LEFT JOIN Reference.dbo.branchdata bdp ON bd.ParentBranchCode=bdp.BranchCode
-LEFT JOIN Centralreach.insights.employee ei on e.EmployeeNumber=ei.EmployeePayrollReference
-LEFT JOIN Centralreach.insights.ContactCustomField md on md.ContactId=ei.employeeid and md.fieldname = 'recruiter'
 LEFT JOIN #dates dd on dd.TermDate=e.TerminationDate
 WHERE e.HireDate&gt;='2023-6-5'
 AND PayrollCompanyCode IN('K86','ODJ')
 AND HomeDepartmentDescription NOT IN ('Support Center','Support Center- Other','Corporate Employee')
 GROUP BY 
-	ISNULL(
-	CASE
-		WHEN md.FieldValue IN ('Amanda Jacaobs') THEN 'Amanda Jacobs'
-		WHEN md.FieldValue IN ('Samantha','Samantha Drsicoll') THEN 'Samantha Driscoll'
-		WHEN md.FieldValue LIKE 'Samantha%' THEN 'Samantha Driscoll'
-		WHEN md.FieldValue LIKE 'Amanda%' THEN 'Amanda Jacobs'
-		WHEN md.FieldValue LIKE 'Robert%' THEN 'Robert Cuevas'
-		WHEN md.FieldValue LIKE 'Shannon%' THEN 'Shannon Conroy'
-		WHEN md.FieldValue LIKE 'Shanon%' THEN 'Shannon Conroy'
-		ELSE md.FieldValue
-	END
-	,'unknown'),
+	e.HireSource,
 	dd.WeekOfYearDisplay,
 	dd.WeekStartDate
 )
 
 
---SELECT DISTINCT COALESCE(hire.Recruiter,term.Recruiter) Recruiter,COUNT(*)
- 
---FROM CteHires hire
---FULL JOIN CteTerms term on hire.BranchName=term.BranchName 
---GROUP By COALESCE(hire.Recruiter,term.Recruiter)
-
-
 
 SELECT 
-	1 as OrderBy,
+	CASE WHEN a.recruiter='Candidates Onboarding'THEN 1.1 ELSE 1 END as OrderBy,
 	a.recruiter,
 	a.WeekOfYearDisplay,
 	a.WeekStartDate,
@@ -2160,7 +2050,7 @@ ORDER By 1,2</CommandText>
       <Fields>
         <Field Name="OrderBy">
           <DataField>OrderBy</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
+          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="recruiter">
           <DataField>recruiter</DataField>

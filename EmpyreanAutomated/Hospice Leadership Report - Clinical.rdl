@@ -518,7 +518,7 @@ SELECT * FROM #results</CommandText>
         <DataSourceName>DataSource1</DataSourceName>
         <CommandText>DECLARE @startdate date,@enddate date
 SET @startdate = '2023-09-01'
-SET @enddate='2023-12-31'
+SET @enddate='2024-1-31'
 
 IF OBJECT_ID('tempdb..#months') IS NOT NULL DROP TABLE #months
 SELECT 

@@ -72,6 +72,7 @@
     <Report Include="SalesActivityReport.rdl" />
     <Report Include="SalesActivitySubReport.rdl" />
     <Report Include="SSRSWakeUp.rdl" />
+    <Report Include="VendorOptumPatientDays.rdl" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Reporting Services\Microsoft.ReportingServices.MSBuilder.targets" />
 </Project>

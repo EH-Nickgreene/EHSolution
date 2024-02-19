@@ -17,7 +17,7 @@
     <DataSet Name="MainDataSet">
       <Query>
         <DataSourceName>CentralReach</DataSourceName>
-        <CommandText>exec usp_CaseloadByLocationGroups 'FULL'</CommandText>
+        <CommandText>exec usp_CaseloadByLocationGroupsV2 'FULL'</CommandText>
       </Query>
       <Fields>
         <Field Name="BranchName">
@@ -76,12 +76,16 @@
           <DataField>WeeksBack</DataField>
           <rd:TypeName>System.Int64</rd:TypeName>
         </Field>
+        <Field Name="WeekStartDate">
+          <DataField>WeekStartDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="Capcity">
       <Query>
         <DataSourceName>CentralReach</DataSourceName>
-        <CommandText>exec [usp_CaseloadByLocationGroups] 'Capacity'</CommandText>
+        <CommandText>exec usp_CaseloadByLocationGroupsV2 'Capacity'</CommandText>
       </Query>
       <Fields>
         <Field Name="EmployeeName">
@@ -124,6 +128,10 @@
           <DataField>ExpectedDays</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
+        <Field Name="WeekStartDate">
+          <DataField>WeekStartDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="CapacityWithActuals">
@@ -163,6 +171,10 @@
         <Field Name="WeekOfYear">
           <DataField>WeekOfYear</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="WeekStartDate">
+          <DataField>WeekStartDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
         <Field Name="ExpectedWeeklyBillableHours">
           <DataField>ExpectedWeeklyBillableHours</DataField>
@@ -551,7 +563,7 @@
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!WeekOfYear.Value</Value>
+                      <Value>=Fields!WeekStartDate.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
@@ -2332,7 +2344,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Data below shows capacity by week by employee.   New employee's capacity will not show on this report until 1 week after their start date.</Value>
+                                  <Value>Data below shows capacity by week by employee.   New employee's capacity will not show on this report until 1 week after their start date.  </Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -3647,7 +3659,7 @@
                           </Group>
                           <SortExpressions>
                             <SortExpression>
-                              <Value>=Fields!WeekOfYear.Value</Value>
+                              <Value>=Fields!WeekStartDate.Value</Value>
                               <Direction>Descending</Direction>
                             </SortExpression>
                           </SortExpressions>

@@ -13,8 +13,8 @@
   DTS:ObjectName="EHHCHBPayrollExportFileImport"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="401"
-  DTS:VersionGUID="{E4BC096B-8D52-4DDC-B4F2-5FC352AB2936}">
+  DTS:VersionBuild="403"
+  DTS:VersionGUID="{0D0B0DEA-4DDB-4B11-8761-A9583C43D111}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -280,7 +280,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="BackupDir">
       <DTS:VariableValue
-        DTS:DataType="8">D:\SSIS\Import\LeadTracker\archive\</DTS:VariableValue>
+        DTS:DataType="8">D:\SSIS\Import\HCHBPayrollExportFile\archive\</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -304,7 +304,7 @@
       DTS:CreationName=""
       DTS:DTSID="{B26EC0E6-058C-4A74-B86E-A65CAB4F7A84}"
       DTS:EvaluateAsExpression="True"
-      DTS:Expression="@[User::ResuiltsDir] +  REPLACE( @[User::FileName] ,&quot;Export&quot;,&quot;ExportCompressed&quot;)"
+      DTS:Expression="@[User::ResuiltsDir] +  REPLACE( @[User::FileName] ,&quot;.csv&quot;,&quot;_Compressed.csv&quot;)"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="ExportFilename">

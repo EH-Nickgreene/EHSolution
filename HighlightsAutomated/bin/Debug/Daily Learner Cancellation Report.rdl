@@ -167,8 +167,8 @@
   FROM v_scheduling sch
   INNER JOIN Reference.dbo.DimDate dd on sch.schedulingDate=dd.date
   LEFT JOIN CancellationReasonToCategory crtc on crtc.cancelledReason=sch.CancelledReason  
-  WHERE sch.schedulingDate&gt;='2023-12-31'
-  and sch.schedulingDate&lt;'2024-1-6'
+  WHERE sch.schedulingDate&gt;=@startDate
+  and sch.schedulingDate&lt;@EndDate
   and sch.serviceCode IN ('97153')
   GROUP BY 
 	sch.clientID,
@@ -182,7 +182,6 @@
   SELECT * 
   FROm #Cancellations can
   LEFT JOIN #CancelledVsCompelted cvc on can.ClientId=cvc.ClientId and can.schedulingDate=cvc.schedulingDate
-
 </CommandText>
       </Query>
       <Fields>

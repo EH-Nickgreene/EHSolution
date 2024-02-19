@@ -43,19 +43,19 @@
           <FullPath>CentralReachReplicateAsync.dtsx</FullPath>
           <References />
         </DtsPackage>
-        <DtsPackage FormatVersion="0">
+        <DtsPackage FormatVersion="8">
           <Name>CentralReachReplicateWeeklyFull.dtsx</Name>
           <FullPath>CentralReachReplicateWeeklyFull.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">
-          <Name>EHLeadTrackingImport 1.dtsx</Name>
-          <FullPath>EHLeadTrackingImport 1.dtsx</FullPath>
-          <References />
-        </DtsPackage>
-        <DtsPackage FormatVersion="0">
           <Name>EHHCHBPayrollExportFileImport.dtsx</Name>
           <FullPath>EHHCHBPayrollExportFileImport.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="8">
+          <Name>EHLeadTrackingImport 1.dtsx</Name>
+          <FullPath>EHLeadTrackingImport 1.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">
@@ -73,6 +73,11 @@
           <FullPath>EmployeeRosterImport.dtsx</FullPath>
           <References />
         </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>ExportEH-OptumPatientDays.dtsx</Name>
+          <FullPath>ExportEH-OptumPatientDays.dtsx</FullPath>
+          <References />
+        </DtsPackage>
         <DtsPackage FormatVersion="8">
           <Name>Generate Cancellation Reports by Location.dtsx</Name>
           <FullPath>Generate Cancellation Reports by Location.dtsx</FullPath>
@@ -81,6 +86,11 @@
         <DtsPackage FormatVersion="3">
           <Name>GroupResources_AirTractor_Eligibility.dtsx</Name>
           <FullPath>GroupResources_AirTractor_Eligibility.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="8">
+          <Name>ImportHHC-BCBAOpenings.dtsx</Name>
+          <FullPath>ImportHHC-BCBAOpenings.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">
@@ -143,6 +153,11 @@
           <FullPath>ReportSenderBCBACaseload.dtsx</FullPath>
           <References />
         </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>ReportSenderEHVendorOptumPatientDays.dtsx</Name>
+          <FullPath>ReportSenderEHVendorOptumPatientDays.dtsx</FullPath>
+          <References />
+        </DtsPackage>
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderEHCensusForecast.dtsx</Name>
           <FullPath>ReportSenderEHCensusForecast.dtsx</FullPath>
@@ -178,7 +193,7 @@
           <FullPath>ReportSenderEHSalesActivity.dtsx</FullPath>
           <References />
         </DtsPackage>
-        <DtsPackage FormatVersion="0">
+        <DtsPackage FormatVersion="8">
           <Name>ReportSenderEHUnbilledDailyReport.dtsx</Name>
           <FullPath>ReportSenderEHUnbilledDailyReport.dtsx</FullPath>
           <References />
