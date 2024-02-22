@@ -75,6 +75,15 @@
     <Report Include="Learners By Hour By Center holiday Analysis.rdl" />
     <Report Include="Master Sheet Exception Report.rdl" />
     <Report Include="MasterSheetDailyReport.rdl" />
+    <Report Include="OpsMetric.rdl" />
+    <Report Include="OpsMetric_BCBASupervisionRate.rdl" />
+    <Report Include="OpsMetric_Caseload.rdl" />
+    <Report Include="OpsMetric_LearnerAttendance.rdl" />
+    <Report Include="OpsMetric_LearnerSupervisionRate.rdl" />
+    <Report Include="OpsMetric_OnTimeConversion.rdl" />
+    <Report Include="OpsMetric_ParentEngagement.rdl" />
+    <Report Include="OpsMetric_Productivity.rdl" />
+    <Report Include="OpsMetric_Summary.rdl" />
     <Report Include="ParentHolidayAnalysis.rdl" />
     <Report Include="RBT and BCBA Time worked.rdl" />
     <Report Include="Referral Details.rdl" />

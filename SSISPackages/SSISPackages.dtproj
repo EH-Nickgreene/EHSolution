@@ -73,11 +73,6 @@
           <FullPath>EmployeeRosterImport.dtsx</FullPath>
           <References />
         </DtsPackage>
-        <DtsPackage FormatVersion="0">
-          <Name>ExportEH-OptumPatientDays.dtsx</Name>
-          <FullPath>ExportEH-OptumPatientDays.dtsx</FullPath>
-          <References />
-        </DtsPackage>
         <DtsPackage FormatVersion="8">
           <Name>Generate Cancellation Reports by Location.dtsx</Name>
           <FullPath>Generate Cancellation Reports by Location.dtsx</FullPath>
@@ -153,11 +148,6 @@
           <FullPath>ReportSenderBCBACaseload.dtsx</FullPath>
           <References />
         </DtsPackage>
-        <DtsPackage FormatVersion="0">
-          <Name>ReportSenderEHVendorOptumPatientDays.dtsx</Name>
-          <FullPath>ReportSenderEHVendorOptumPatientDays.dtsx</FullPath>
-          <References />
-        </DtsPackage>
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderEHCensusForecast.dtsx</Name>
           <FullPath>ReportSenderEHCensusForecast.dtsx</FullPath>
@@ -196,6 +186,11 @@
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderEHUnbilledDailyReport.dtsx</Name>
           <FullPath>ReportSenderEHUnbilledDailyReport.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="8">
+          <Name>ReportSenderEHVendorOptumPatientDays.dtsx</Name>
+          <FullPath>ReportSenderEHVendorOptumPatientDays.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">

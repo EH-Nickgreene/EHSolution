@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report MustUnderstand="df" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily">
+  <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="CentralReach">
+      <DataSourceReference>CentralReach</DataSourceReference>
+      <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>9ecddf6a-478a-4d20-a070-03287fe2267b</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="paramFilter">
+      <Query>
+        <DataSourceName>CentralReach</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@ReportType">
+            <Value>=Parameters!ReportType.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>SELECT BranchNameGroup LabelField,BranchCode ValueField
+FROM Reference.dbo.BranchData
+WHERE IsLearningCenter=1
+and BranchStatus='Active'
+AND BranchCode=ParentBranchCode
+AND @ReportType='Branch'
+UNIOn ALL 
+SELECT DISTINCT RDOOName,RDOOName  FilterValue
+FROM Reference.dbo.BranchData
+WHERE IsLearningCenter=1
+and BranchStatus='Active'
+AND BranchCode=ParentBranchCode
+AND @ReportType='Region'
+and ISNULL(RDOOName,'') &lt;&gt;''
+UNIOn ALL 
+SELECT 'ALL','ALL'
+WHERE @ReportType='ALL'
+</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="LabelField">
+          <DataField>LabelField</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValueField">
+          <DataField>ValueField</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Subreport Name="Subreport1">
+            <ReportName>OpsMetric_Summary</ReportName>
+            <Left>0in</Left>
+            <Height>0.90625in</Height>
+            <Width>9.46875in</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Subreport>
+          <Subreport Name="Subreport2">
+            <ReportName>OpsMetric_Productivity</ReportName>
+            <Parameters>
+              <Parameter Name="ReportType">
+                <Value>=Parameters!ReportType.Value</Value>
+              </Parameter>
+              <Parameter Name="Filter">
+                <Value>=Parameters!Filter.Value</Value>
+              </Parameter>
+            </Parameters>
+            <Top>0.93625in</Top>
+            <Left>0in</Left>
+            <Height>0.61458in</Height>
+            <Width>9.46875in</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Subreport>
+          <Subreport Name="Subreport3">
+            <ReportName>OpsMetric_Caseload</ReportName>
+            <Parameters>
+              <Parameter Name="ReportType">
+                <Value>=Parameters!ReportType.Value</Value>
+              </Parameter>
+              <Parameter Name="Filter">
+                <Value>=Parameters!Filter.Value</Value>
+              </Parameter>
+            </Parameters>
+            <Top>1.57861in</Top>
+            <Height>0.61458in</Height>
+            <Width>9.46875in</Width>
+            <ZIndex>2</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Subreport>
+          <Subreport Name="Subreport4">
+            <ReportName>OpsMetric_LearnerAttendance</ReportName>
+            <Parameters>
+              <Parameter Name="ReportType">
+                <Value>=Parameters!ReportType.Value</Value>
+              </Parameter>
+              <Parameter Name="Filter">
+                <Value>=Parameters!Filter.Value</Value>
+              </Parameter>
+            </Parameters>
+            <Top>2.24875in</Top>
+            <Left>0in</Left>
+            <Height>0.61458in</Height>
+            <Width>9.46875in</Width>
+            <ZIndex>3</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Subreport>
+          <Subreport Name="Subreport5">
+            <ReportName>OpsMetric_OnTimeConversion</ReportName>
+            <Parameters>
+              <Parameter Name="ReportType">
+                <Value>=Parameters!ReportType.Value</Value>
+              </Parameter>
+              <Parameter Name="Filter">
+                <Value>=Parameters!Filter.Value</Value>
+              </Parameter>
+            </Parameters>
+            <Top>2.91888in</Top>
+            <Left>0in</Left>
+            <Height>0.61458in</Height>
+            <Width>9.46875in</Width>
+            <ZIndex>4</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Subreport>
+          <Subreport Name="Subreport6">
+            <ReportName>OpsMetric_ParentEngagement</ReportName>
+            <Parameters>
+              <Parameter Name="ReportType">
+                <Value>=Parameters!ReportType.Value</Value>
+              </Parameter>
+              <Parameter Name="Filter">
+                <Value>=Parameters!Filter.Value</Value>
+              </Parameter>
+            </Parameters>
+            <Top>4.95707in</Top>
+            <Height>0.61458in</Height>
+            <Width>9.46875in</Width>
+            <ZIndex>5</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Subreport>
+          <Subreport Name="Subreport7">
+            <ReportName>OpsMetric_BCBASupervisionRate</ReportName>
+            <Parameters>
+              <Parameter Name="ReportType">
+                <Value>=Parameters!ReportType.Value</Value>
+              </Parameter>
+              <Parameter Name="Filter">
+                <Value>=Parameters!Filter.Value</Value>
+              </Parameter>
+            </Parameters>
+            <Top>3.58902in</Top>
+            <Height>0.61458in</Height>
+            <Width>9.46875in</Width>
+            <ZIndex>6</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Subreport>
+          <Subreport Name="Subreport8">
+            <ReportName>OpsMetric_LearnerSupervisionRate</ReportName>
+            <Parameters>
+              <Parameter Name="ReportType">
+                <Value>=Parameters!ReportType.Value</Value>
+              </Parameter>
+              <Parameter Name="Filter">
+                <Value>=Parameters!Filter.Value</Value>
+              </Parameter>
+            </Parameters>
+            <Top>4.27304in</Top>
+            <Height>0.61458in</Height>
+            <Width>9.46875in</Width>
+            <ZIndex>7</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Subreport>
+        </ReportItems>
+        <Height>5.57165in</Height>
+        <Style />
+      </Body>
+      <Width>9.46875in</Width>
+      <Page>
+        <LeftMargin>1in</LeftMargin>
+        <RightMargin>1in</RightMargin>
+        <TopMargin>1in</TopMargin>
+        <BottomMargin>1in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="ReportType">
+      <DataType>String</DataType>
+      <Prompt>Report Type</Prompt>
+      <ValidValues>
+        <ParameterValues>
+          <ParameterValue>
+            <Value>ALL</Value>
+            <Label>ALL</Label>
+          </ParameterValue>
+          <ParameterValue>
+            <Value>Branch</Value>
+            <Label>Branch</Label>
+          </ParameterValue>
+          <ParameterValue>
+            <Value>Region</Value>
+            <Label>Region</Label>
+          </ParameterValue>
+        </ParameterValues>
+      </ValidValues>
+    </ReportParameter>
+    <ReportParameter Name="Filter">
+      <DataType>String</DataType>
+      <Prompt>Filter</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>paramFilter</DataSetName>
+          <ValueField>ValueField</ValueField>
+          <LabelField>LabelField</LabelField>
+        </DataSetReference>
+      </ValidValues>
+    </ReportParameter>
+  </ReportParameters>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>4</NumberOfColumns>
+      <NumberOfRows>2</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>ReportType</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>Filter</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>64c858c1-7b39-40de-bdd8-3e439173ffbc</rd:ReportID>
+</Report>
