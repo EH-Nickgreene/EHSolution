@@ -13,16 +13,24 @@
     <DataSet Name="MTDdata">
       <Query>
         <DataSourceName>EHClinical</DataSourceName>
-        <CommandText>
-DECLARE @monthInt INT
+        <CommandText>DECLARE @monthInt INT
 
-SELECT @monthInt =202401
+
+SET @monthInt=202402
+
+DECLARE @StartDate date, @EndDate date
+
+SELECT @StartDate =MIN(Date), @EndDate =MAX(DATE)
+FROM reference.dbo.dimdate
+WHERE Monthint=@monthInt
+
 
 IF OBJECT_ID('tempdb..#temp') IS NOT NULL DROP TABLE #temp
 SELECT
 dd.WeekOfYearDisplayMonth WeekOfYearDisplay,
 ac.ac_firstname+' '+ac_lastname AdmissionCoordinator,
 st.TargetAdmits,
+ST.EmployeeGivenTarget,
 st.NonCompeteEndDate,
 e.Hiredate,
 COUNT(*) Admissions
@@ -31,7 +39,7 @@ FROM wh_admissions wh
 LEFT JOIN HCHB_EMPYREAN.dbo.Client_episodes ce on ce.epi_id=wh.epi_id
 LEFT JOIN HCHB_EMPYREAN.dbo.ADMISSION_COORDINATORS ac on ac_id=ce.epi_acid
 LEFT JOIN reference.dbo.dimdate dd on wh.epi_socdate=dd.date
-LEFT JOIN SalesTargets st on st.AdmissionCoordinatorID=ac.ac_id AND st.effectiveStartDate&lt;=getdate() and st.effectiveEndDate&gt;=getdate()
+LEFT JOIN SalesTargets st on st.AdmissionCoordinatorID=ac.ac_id AND st.effectiveStartDate&lt;=@StartDate and st.effectiveEndDate&gt;=@EndDate
 LEFT JOIN HCHB_EMPYREAN.dbo.workers wkr on wkr.wkr_id=ac.ac_wkrid
 LEFT JOIN HCHB_EMPYREAN.dbo.worker_homeBranch whb on whb.wh_wkrid=wkr.wkr_id
 LEFT JOIN (
@@ -47,6 +55,7 @@ GROUP BY
 	dd.WeekOfYearDisplayMonth,
 	ac.ac_firstname+' '+ac_lastname ,
 	st.TargetAdmits,
+	ST.EmployeeGivenTarget,
 	st.NonCompeteEndDate,
 	e.Hiredate
 
@@ -56,6 +65,7 @@ SELECT
 	dd.WeekOfYearDisplayMonth WeekOfYearDisplay,
 	ac.ac_firstname+' '+ac_lastname AdmissionCoordinator,
 	st.TargetAdmits,
+	ST.EmployeeGivenTarget,
 	st.NonCompeteEndDate,
 	e.Hiredate,
 	0 Admissions
@@ -65,8 +75,8 @@ FROM
 	FROM reference.dbo.dimdate
 	WHERE monthint=@monthInt
 ) dd
-CROSS JOIN HCHB_EMPYREAN.dbo.ADMISSION_COORDINATORS ac
-INNER JOIN SalesTargets st on st.AdmissionCoordinatorID=ac.ac_id AND st.effectiveStartDate&lt;=getdate() and st.effectiveEndDate&gt;=getdate()
+CROSS JOIN HCHB_EMPYREAN.dbo.ADMISSION_COORDINATORS ac 
+INNER JOIN SalesTargets st on st.AdmissionCoordinatorID=ac.ac_id AND st.effectiveStartDate&lt;=@StartDate and st.effectiveEndDate&gt;=@EndDate
 LEFT JOIN HCHB_EMPYREAN.dbo.workers wkr on wkr.wkr_id=ac.ac_wkrid
 LEFT JOIN HCHB_EMPYREAN.dbo.worker_homeBranch whb on whb.wh_wkrid=wkr.wkr_id
 LEFT JOIN (
@@ -77,7 +87,7 @@ LEFT JOIN (
 	LEFT JOIN HCHB_EMPYREAN.dbo.PAYROLL_GL_CODE_MAPPING_PAYROLL_BRANCHES pgcmpb ON pgcm.pgm_id=pgcmpb.pgmpb_pgmid
 	) pb on pgmpb_branchcode=whb.wh_homebranch
 LEFT JOIN HumanResources.dbo.employee e on e.Employeenumber=wkr.wkr_payrollno and e.PayrollCompanyCode=pb.pgm_payrollCode
-
+WHERE AC.ac_active='Y'
 
 SELECT 
 	*,
@@ -95,6 +105,10 @@ FROM #temp</CommandText>
         </Field>
         <Field Name="TargetAdmits">
           <DataField>TargetAdmits</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="EmployeeGivenTarget">
+          <DataField>EmployeeGivenTarget</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="NonCompeteEndDate">
@@ -121,13 +135,19 @@ FROM #temp</CommandText>
         <CommandText>
 DECLARE @monthInt INT
 
-SELECT @monthInt =202312
+SELECT @monthInt =ConfiguredValue
+FROM reference.[dbo].[SSIS Configurations]
+WHERE ConfigurationFilter IN ('ReportSenderEHHospiceDailyReport')
+and PackagePath='\Package.Variables[User::MonthInt].Properties[Value]'
 
 SELECT DISTINCT 
 	Month,
-	Year
-FROM reference.dbo.dimdate
-WHERE monthint=@monthInt</CommandText>
+	Year,
+	ROUND(((SELECT COUNT(*) FROM reference.dbo.dimdate WHERE monthint=@monthInt and IsWeekDay=1 and IsEmpyreanHoliday=0 and Date&lt;CONVERT(date,GETDATE())) /
+	CONVERT(Float,(SELECT COUNT(*) FROM reference.dbo.dimdate WHERE monthint=@monthInt and IsWeekDay=1 and IsEmpyreanHoliday=0)))*100,0) PercentBusinessDaysCompleted
+
+FROM reference.dbo.dimdate d
+WHERE d.monthint=@monthInt</CommandText>
       </Query>
       <Fields>
         <Field Name="Month">
@@ -137,6 +157,10 @@ WHERE monthint=@monthInt</CommandText>
         <Field Name="Year">
           <DataField>Year</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="PercentBusinessDaysCompleted">
+          <DataField>PercentBusinessDaysCompleted</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -313,10 +337,16 @@ WHERE monthint=@monthInt</CommandText>
                   <Width>0.46875in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.625in</Width>
+                  <Width>0.53125in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.54167in</Width>
+                  <Width>0.47916in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.89583in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.80209in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -429,6 +459,77 @@ WHERE monthint=@monthInt</CommandText>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Textbox36">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!Admissions.Value) / First(Fields!TargetAdmits.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>7pt</FontSize>
+                                    <Format>0.0%</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox20</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="TargetAdmits2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=First(Fields!EmployeeGivenTarget.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>7pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>TargetAdmits1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Textbox20">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -436,7 +537,7 @@ WHERE monthint=@monthInt</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=SUM(Fields!Admissions.Value)/FIRST(Fields!TargetAdmits.Value)</Value>
+                                  <Value>=SUM(Fields!Admissions.Value)/FIRST(Fields!EmployeeGivenTarget.Value)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>7pt</FontSize>
@@ -581,6 +682,81 @@ WHERE monthint=@monthInt</CommandText>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Textbox42">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!Admissions.Value) / Sum(IIF(Fields!RowID.Value = 1, Fields!TargetAdmits.Value, 0))</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>7pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>0.0%</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox40</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>LightGrey</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="TargetAdmits3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(IIF(Fields!RowID.Value = 1, Fields!EmployeeGivenTarget.Value, 0))</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>7pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>TargetAdmits</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>LightGrey</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Textbox40">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -588,7 +764,7 @@ WHERE monthint=@monthInt</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=SUM(Fields!Admissions.Value) / Sum(IIF(Fields!RowID.Value=1,Fields!TargetAdmits.Value,0))</Value>
+                                  <Value>=SUM(Fields!Admissions.Value) / Sum(IIF(Fields!RowID.Value=1,Fields!EmployeeGivenTarget.Value,0))</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>7pt</FontSize>
@@ -759,7 +935,7 @@ WHERE monthint=@monthInt</CommandText>
                   <TablixHeader>
                     <Size>0.34375in</Size>
                     <CellContents>
-                      <Textbox Name="Textbox19">
+                      <Textbox Name="Textbox22">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
@@ -767,6 +943,88 @@ WHERE monthint=@monthInt</CommandText>
                             <TextRuns>
                               <TextRun>
                                 <Value>% to Target</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>7pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox19</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Teal</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>0.34375in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox18">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Employee Given Admit Target</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>7pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox17</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Teal</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>0.34375in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox19">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>% to Employee Given Target</Value>
                                 <Style>
                                   <FontFamily>Arial</FontFamily>
                                   <FontSize>7pt</FontSize>
@@ -808,12 +1066,12 @@ WHERE monthint=@monthInt</CommandText>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Sum(Fields!Admissions.Value)</Value>
+                      <Value>=SUM(Fields!Admissions.Value)/(Fields!EmployeeGivenTarget.Value)</Value>
                       <Direction>Descending</Direction>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
-                    <Size>0.35417in</Size>
+                    <Size>0.3125in</Size>
                     <CellContents>
                       <Textbox Name="Textbox24">
                         <CanGrow>true</CanGrow>
@@ -851,7 +1109,7 @@ WHERE monthint=@monthInt</CommandText>
                   <TablixMembers>
                     <TablixMember>
                       <TablixHeader>
-                        <Size>1.29167in</Size>
+                        <Size>1.14584in</Size>
                         <CellContents>
                           <Textbox Name="AdmissionCoordinator">
                             <CanGrow>true</CanGrow>
@@ -889,7 +1147,7 @@ WHERE monthint=@monthInt</CommandText>
                       <TablixMembers>
                         <TablixMember>
                           <TablixHeader>
-                            <Size>0.63542in</Size>
+                            <Size>0.52084in</Size>
                             <CellContents>
                               <Textbox Name="Hiredate">
                                 <CanGrow>true</CanGrow>
@@ -928,7 +1186,7 @@ WHERE monthint=@monthInt</CommandText>
                           <TablixMembers>
                             <TablixMember>
                               <TablixHeader>
-                                <Size>0.60417in</Size>
+                                <Size>0.55209in</Size>
                                 <CellContents>
                                   <Textbox Name="NonCompeteEndDate">
                                     <CanGrow>true</CanGrow>
@@ -976,7 +1234,7 @@ WHERE monthint=@monthInt</CommandText>
                 </TablixMember>
                 <TablixMember>
                   <TablixHeader>
-                    <Size>2.28126in</Size>
+                    <Size>1.97918in</Size>
                     <CellContents>
                       <Textbox Name="Textbox34">
                         <CanGrow>true</CanGrow>
@@ -1016,7 +1274,7 @@ WHERE monthint=@monthInt</CommandText>
                   <TablixMembers>
                     <TablixMember>
                       <TablixHeader>
-                        <Size>0.60417in</Size>
+                        <Size>0.55209in</Size>
                         <CellContents>
                           <Textbox Name="Textbox43">
                             <CanGrow>true</CanGrow>
@@ -1060,9 +1318,9 @@ WHERE monthint=@monthInt</CommandText>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>MTDdata</DataSetName>
-            <Top>0.98833in</Top>
+            <Top>1.23833in</Top>
             <Height>0.84375in</Height>
-            <Width>5.20835in</Width>
+            <Width>6.39585in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1087,7 +1345,7 @@ WHERE monthint=@monthInt</CommandText>
             </Paragraphs>
             <rd:DefaultName>Textbox31</rd:DefaultName>
             <Height>0.25in</Height>
-            <Width>3.4375in</Width>
+            <Width>3.57293in</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -1119,7 +1377,7 @@ WHERE monthint=@monthInt</CommandText>
             <rd:DefaultName>Textbox31</rd:DefaultName>
             <Top>0.25in</Top>
             <Height>0.25in</Height>
-            <Width>3.4375in</Width>
+            <Width>3.57293in</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -1151,8 +1409,8 @@ WHERE monthint=@monthInt</CommandText>
             </Paragraphs>
             <rd:DefaultName>Textbox33</rd:DefaultName>
             <Top>0.72444in</Top>
-            <Height>0.25in</Height>
-            <Width>3.4375in</Width>
+            <Height>0.20833in</Height>
+            <Width>3.57293in</Width>
             <ZIndex>3</ZIndex>
             <Style>
               <Border>
@@ -1164,16 +1422,49 @@ WHERE monthint=@monthInt</CommandText>
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
+          <Textbox Name="Textbox35">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="% Business days completed in month: " &amp; Sum(Fields!PercentBusinessDaysCompleted.Value, "Singlerow") &amp; "%"</Value>
+                    <Style>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <ListLevel>1</ListLevel>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox33</rd:DefaultName>
+            <Top>0.97444in</Top>
+            <Height>0.19445in</Height>
+            <Width>3.57293in</Width>
+            <ZIndex>4</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
         </ReportItems>
-        <Height>1.83208in</Height>
+        <Height>2.08208in</Height>
         <Style />
       </Body>
-      <Width>5.20835in</Width>
+      <Width>6.39585in</Width>
       <Page>
         <PageHeight>8.5in</PageHeight>
         <PageWidth>11in</PageWidth>
-        <LeftMargin>0.5in</LeftMargin>
-        <RightMargin>0.5in</RightMargin>
+        <LeftMargin>0.25in</LeftMargin>
+        <RightMargin>0.25in</RightMargin>
         <TopMargin>1in</TopMargin>
         <BottomMargin>1in</BottomMargin>
         <Style />

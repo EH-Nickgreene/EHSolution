@@ -2025,6 +2025,7 @@ WHERE @ReportType='ALL'
                                                   <FontFamily>Arial</FontFamily>
                                                   <FontSize>8pt</FontSize>
                                                   <Format>0.0%</Format>
+                                                  <Color>=IIF(Sum(Fields!NumeratorValue.Value) / Sum(Fields!DenominatorValue.Value)&lt;First(Fields!Threshold.Value), "White","Black")</Color>
                                                 </Style>
                                               </TextRun>
                                             </TextRuns>
@@ -2037,6 +2038,7 @@ WHERE @ReportType='ALL'
                                             <Color>LightGrey</Color>
                                             <Style>Solid</Style>
                                           </Border>
+                                          <BackgroundColor>=IIF(Sum(Fields!NumeratorValue.Value) / Sum(Fields!DenominatorValue.Value)&lt;First(Fields!Threshold.Value), "Red","White")</BackgroundColor>
                                           <PaddingLeft>2pt</PaddingLeft>
                                           <PaddingRight>2pt</PaddingRight>
                                           <PaddingTop>2pt</PaddingTop>
@@ -2838,6 +2840,12 @@ WHERE @ReportType='ALL'
                                                                     </TablixMember>
                                                                     <TablixMember>
                                                                       <Group Name="Details" />
+                                                                      <SortExpressions>
+                                                                        <SortExpression>
+                                                                          <Value>=Fields!WeeklyAverage.Value</Value>
+                                                                          <Direction>Descending</Direction>
+                                                                        </SortExpression>
+                                                                      </SortExpressions>
                                                                       <Visibility>
                                                                         <Hidden>true</Hidden>
                                                                         <ToggleItem>BCBAName1</ToggleItem>
@@ -2901,7 +2909,7 @@ WHERE @ReportType='ALL'
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>="Executed On: " &amp; FORMAT("MM/dd/yyyy",TODAY())</Value>
+                    <Value>="Executed On: " &amp; FORMAT("MM/dd/yyyy",NOW())</Value>
                     <Style />
                   </TextRun>
                 </TextRuns>
@@ -2941,7 +2949,7 @@ WHERE @ReportType='ALL'
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value> - Learner Supervision % = (Supervisory Hours During Direct Care) / (Total Direct Care Hours)</Value>
+                    <Value> - Learner Supervision % = (Supervison Hours During Direct Care) / (Total Direct Care Hours)</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>
@@ -2963,7 +2971,7 @@ WHERE @ReportType='ALL'
                     <Style />
                   </TextRun>
                   <TextRun>
-                    <Value> - Supervisory includes service code 97155</Value>
+                    <Value> - Supervison includes service code 97155</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>
@@ -2974,7 +2982,7 @@ WHERE @ReportType='ALL'
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value> - Supervisory session time must overlap with a direct care to be included</Value>
+                    <Value> - Supervison session time must overlap with a direct care session to be included</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>
@@ -3016,7 +3024,7 @@ WHERE @ReportType='ALL'
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>="   Weekly Average Threshold: " &amp; CStr((First(Fields!Threshold.Value, "MetricData"))*100) &amp; "%"</Value>
+                    <Value>="   Learner Supervision Threshold: " &amp; CStr((First(Fields!Threshold.Value, "MetricData"))*100) &amp; "%"</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>

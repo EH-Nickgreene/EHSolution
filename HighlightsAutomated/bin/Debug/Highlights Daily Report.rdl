@@ -290,7 +290,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 		SELECT 
 		ISNULL(bdp.branchCode,'EZZ'),
 		dd.weekofyearDisplay,
-		cmd.[Initial Service Request]+' Referrals' MetricType,
+		ISNULL(cmd.[Initial Service Request],'DIAG')+' Referrals' MetricType,
 		COUNT(*) MetricValue,
 		0 Completed,
 		0 ScheduledHours,
@@ -340,7 +340,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 				ELSE 6
 			END ColumnOrder,				
 			1 as BranchOrder,
-			bd.BranchName ClientOfficeLocationName,
+			bd.BranchNameGroup ClientOfficeLocationName,
 			COALESCE(c.Week,st.ReportingPeriod) ReportingWeek,
 			COALESCE(c.MetricType,st.metricType) MetricType,
 			CASE
@@ -453,8 +453,27 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
     <DataSet Name="ActionableReferrals">
       <Query>
         <DataSourceName>HumanResourcesElevated</DataSourceName>
-        <CommandText>		SELECT 
+        <CommandText>		DECLARE @Today date=GETDATE()
 
+		SELECT 
+			CASE
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=30 THEN '0-30'
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=31 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=60  THEN '31-60'
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=61 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=90  THEN '61-90'
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=91 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=120  THEN '91-120'
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=121 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=180  THEN '121-180'
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=181 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=360  THEN '181-360'
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=361 THEN '361+'
+			END ReferralAge,
+			CASE
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=30 THEN 1
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=31 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=60  THEN 2
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=61 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=90  THEN 3
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=91 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=120  THEN 4
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=121 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=180  THEN 5
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=181 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=360  THEN 6
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=361 THEN 7
+			END ReferralAgeOrder,
 			C.ClientOfficeLocationName,	
 			CMD.CurrentStatus,
 			[Reason Code],
@@ -467,10 +486,37 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 		GROUP BY 
 			C.ClientOfficeLocationName,
 			CMD.CurrentStatus,
-			[Reason Code]
+			[Reason Code],
+			CASE
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=30 THEN '0-30'
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=31 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=60  THEN '31-60'
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=61 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=90  THEN '61-90'
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=91 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=120  THEN '91-120'
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=121 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=180  THEN '121-180'
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=181 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=360  THEN '181-360'
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=361 THEN '361+'
+			END,
+			CASE
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=30 THEN 1
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=31 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=60  THEN 2
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=61 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=90  THEN 3
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=91 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=120  THEN 4
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=121 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=180  THEN 5
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=181 and Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&lt;=360  THEN 6
+				WHEN Datediff(dd,ISNULL([Referral Form Date],LastChangeDate),@Today)&gt;=361 THEN 7
+			END
+
 </CommandText>
       </Query>
       <Fields>
+        <Field Name="ReferralAge">
+          <DataField>ReferralAge</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ReferralAgeOrder">
+          <DataField>ReferralAgeOrder</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
         <Field Name="ClientOfficeLocationName">
           <DataField>ClientOfficeLocationName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -492,13 +538,12 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
     <DataSet Name="CurrentCensus">
       <Query>
         <DataSourceName>HumanResourcesElevated</DataSourceName>
-        <CommandText>
---CURRENT CENSUS
+        <CommandText>--CURRENT CENSUS
 
 		; With CteCensusActive as(
 
 		SELECT 
-			bdp.BranchName,
+			bdp.BranchNameGroup,
 			SUM(CASE WHEN [Reason Code]='Exclude from Stat' THEN 1 ELSE 0 END) Active_ExcludeFromStat,
 			SUM(CASE WHEN [Reason Code]='On Service' THEN 1 ELSE 0 END) Active_OnService
 			
@@ -508,12 +553,12 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 		LEFT JOIN Reference.dbo.branchData bdp on bdp.branchcode=bd.ParentBranchCode
 		WHERE CurrentStatus IN ('Active')
 		and [Reason Code] IN('Exclude from Stat','On Service')
-		GROUP BY bdp.BranchName
+		GROUP BY bdp.BranchNameGroup
 		)
 
 		, CteCensusUpNext as (
 		--UpNext Learners
-		SELECT bdp.BranchName,
+		SELECT bdp.BranchNameGroup,
 		SUM(CASE WHEN [Reason Code]='Up Next'THEN 1 ELSE 0 END) Probably_UpNext,
 		SUM(CASE WHEN ISNULL([Reason Code],'')&lt;&gt;'Up Next'THEN 1 ELSE 0 END) Probable_Other		
 		FROM CentralReach.dbo.ClientMasterSheet cmd
@@ -522,11 +567,11 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 		LEFT JOIN Reference.dbo.branchData bdp on bdp.branchcode=bd.ParentBranchCode
 		WHERE CurrentStatus IN ('Probable')
 		--and [Reason Code]='Up Next'
-		GROUP BY bdp.BranchName
+		GROUP BY bdp.BranchNameGroup
 		)
 
 		SELECT 
-			COALESCE(active.BranchName,upnext.BranchName) as LearningCenter,
+			COALESCE(active.BranchNameGroup,upnext.BranchNameGroup) as LearningCenter,
 			ISNULL(Active.Active_OnService,0) Active_OnService,
 			ISNULL(Active.Active_ExcludeFromStat,0) Active_ExcludeFromStat,
 			ISNULL(UpNext.Probably_UpNext,0) Probable_UpNext,
@@ -534,7 +579,7 @@ IF OBJECT_ID('tempdb..#Current') IS NOT NULL DROP TABLE #Current
 
 		--SELECT * 
 		FROM CteCensusActive active
-		FULL JOIN CteCensusUpNext upnext on active.BranchName=upnext.BranchName</CommandText>
+		FULL JOIN CteCensusUpNext upnext on active.BranchNameGroup=upnext.BranchNameGroup</CommandText>
       </Query>
       <Fields>
         <Field Name="LearningCenter">
@@ -598,6 +643,68 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
         <Field Name="ScheduledHours">
           <DataField>ScheduledHours</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="ReferralToABADays">
+      <Query>
+        <DataSourceName>HumanResourcesElevated</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@WeekStartDate">
+            <Value>=Parameters!WeekStartDate.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@WeekEndDate">
+            <Value>=Parameters!WeekEndDate.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>;With ChangeTracking as (
+	SELECT ClientID,MIN(InsertedOn) ReferralDate 
+	FROM CentralReach.dbo.ClientMetaDataChanges
+	GROUP BY ClientID
+	)
+
+	SELECT 
+		bd.ABACode+' - '+bd.BranchName BranchName,
+		cmd.Learner,
+		cmd.[Initial Service Request],
+		datediff(dd,[ABA Assess Scheduled Date],ISNULL([Date ABA Service Began],@WeekEndDate)) AssesmentToABADays,
+		datediff(dd,ISNULL([Referral Form Date],ReferralDate),ISNULL([Date ABA Service Began],@WeekEndDate)) ReferralToABADays
+		--cmd.*
+
+		
+	FROM 
+		CentralReach.dbo.ClientMasterSheet cmd
+		LEFT JOIN CentralReach.insights.Client c on cmd.CLientID=c.ClientId
+		LEFT JOIN Reference.dbo.branchData bd on LEFT(cmd.serviceLocation,3)=bd.ABACode
+		LEFT JOIN Reference.dbo.branchData bdp on bdp.branchcode=bd.ParentBranchCode
+		INNER JOIN Reference.dbo.DimDate dd on dd.date=cmd.[Planned Start Week ]
+		LEFT JOIN ChangeTracking ct on ct.clientid=cmd.clientid
+	WHERE 
+		dd.date&gt;=@WeekStartDate
+		and dd.date&lt;=@WeekEndDate
+		ORDER By ReferralToABADays
+</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="BranchName">
+          <DataField>BranchName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Learner">
+          <DataField>Learner</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Initial_Service_Request">
+          <DataField>Initial Service Request</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AssesmentToABADays">
+          <DataField>AssesmentToABADays</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="ReferralToABADays">
+          <DataField>ReferralToABADays</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -1221,7 +1328,8 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
             <PageBreak>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
-            <Top>5.43973in</Top>
+            <Top>7.68973in</Top>
+            <Left>0.02084in</Left>
             <Height>0.86458in</Height>
             <Width>5.28125in</Width>
             <Style>
@@ -1767,6 +1875,7 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <Top>1.78125in</Top>
+            <Left>0.02084in</Left>
             <Height>1.66667in</Height>
             <Width>3.40625in</Width>
             <ZIndex>1</ZIndex>
@@ -2432,7 +2541,8 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>ActionableReferrals</DataSetName>
-            <Top>8.19667in</Top>
+            <Top>10.44667in</Top>
+            <Left>0.02084in</Left>
             <Height>1.73958in</Height>
             <Width>3.125in</Width>
             <ZIndex>2</ZIndex>
@@ -2460,7 +2570,8 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox58</rd:DefaultName>
-            <Top>3.50917in</Top>
+            <Top>5.75917in</Top>
+            <Left>0.02084in</Left>
             <Height>0.25in</Height>
             <Width>2.5in</Width>
             <ZIndex>3</ZIndex>
@@ -2493,6 +2604,7 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
             </Paragraphs>
             <rd:DefaultName>Textbox58</rd:DefaultName>
             <Top>0.00347in</Top>
+            <Left>0.02084in</Left>
             <Height>0.25in</Height>
             <Width>2.5in</Width>
             <ZIndex>4</ZIndex>
@@ -3642,7 +3754,8 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>CurrentCensus</DataSetName>
-            <Top>6.7175in</Top>
+            <Top>8.9675in</Top>
+            <Left>0.02084in</Left>
             <Height>1.125in</Height>
             <Width>5.88541in</Width>
             <ZIndex>5</ZIndex>
@@ -3672,6 +3785,7 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
             </Paragraphs>
             <rd:DefaultName>Textbox58</rd:DefaultName>
             <Top>1.48958in</Top>
+            <Left>0.02084in</Left>
             <Height>0.25in</Height>
             <Width>4.55209in</Width>
             <ZIndex>6</ZIndex>
@@ -3703,7 +3817,8 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox58</rd:DefaultName>
-            <Top>6.3425in</Top>
+            <Top>8.5925in</Top>
+            <Left>0.02084in</Left>
             <Height>0.25in</Height>
             <Width>3.3125in</Width>
             <ZIndex>7</ZIndex>
@@ -3721,7 +3836,8 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
             <PageBreak>
               <BreakLocation>Start</BreakLocation>
             </PageBreak>
-            <Top>7.98833in</Top>
+            <Top>10.23833in</Top>
+            <Left>0.02084in</Left>
             <Height>0.20833in</Height>
             <Width>4.14583in</Width>
             <ZIndex>8</ZIndex>
@@ -4017,6 +4133,7 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
               </Filter>
             </Filters>
             <Top>0.29514in</Top>
+            <Left>0.02084in</Left>
             <Height>1.0625in</Height>
             <Width>3.3125in</Width>
             <ZIndex>9</ZIndex>
@@ -4334,7 +4451,8 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>DumbyQuery</DataSetName>
-            <Top>3.82861in</Top>
+            <Top>6.07861in</Top>
+            <Left>0.02084in</Left>
             <Height>1.5057in</Height>
             <Width>5.28125in</Width>
             <ZIndex>10</ZIndex>
@@ -4344,11 +4462,672 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
               </Border>
             </Style>
           </Tablix>
+          <Rectangle Name="Rectangle2">
+            <ReportItems>
+              <Tablix Name="Tablix8">
+                <TablixBody>
+                  <TablixColumns>
+                    <TablixColumn>
+                      <Width>2.40625in</Width>
+                    </TablixColumn>
+                    <TablixColumn>
+                      <Width>1.73958in</Width>
+                    </TablixColumn>
+                    <TablixColumn>
+                      <Width>0.76042in</Width>
+                    </TablixColumn>
+                    <TablixColumn>
+                      <Width>1in</Width>
+                    </TablixColumn>
+                    <TablixColumn>
+                      <Width>0.76041in</Width>
+                    </TablixColumn>
+                  </TablixColumns>
+                  <TablixRows>
+                    <TablixRow>
+                      <Height>0.33333in</Height>
+                      <TablixCells>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="Textbox37">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>Learning Center</Value>
+                                      <Style>
+                                        <FontFamily>Arial</FontFamily>
+                                        <FontSize>8pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                        <Color>White</Color>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Center</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox37</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Color>LightGrey</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                                <BackgroundColor>Teal</BackgroundColor>
+                                <VerticalAlign>Middle</VerticalAlign>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="Textbox24">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>Learner</Value>
+                                      <Style>
+                                        <FontSize>8pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                        <Color>White</Color>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Center</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox24</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Color>LightGrey</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                                <BackgroundColor>Teal</BackgroundColor>
+                                <VerticalAlign>Middle</VerticalAlign>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="Textbox30">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>Category</Value>
+                                      <Style>
+                                        <FontSize>8pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                        <Color>White</Color>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Center</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox30</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Color>LightGrey</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                                <BackgroundColor>Teal</BackgroundColor>
+                                <VerticalAlign>Middle</VerticalAlign>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="Textbox68">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>Assesment To ABA Days</Value>
+                                      <Style>
+                                        <FontFamily>Arial</FontFamily>
+                                        <FontSize>8pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                        <Color>White</Color>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Center</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox68</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Color>LightGrey</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                                <BackgroundColor>Teal</BackgroundColor>
+                                <VerticalAlign>Middle</VerticalAlign>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="Textbox35">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value> Referral To ABA Days</Value>
+                                      <Style>
+                                        <FontFamily>Arial</FontFamily>
+                                        <FontSize>8pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                        <Color>White</Color>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Center</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox35</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Color>LightGrey</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                                <BackgroundColor>Teal</BackgroundColor>
+                                <VerticalAlign>Middle</VerticalAlign>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                      </TablixCells>
+                    </TablixRow>
+                    <TablixRow>
+                      <Height>0.25in</Height>
+                      <TablixCells>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="BranchName">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!BranchName.Value</Value>
+                                      <Style>
+                                        <FontSize>8pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>BranchName</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Color>LightGrey</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="Learner">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!Learner.Value</Value>
+                                      <Style>
+                                        <FontSize>8pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Learner</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Color>LightGrey</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="Initial_Service_Request">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!Initial_Service_Request.Value</Value>
+                                      <Style>
+                                        <FontSize>8pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Center</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Initial_Service_Request</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Color>LightGrey</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="AssesmentToABADays">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!AssesmentToABADays.Value</Value>
+                                      <Style>
+                                        <FontFamily>Arial</FontFamily>
+                                        <FontSize>8pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Center</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>AssesmentToABADays</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Color>LightGrey</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="ReferralToABADays">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!ReferralToABADays.Value</Value>
+                                      <Style>
+                                        <FontFamily>Arial</FontFamily>
+                                        <FontSize>8pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Center</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>ReferralToABADays</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Color>LightGrey</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                      </TablixCells>
+                    </TablixRow>
+                    <TablixRow>
+                      <Height>0.25in</Height>
+                      <TablixCells>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="Textbox46">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value />
+                                      <Style>
+                                        <FontFamily>Arial</FontFamily>
+                                        <FontSize>8pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox46</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Color>LightGrey</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                                <BackgroundColor>LightGrey</BackgroundColor>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="Textbox40">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value />
+                                      <Style>
+                                        <FontFamily>Arial</FontFamily>
+                                        <FontSize>8pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox40</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Color>LightGrey</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                                <BackgroundColor>LightGrey</BackgroundColor>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="Textbox44">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>Average:</Value>
+                                      <Style>
+                                        <FontFamily>Arial</FontFamily>
+                                        <FontSize>8pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Center</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox44</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Color>LightGrey</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                                <BackgroundColor>LightGrey</BackgroundColor>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="Textbox73">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=AVG(Fields!AssesmentToABADays.Value)</Value>
+                                      <Style>
+                                        <FontFamily>Arial</FontFamily>
+                                        <FontSize>8pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Center</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Textbox73</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Color>LightGrey</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                                <BackgroundColor>LightGrey</BackgroundColor>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                        <TablixCell>
+                          <CellContents>
+                            <Textbox Name="ReferralToABADays1">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=AVG(Fields!ReferralToABADays.Value)</Value>
+                                      <Style>
+                                        <FontFamily>Arial</FontFamily>
+                                        <FontSize>8pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                        <Format>0.00;(0.00)</Format>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Center</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>ReferralToABADays1</rd:DefaultName>
+                              <Style>
+                                <Border>
+                                  <Color>LightGrey</Color>
+                                  <Style>Solid</Style>
+                                </Border>
+                                <BackgroundColor>LightGrey</BackgroundColor>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
+                          </CellContents>
+                        </TablixCell>
+                      </TablixCells>
+                    </TablixRow>
+                  </TablixRows>
+                </TablixBody>
+                <TablixColumnHierarchy>
+                  <TablixMembers>
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                  </TablixMembers>
+                </TablixColumnHierarchy>
+                <TablixRowHierarchy>
+                  <TablixMembers>
+                    <TablixMember>
+                      <KeepWithGroup>After</KeepWithGroup>
+                    </TablixMember>
+                    <TablixMember>
+                      <Group Name="Details2" />
+                    </TablixMember>
+                    <TablixMember>
+                      <KeepWithGroup>Before</KeepWithGroup>
+                    </TablixMember>
+                  </TablixMembers>
+                </TablixRowHierarchy>
+                <DataSetName>ReferralToABADays</DataSetName>
+                <Top>0.40625in</Top>
+                <Height>0.83333in</Height>
+                <Width>6.66666in</Width>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                </Style>
+              </Tablix>
+              <Textbox Name="Textbox66">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>Learners starting this week - # of days referral to ABA</Value>
+                        <Style>
+                          <FontSize>12pt</FontSize>
+                          <FontWeight>Bold</FontWeight>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox58</rd:DefaultName>
+                <Top>0.08681in</Top>
+                <Left>0.02084in</Left>
+                <Height>0.25in</Height>
+                <Width>5.66666in</Width>
+                <ZIndex>1</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+            </ReportItems>
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
+            <Top>3.63652in</Top>
+            <Height>1.23958in</Height>
+            <Width>6.66666in</Width>
+            <ZIndex>11</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Rectangle>
         </ReportItems>
-        <Height>9.93625in</Height>
+        <Height>12.81125in</Height>
         <Style />
       </Body>
-      <Width>5.88541in</Width>
+      <Width>6.66666in</Width>
       <Page>
         <PageHeader>
           <Height>0.96292in</Height>
@@ -4372,6 +5151,7 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox100</rd:DefaultName>
+              <Left>0.02084in</Left>
               <Height>0.25in</Height>
               <Width>5.3125in</Width>
               <Style>
@@ -4402,6 +5182,7 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
               </Paragraphs>
               <rd:DefaultName>Textbox100</rd:DefaultName>
               <Top>0.515in</Top>
+              <Left>0.02084in</Left>
               <Height>0.25in</Height>
               <Width>5.3125in</Width>
               <ZIndex>1</ZIndex>
@@ -4433,6 +5214,7 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
               </Paragraphs>
               <rd:DefaultName>Textbox100</rd:DefaultName>
               <Top>0.265in</Top>
+              <Left>0.02084in</Left>
               <Height>0.25in</Height>
               <Width>5.3125in</Width>
               <ZIndex>2</ZIndex>
@@ -4448,7 +5230,7 @@ and CONVERT(date,TrackingDate)=@WeekStartDate
             </Textbox>
             <Line Name="Line1">
               <Top>0.87375in</Top>
-              <Left>0.01958in</Left>
+              <Left>0.04042in</Left>
               <Height>0in</Height>
               <Width>5.86583in</Width>
               <ZIndex>3</ZIndex>

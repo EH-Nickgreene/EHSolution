@@ -2892,7 +2892,7 @@ WHERE @ReportType='ALL'
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>="Executed On: " &amp; FORMAT("MM/dd/yyyy",TODAY())</Value>
+                    <Value>="Executed On: " &amp; FORMAT("MM/dd/yyyy",NOW())</Value>
                     <Style />
                   </TextRun>
                 </TextRuns>

@@ -1371,7 +1371,7 @@ WHERE @ReportType='ALL'
                                   <Paragraph>
                                     <TextRuns>
                                       <TextRun>
-                                        <Value>6 Weel Supervision Hours</Value>
+                                        <Value>6 Week Supervision Hours</Value>
                                         <Style>
                                           <FontFamily>Arial</FontFamily>
                                           <FontSize>8pt</FontSize>
@@ -2023,6 +2023,7 @@ WHERE @ReportType='ALL'
                                                   <FontFamily>Arial</FontFamily>
                                                   <FontSize>8pt</FontSize>
                                                   <Format>0.0%</Format>
+                                                  <Color>=IIF(Sum(Fields!NumeratorValue.Value) / Sum(Fields!DenominatorValue.Value)&lt;First(Fields!Threshold.Value), "White","Black")</Color>
                                                 </Style>
                                               </TextRun>
                                             </TextRuns>
@@ -2035,6 +2036,7 @@ WHERE @ReportType='ALL'
                                             <Color>LightGrey</Color>
                                             <Style>Solid</Style>
                                           </Border>
+                                          <BackgroundColor>=IIF(Sum(Fields!NumeratorValue.Value) / Sum(Fields!DenominatorValue.Value)&lt;First(Fields!Threshold.Value), "Red","White")</BackgroundColor>
                                           <PaddingLeft>2pt</PaddingLeft>
                                           <PaddingRight>2pt</PaddingRight>
                                           <PaddingTop>2pt</PaddingTop>
@@ -2832,6 +2834,12 @@ WHERE @ReportType='ALL'
                                                                     </TablixMember>
                                                                     <TablixMember>
                                                                       <Group Name="Details" />
+                                                                      <SortExpressions>
+                                                                        <SortExpression>
+                                                                          <Value>=Fields!WeeklyAverage.Value</Value>
+                                                                          <Direction>Descending</Direction>
+                                                                        </SortExpression>
+                                                                      </SortExpressions>
                                                                       <Visibility>
                                                                         <Hidden>true</Hidden>
                                                                         <ToggleItem>BCBAName1</ToggleItem>
@@ -2895,7 +2903,7 @@ WHERE @ReportType='ALL'
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>="Executed On: " &amp; FORMAT("MM/dd/yyyy",TODAY())</Value>
+                    <Value>="Executed On: " &amp; FORMAT("MM/dd/yyyy",NOW())</Value>
                     <Style />
                   </TextRun>
                 </TextRuns>
@@ -2957,7 +2965,7 @@ WHERE @ReportType='ALL'
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value> - BCBA learner labels are not used in this report</Value>
+                    <Value> - BCBA learner label assignments are not used in this report</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>
@@ -2968,7 +2976,7 @@ WHERE @ReportType='ALL'
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value> - Time is asigned to a BCBA if they completed the sessions</Value>
+                    <Value> - Employees are mapped to the location they are assigned to in ADP</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>
@@ -2999,7 +3007,7 @@ WHERE @ReportType='ALL'
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>="   Weekly Average Threshold: " &amp; CStr((First(Fields!Threshold.Value, "MetricData"))*100) &amp; "%"</Value>
+                    <Value>="   BCBA Supervision Threshold: " &amp; CStr((First(Fields!Threshold.Value, "MetricData"))*100) &amp; "%"</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                     </Style>

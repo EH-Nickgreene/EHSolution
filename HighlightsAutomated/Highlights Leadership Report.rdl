@@ -16021,7 +16021,7 @@ Conversion ABADx</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>TermsByRecruiterByWeek</DataSetName>
-            <Top>33.70709in</Top>
+            <Top>33.83209in</Top>
             <Height>0.625in</Height>
             <Width>2.70834in</Width>
             <ZIndex>46</ZIndex>
@@ -16113,10 +16113,25 @@ Conversion ABADx</Value>
                 <ListLevel>1</ListLevel>
                 <Style />
               </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Values represent: Hires / Terms / Net</Value>
+                    <Style>
+                      <FontSize>9pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <Color>#575757</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <ListStyle>Bulleted</ListStyle>
+                <ListLevel>1</ListLevel>
+                <Style />
+              </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox189</rd:DefaultName>
             <Top>33.0925in</Top>
-            <Height>0.54514in</Height>
+            <Height>0.77431in</Height>
             <Width>4.99867in</Width>
             <ZIndex>48</ZIndex>
             <Style>

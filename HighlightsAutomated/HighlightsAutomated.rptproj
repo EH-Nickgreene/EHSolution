@@ -58,6 +58,7 @@
     <Report Include="BCBA Caseload Summary Report.rdl" />
     <Report Include="Billing Hours by Location by Week.rdl" />
     <Report Include="Clinic Capacity.rdl" />
+    <Report Include="Copy of Highlights Daily Report.rdl" />
     <Report Include="Copy of Learner Cancellation Rate.rdl" />
     <Report Include="Copy of Productivity And Auth Utilization.rdl" />
     <Report Include="Daily Learner Cancellation Report.rdl" />
@@ -76,8 +77,12 @@
     <Report Include="Master Sheet Exception Report.rdl" />
     <Report Include="MasterSheetDailyReport.rdl" />
     <Report Include="OpsMetric.rdl" />
+    <Report Include="OpsMetricsV2_ExecCaseload Subreport.rdl" />
+    <Report Include="OpsMetricsV2_ExecCaseload.rdl" />
+    <Report Include="OpsMetricsV2_ExecProductivity.rdl" />
     <Report Include="OpsMetric_BCBASupervisionRate.rdl" />
     <Report Include="OpsMetric_Caseload.rdl" />
+    <Report Include="OpsMetric_ExceptionReport.rdl" />
     <Report Include="OpsMetric_LearnerAttendance.rdl" />
     <Report Include="OpsMetric_LearnerSupervisionRate.rdl" />
     <Report Include="OpsMetric_OnTimeConversion.rdl" />
@@ -86,6 +91,7 @@
     <Report Include="OpsMetric_Summary.rdl" />
     <Report Include="ParentHolidayAnalysis.rdl" />
     <Report Include="RBT and BCBA Time worked.rdl" />
+    <Report Include="Recruiter Productivity.rdl" />
     <Report Include="Referral Details.rdl" />
     <Report Include="Referral Master Sheet.rdl" />
     <Report Include="UpNext.rdl" />

@@ -341,16 +341,16 @@ WHERE d.monthint=@monthInt</CommandText>
                   <Width>0.46875in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.625in</Width>
+                  <Width>0.53125in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.58333in</Width>
+                  <Width>0.47916in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>0.89583in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.92709in</Width>
+                  <Width>0.80209in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1075,7 +1075,7 @@ WHERE d.monthint=@monthInt</CommandText>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
-                    <Size>0.35417in</Size>
+                    <Size>0.3125in</Size>
                     <CellContents>
                       <Textbox Name="Textbox24">
                         <CanGrow>true</CanGrow>
@@ -1113,7 +1113,7 @@ WHERE d.monthint=@monthInt</CommandText>
                   <TablixMembers>
                     <TablixMember>
                       <TablixHeader>
-                        <Size>1.29167in</Size>
+                        <Size>1.14584in</Size>
                         <CellContents>
                           <Textbox Name="AdmissionCoordinator">
                             <CanGrow>true</CanGrow>
@@ -1151,7 +1151,7 @@ WHERE d.monthint=@monthInt</CommandText>
                       <TablixMembers>
                         <TablixMember>
                           <TablixHeader>
-                            <Size>0.63542in</Size>
+                            <Size>0.52084in</Size>
                             <CellContents>
                               <Textbox Name="Hiredate">
                                 <CanGrow>true</CanGrow>
@@ -1190,7 +1190,7 @@ WHERE d.monthint=@monthInt</CommandText>
                           <TablixMembers>
                             <TablixMember>
                               <TablixHeader>
-                                <Size>0.60417in</Size>
+                                <Size>0.55209in</Size>
                                 <CellContents>
                                   <Textbox Name="NonCompeteEndDate">
                                     <CanGrow>true</CanGrow>
@@ -1238,7 +1238,7 @@ WHERE d.monthint=@monthInt</CommandText>
                 </TablixMember>
                 <TablixMember>
                   <TablixHeader>
-                    <Size>2.28126in</Size>
+                    <Size>1.97918in</Size>
                     <CellContents>
                       <Textbox Name="Textbox34">
                         <CanGrow>true</CanGrow>
@@ -1278,7 +1278,7 @@ WHERE d.monthint=@monthInt</CommandText>
                   <TablixMembers>
                     <TablixMember>
                       <TablixHeader>
-                        <Size>0.60417in</Size>
+                        <Size>0.55209in</Size>
                         <CellContents>
                           <Textbox Name="Textbox43">
                             <CanGrow>true</CanGrow>
@@ -1324,7 +1324,7 @@ WHERE d.monthint=@monthInt</CommandText>
             <DataSetName>MTDdata</DataSetName>
             <Top>1.23833in</Top>
             <Height>0.84375in</Height>
-            <Width>7.1771in</Width>
+            <Width>6.39585in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1463,7 +1463,7 @@ WHERE d.monthint=@monthInt</CommandText>
         <Height>2.08208in</Height>
         <Style />
       </Body>
-      <Width>7.1771in</Width>
+      <Width>6.39585in</Width>
       <Page>
         <PageHeight>8.5in</PageHeight>
         <PageWidth>11in</PageWidth>

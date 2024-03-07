@@ -53,7 +53,9 @@
     <DataSource Include="HumanResources.rds" />
   </ItemGroup>
   <ItemGroup>
+    <Report Include="Aide Productivity.rdl" />
     <Report Include="CensusForecast.rdl" />
+    <Report Include="Copy of CensusForecast.rdl" />
     <Report Include="Copy of MTD Admissions by Sales Rep.rdl" />
     <Report Include="DailyLeadTracker.rdl" />
     <Report Include="Hospice Leadership Report - Clinical.rdl" />
