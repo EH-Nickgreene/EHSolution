@@ -102,7 +102,7 @@
 		ORDER BY BranchName
 		
 
-		SELECT *,dateadd(dd,-35,@StartDate) SixWeekStart,@StartDate SixWeekEnd FROM #temp
+		SELECT *,dateadd(dd,-35,@StartDate) SixWeekStart,dateadd(dd,6,@StartDate) SixWeekEnd FROM #temp
 		UNION ALL	
 		SELECT 
 			jc.ABAExpectedBillableHours,
@@ -144,7 +144,7 @@
 			NULL ConsecutiveWeeksBelowThreshold	,
 			0 WeeklyAverage,
 			dateadd(dd,-35,@StartDate) SixWeekStart,
-			@StartDate SixWeekEnd
+			dateadd(dd,6,@StartDate) SixWeekEnd
 
 
 		FROM HumanResources.dbo.v_employee e 
@@ -1801,8 +1801,8 @@ and BranchStatus='Active'
             <PageName>Summary</PageName>
             <Top>1.35292in</Top>
             <Left>0.00001in</Left>
-            <Height>1.63542in</Height>
-            <Width>11.90625in</Width>
+            <Height>1.63541in</Height>
+            <Width>11.90626in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -3642,7 +3642,7 @@ and BranchStatus='Active'
             <Top>3.25in</Top>
             <Left>0.00001in</Left>
             <Height>1.45833in</Height>
-            <Width>13.78125in</Width>
+            <Width>13.78126in</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -3881,7 +3881,7 @@ and BranchStatus='Active'
             <DataSetName>SingleRow</DataSetName>
             <Top>0.71403in</Top>
             <Height>0.5in</Height>
-            <Width>3.31251in</Width>
+            <Width>3.3125in</Width>
             <ZIndex>4</ZIndex>
             <Style>
               <Border>
@@ -5687,7 +5687,7 @@ and BranchStatus='Active'
             <PageName>Detail</PageName>
             <Top>6.03in</Top>
             <Height>1.09375in</Height>
-            <Width>17.76043in</Width>
+            <Width>17.76041in</Width>
             <ZIndex>6</ZIndex>
             <Style>
               <Border>

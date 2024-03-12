@@ -133,6 +133,11 @@
           <FullPath>ReportSenderABARBTandBCBATimeWorked.dtsx</FullPath>
           <References />
         </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>ReportSenderABARecruiterProductivity.dtsx</Name>
+          <FullPath>ReportSenderABARecruiterProductivity.dtsx</FullPath>
+          <References />
+        </DtsPackage>
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderABAUpNext.dtsx</Name>
           <FullPath>ReportSenderABAUpNext.dtsx</FullPath>
@@ -146,6 +151,11 @@
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderBCBACaseload.dtsx</Name>
           <FullPath>ReportSenderBCBACaseload.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>ReportSenderEHAideProductivity.dtsx</Name>
+          <FullPath>ReportSenderEHAideProductivity.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">
@@ -176,6 +186,11 @@
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderEHOpsMetrics.dtsx</Name>
           <FullPath>ReportSenderEHOpsMetrics.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>ReportSenderEHStateServPatientDays.dtsx</Name>
+          <FullPath>ReportSenderEHStateServPatientDays.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">
