@@ -55,6 +55,7 @@
   <ItemGroup>
     <Report Include="Aide Productivity.rdl" />
     <Report Include="CensusForecast.rdl" />
+    <Report Include="Chaplain Productivity.rdl" />
     <Report Include="Copy of CensusForecast.rdl" />
     <Report Include="Copy of MTD Admissions by Sales Rep.rdl" />
     <Report Include="DailyLeadTracker.rdl" />
@@ -73,6 +74,7 @@
     <Report Include="OpsMetrics_UnverifiedVisits.rdl" />
     <Report Include="SalesActivityReport.rdl" />
     <Report Include="SalesActivitySubReport.rdl" />
+    <Report Include="Social Worker Productivity.rdl" />
     <Report Include="SSRSWakeUp.rdl" />
     <Report Include="StateservPatientDays.rdl" />
     <Report Include="VendorOptumPatientDays.rdl" />

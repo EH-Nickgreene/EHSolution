@@ -80,6 +80,8 @@
     <Report Include="OpsMetric.rdl" />
     <Report Include="OpsMetricsV2_ExecCaseload Subreport.rdl" />
     <Report Include="OpsMetricsV2_ExecCaseload.rdl" />
+    <Report Include="OpsMetricsV2_ExecProductivity Subreport.rdl" />
+    <Report Include="OpsMetricsV2_ExecProductivity-bad.rdl" />
     <Report Include="OpsMetricsV2_ExecProductivity.rdl" />
     <Report Include="OpsMetric_BCBASupervisionRate.rdl" />
     <Report Include="OpsMetric_Caseload.rdl" />
