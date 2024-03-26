@@ -21,8 +21,7 @@
             <Value>=Parameters!edate.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>
-DECLARE @days INT
+        <CommandText>DECLARE @days INT
 SET @days=datediff(dd,@sdate,@edate)+1
 
 DECLARE @ProductivityPointsPerHourForPTO decimal(9,3)=.525
@@ -244,7 +243,7 @@ SELECT
 		WHEN bd.BranchCode&lt;&gt;bdc.BranchCode THEN 0
 		WHEN base.WorkerCategoryDescription='PRN' THEN 0
 		WHEN jc.jobCategory = 'DOO' THEN 0
-		WHEN jc.jobcategory IN ('Social Worker','Chaplain') and wjt.wjt_desc LIKE '%COORDINATOR%'
+		WHEN jc.jobcategory IN ('Social Worker','Chaplain') and wjt.wjt_desc LIKE '%COORD%'
 		THEN jc.ProductivityPoints /2
 		ELSE ISNULL(jc.ProductivityPoints ,0)
 	END ExpectedWeeklyPoint,
@@ -310,7 +309,7 @@ GROUP BY
 		WHEN bd.BranchCode&lt;&gt;bdc.BranchCode THEN 0
 		WHEN base.WorkerCategoryDescription='PRN' THEN 0
 		WHEN jc.jobCategory = 'DOO' THEN 0
-		WHEN jc.jobcategory IN ('Social Worker','Chaplain') and wjt.wjt_desc LIKE '%COORDINATOR%'
+		WHEN jc.jobcategory IN ('Social Worker','Chaplain') and wjt.wjt_desc LIKE '%COORD%'
 		THEN jc.ProductivityPoints /2
 		ELSE ISNULL(jc.ProductivityPoints ,0)
 	END ,
@@ -368,7 +367,7 @@ SELECT
 	CASE
 		WHEN base.WorkerCategoryDescription='PRN' THEN 0
 		WHEN jc.jobCategory = 'DOO' THEN 0
-		WHEN jc.jobcategory IN ('Social Worker','Chaplain') and wjt.wjt_desc LIKE '%COORDINATOR%'
+		WHEN jc.jobcategory IN ('Social Worker','Chaplain') and wjt.wjt_desc LIKE '%COORD%'
 		THEN jc.ProductivityPoints /2
 		ELSE ISNULL(jc.ProductivityPoints ,0)
 	END ExpectedWeeklyPoint,
@@ -431,7 +430,7 @@ GROUP BY
 	CASE
 		WHEN base.WorkerCategoryDescription='PRN' THEN 0
 		WHEN jc.jobCategory = 'DOO' THEN 0
-		WHEN jc.jobcategory IN ('Social Worker','Chaplain') and wjt.wjt_desc LIKE '%COORDINATOR%'
+		WHEN jc.jobcategory IN ('Social Worker','Chaplain') and wjt.wjt_desc LIKE '%COORD%'
 		THEN jc.ProductivityPoints /2
 		ELSE ISNULL(jc.ProductivityPoints ,0)
 	END ,
@@ -447,8 +446,7 @@ GROUP BY
 	END 
 
 
-SELECT * FROM #results
-</CommandText>
+SELECT * FROM #results</CommandText>
       </Query>
       <Fields>
         <Field Name="OrderBy">

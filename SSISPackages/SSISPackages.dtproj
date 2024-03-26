@@ -133,7 +133,7 @@
           <FullPath>ReportSenderABARBTandBCBATimeWorked.dtsx</FullPath>
           <References />
         </DtsPackage>
-        <DtsPackage FormatVersion="0">
+        <DtsPackage FormatVersion="8">
           <Name>ReportSenderABARecruiterProductivity.dtsx</Name>
           <FullPath>ReportSenderABARecruiterProductivity.dtsx</FullPath>
           <References />
@@ -153,7 +153,7 @@
           <FullPath>ReportSenderBCBACaseload.dtsx</FullPath>
           <References />
         </DtsPackage>
-        <DtsPackage FormatVersion="0">
+        <DtsPackage FormatVersion="8">
           <Name>ReportSenderEHAideProductivity.dtsx</Name>
           <FullPath>ReportSenderEHAideProductivity.dtsx</FullPath>
           <References />
@@ -174,6 +174,11 @@
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">
+          <Name>ReportSenderEHMilitaryHistoryChecklist.dtsx</Name>
+          <FullPath>ReportSenderEHMilitaryHistoryChecklist.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="8">
           <Name>ReportSenderEHMTDAdmissionsBySalesRep.dtsx</Name>
           <FullPath>ReportSenderEHMTDAdmissionsBySalesRep.dtsx</FullPath>
           <References />
@@ -188,14 +193,24 @@
           <FullPath>ReportSenderEHOpsMetrics.dtsx</FullPath>
           <References />
         </DtsPackage>
-        <DtsPackage FormatVersion="0">
-          <Name>ReportSenderEHStateServPatientDays.dtsx</Name>
-          <FullPath>ReportSenderEHStateServPatientDays.dtsx</FullPath>
-          <References />
-        </DtsPackage>
         <DtsPackage FormatVersion="8">
           <Name>ReportSenderEHSalesActivity.dtsx</Name>
           <FullPath>ReportSenderEHSalesActivity.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>ReportSenderEHChaplainProductivity.dtsx</Name>
+          <FullPath>ReportSenderEHChaplainProductivity.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="0">
+          <Name>ReportSenderEHSocialWorkerProductivity.dtsx</Name>
+          <FullPath>ReportSenderEHSocialWorkerProductivity.dtsx</FullPath>
+          <References />
+        </DtsPackage>
+        <DtsPackage FormatVersion="8">
+          <Name>ReportSenderEHStateServPatientDays.dtsx</Name>
+          <FullPath>ReportSenderEHStateServPatientDays.dtsx</FullPath>
           <References />
         </DtsPackage>
         <DtsPackage FormatVersion="8">

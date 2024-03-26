@@ -59,12 +59,14 @@
     <Report Include="Billing Hours by Location by Week.rdl" />
     <Report Include="Clinic Capacity.rdl" />
     <Report Include="Copy of Highlights Daily Report.rdl" />
+    <Report Include="Copy of Highlights Leadership Report - delete.rdl" />
     <Report Include="Copy of Learner Cancellation Rate.rdl" />
     <Report Include="Copy of Productivity And Auth Utilization.rdl" />
     <Report Include="Daily Learner Cancellation Report.rdl" />
     <Report Include="DOO Incentive Plan For Anita.rdl" />
     <Report Include="DOO Incentive Plan.rdl" />
     <Report Include="Highlights Daily Report.rdl" />
+    <Report Include="Highlights Forecast.rdl" />
     <Report Include="Highlights Leadership Report with referral conversion slide.rdl" />
     <Report Include="Highlights Leadership Report.rdl" />
     <Report Include="Highlights Morning Report.rdl" />

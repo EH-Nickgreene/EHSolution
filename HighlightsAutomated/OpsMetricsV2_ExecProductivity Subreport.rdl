@@ -40,7 +40,7 @@
 					)a
 
 			)
-			--SET @StartDate='2024-2-18'
+			--SET @StartDate='2024-3-10'
 
 			
 		--SELECT * FROM #productivity
@@ -381,11 +381,13 @@ AND [Reason Code]='Ready to Schedule'</CommandText>
     <DataSet Name="RDOOSingleRow">
       <Query>
         <DataSourceName>CentralReach</DataSourceName>
-        <CommandText>SELECT RDOOName,COUNT(*)LocationCount,STRING_AGG(Shortname,', ') LocationNames ,RegionGroup+' - ' +RDOOName RDOOHeader
+        <CommandText>--SELECT RDOOName,COUNT(*)LocationCount,STRING_AGG(Shortname,', ') LocationNames --,RegionGroup+' - ' +RDOOName RDOOHeader
+SELECT RDOOName,COUNT(*)LocationCount,STRING_AGG(Shortname,', ') LocationNames ,RDOOName RDOOHeader
 FROm reference.dbo.BranchData
 WHERE IsLearningCenter=1
 and BranchStatus='Active'
-GROUP BY RDOOName,RegionGroup</CommandText>
+GROUP BY RDOOName--,RegionGroup
+</CommandText>
       </Query>
       <Fields>
         <Field Name="RDOOName">

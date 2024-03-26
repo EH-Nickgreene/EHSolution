@@ -90,7 +90,7 @@ FROM HumanResources.dbo.Employee e
 INNER JOIN HumanResources.dbo.PayrollCompany pc on pc.PayrollCompanyCode=e.PayrollCompanyCode
 LEFT JOIN HumanResources.dbo.JobCodes jc on e.jobtitleCode=jc.jobCode
 LEFT JOIN Reference.dbo.BranchData bd on bd.ADPHomeDepartmentCode=e.HomeDepartmentCode
-WHERE jc.jobCategory IN ('Nurse','LPN/LVN','DOO')
+WHERE jc.jobCategory IN ('Nurse','LPN/LVN','DOO','Clinical Manager')
 and pc.lob='Empyrean'
 --AND WorkerCategoryDescription='FullTime'
 AND e.HireDate&lt;=@edate
@@ -277,7 +277,7 @@ LEFT JOIN HumanResources.dbo.JobCodes jc on base.jobtitleCode=jc.jobCode
 LEFT JOIn #NurseHeadCount nhc on nhc.BranchCode=bd.BranchCode and nhc.WorkerCategoryDescription=base.WorkerCategoryDescription
 LEFT JOIN #TotalPossiblePoints tpp on tpp.Branch_Code=bd.BranchCode
 WHERE 
-base.jobCategory IN ('Nurse','LPN/LVN','DOO')
+base.jobCategory IN ('Nurse','LPN/LVN','DOO','Clinical Manager')
 AND base.jobTitleDescription &lt;&gt;'Registered Nurse On Call /HSP'
 GROUP BY 
 	CASE

@@ -5,23 +5,23 @@
   DTS:CreationName="Microsoft.Package"
   DTS:CreatorComputerName="SQLVM"
   DTS:CreatorName="SQLVM\NickGreene"
-  DTS:DTSID="{A7DF47C8-EBB4-4C7C-9F28-3213195CBE05}"
+  DTS:DTSID="{698039EB-F49F-4C68-821C-5D7737AC831B}"
   DTS:EnableConfig="True"
   DTS:ExecutableType="Microsoft.Package"
   DTS:LastModifiedProductVersion="16.0.5270.0"
   DTS:LocaleID="1033"
-  DTS:ObjectName="ReportSenderEHUnbilledDailyReport"
+  DTS:ObjectName="ReportSenderEHMilitaryHistoryChecklist"
   DTS:PackageType="5"
   DTS:ProtectionLevel="0"
-  DTS:VersionBuild="92"
-  DTS:VersionGUID="{3B53D4F8-99FB-4883-AA64-FD58519A9D34}">
+  DTS:VersionBuild="95"
+  DTS:VersionGUID="{932DB2F4-B821-41CD-ADBB-31AE1A4BB39C}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[Logging]"
       DTS:CreationName="OLEDB"
-      DTS:DTSID="{96C5AA2E-98DC-43CD-A70F-1AEFFEFB8FE7}"
+      DTS:DTSID="{72B2FE89-BF3B-407D-BFE5-0F3993EF1A0F}"
       DTS:ObjectName="Logging">
       <DTS:ObjectData>
         <DTS:ConnectionManager
@@ -33,7 +33,7 @@
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[SQLVM.Reference]"
       DTS:CreationName="OLEDB"
-      DTS:DTSID="{16427B1D-234C-4E99-BB6F-814D49417150}"
+      DTS:DTSID="{881E877E-FEBA-416D-A9A5-39F421D3B0E9}"
       DTS:ObjectName="SQLVM.Reference">
       <DTS:ObjectData>
         <DTS:ConnectionManager
@@ -45,16 +45,16 @@
   </DTS:ConnectionManagers>
   <DTS:Configurations>
     <DTS:Configuration
-      DTS:ConfigurationString="&quot;SQLVM.Reference&quot;;&quot;[dbo].[SSIS Configurations]&quot;;&quot;ReportSenderEHUnbilledDailyReport&quot;;"
+      DTS:ConfigurationString="&quot;SQLVM.Reference&quot;;&quot;[dbo].[SSIS Configurations]&quot;;&quot;ReportSenderEHMilitaryHistoryChecklist&quot;;"
       DTS:ConfigurationType="7"
       DTS:CreationName=""
-      DTS:DTSID="{417A7661-E132-4524-AE74-F9D1A59A760E}"
+      DTS:DTSID="{715FE9FB-FB7B-4E32-8BBA-697C6FA1EB54}"
       DTS:ObjectName="Configuration 1" />
   </DTS:Configurations>
   <DTS:Variables>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{91222EE4-83F1-4BBF-9717-4CE54BD2B3D3}"
+      DTS:DTSID="{232C2DEB-0171-461E-8844-981625C939E9}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EmailBCC">
@@ -63,7 +63,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{906207AA-B17B-4BF7-820A-1464E6EC9512}"
+      DTS:DTSID="{6B1DC90E-9667-4592-938C-467D91286722}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EmailBody">
@@ -73,7 +73,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{74D96528-FED3-4AA4-858C-CB81A53ED74F}"
+      DTS:DTSID="{CDAE2327-B21B-4610-84F8-D672930401ED}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EmailCC">
@@ -83,7 +83,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{23D3E558-1CD7-4D3C-B848-1471E471767E}"
+      DTS:DTSID="{07A708A2-D467-4879-B1A6-A32C25DFA59F}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EmailProfile">
@@ -92,7 +92,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{1674BD9E-9BC4-4E23-A8D4-FB2D37DCF303}"
+      DTS:DTSID="{65C601D2-669B-438E-AC10-42596634E29D}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EmailSignature">
@@ -101,25 +101,25 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{2A75ED83-B6E2-445F-8374-E4B52AA79B00}"
+      DTS:DTSID="{26331F4D-54CA-4281-A9B2-F950E1624D43}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EmailSubject">
       <DTS:VariableValue
-        DTS:DataType="8">Hospice Unbilled mm.dd.yy</DTS:VariableValue>
+        DTS:DataType="8">Military History Checklist mm.dd.yy</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{967A3F6B-51DC-4DFE-A4AA-312CF5AA850F}"
+      DTS:DTSID="{2587458E-380D-4D14-A2F8-5DF0939873F3}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EmailTo">
       <DTS:VariableValue
-        DTS:DataType="8">nick.greene@empyreanhospice.com;stephanie.baheth@empyreanhospice.com;melissa@highlightshealthcare.com;mandie.kalista@empyreanhospice.com;elle.baker@empyreanhospice.com;michelle.rowe@empyreanhospice.com</DTS:VariableValue>
+        DTS:DataType="8">robin.watts@empyreanhospice.com;nick.greene@empyreanhospice.com;carol.barbee@empyreanhospice.com</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{540565DD-7DD8-49CB-BB51-D2752D3173B4}"
+      DTS:DTSID="{15D05473-FEC4-4730-B404-5EABF2EBA780}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="EndDate">
@@ -128,7 +128,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{EDAC0D5A-B412-4B8C-BBB9-D466E3905A6B}"
+      DTS:DTSID="{2017AB0B-9C20-4ACA-900A-AC66D460556C}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="EtlLoadId">
@@ -138,7 +138,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{58B7F5FE-A626-450F-8FD4-84F2CF2EC5FF}"
+      DTS:DTSID="{8BC0CDF5-6154-440B-914F-02CF94655BEC}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="FileExists">
@@ -147,7 +147,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{C54C676D-E6DA-4F12-A2BF-E6705E52CCA7}"
+      DTS:DTSID="{E94CA066-98F8-4C11-AB6B-5593FEB8B65F}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="FileExtension">
@@ -156,16 +156,16 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{D4FDA7CF-366B-4E49-BFA6-B17B7C462892}"
+      DTS:DTSID="{7A8C5140-C2E2-4BEF-BC30-FF71C265685D}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="Filename">
       <DTS:VariableValue
-        DTS:DataType="8">Hospice Unbilled yyyymmdd.xlsx</DTS:VariableValue>
+        DTS:DataType="8">Military_History_Checklist_yyyymmdd.xlsx</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{1C0F410B-3C9F-4CB0-9B6A-8E031553269C}"
+      DTS:DTSID="{0FAF7A52-5C07-40B0-856B-1D646EDE34FB}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="FileProcessedRowCount">
@@ -174,7 +174,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{C24F8649-24FB-44C9-BE01-1B31E72550F9}"
+      DTS:DTSID="{E3E9AED6-0B89-4453-BA0D-E8E0582D1634}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="FileType">
@@ -183,7 +183,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{A0DA4557-60D7-4578-8378-3C99D85402CA}"
+      DTS:DTSID="{DAB5D658-3F3D-46B3-AE35-1E9FEAEC79E1}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="FolderPath">
@@ -192,27 +192,27 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{415C0BA2-2A5A-4004-8B4B-71B93BEA4626}"
+      DTS:DTSID="{21A73225-7623-40CF-B402-0AEFCE879592}"
       DTS:EvaluateAsExpression="True"
       DTS:Expression="@[User::FolderPath] + @[User::Filename]"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="FullFilePath">
       <DTS:VariableValue
-        DTS:DataType="8">D:\SSRSReports\Hospice Unbilled yyyymmdd.xlsx</DTS:VariableValue>
+        DTS:DataType="8">D:\SSRSReports\Military_History_Checklist_yyyymmdd.xlsx</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{DF0B522A-C5EA-4ECD-B51A-F9AA387C7F87}"
+      DTS:DTSID="{CB992613-F90D-4959-9FA2-AAD536D851E6}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="MonthInt">
       <DTS:VariableValue
-        DTS:DataType="3">202310</DTS:VariableValue>
+        DTS:DataType="3">0</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{C2A3A805-124F-441A-8B21-D72A78A5AABD}"
+      DTS:DTSID="{3E9C3EE2-D696-4A8C-84E6-E96C4BD96726}"
       DTS:EvaluateAsExpression="True"
       DTS:Expression="&quot;EXEC msdb.dbo.sp_send_dbmail&#xA;&#x9;&#x9;@profile_name = '&quot;+ @[User::EmailProfile] +&quot;',&#xA;&#x9;&#x9;@recipients = '&quot;+@[User::EmailTo]+&quot;',&#xA;&#x9;&#x9;@copy_recipients  = '&quot;+ @[User::EmailCC] +&quot;',&#xA;&#x9;&#x9;@blind_copy_recipients= '&quot;+ @[User::EmailBCC] +&quot;',&#xA;&#x9;&#x9;@body = '&quot;+ @[User::EmailBody] +&quot;',&#xA;&#x9;&#x9;@subject = '&quot;+ @[User::EmailSubject] +&quot;',&#xA;&#x9;&#x9;@body_format ='HTML',&#xA;&#x9;&#x9;@file_attachments = '&quot;+ @[User::FullFilePath] +&quot;'&quot;"
       DTS:IncludeInDebugDump="2345"
@@ -221,26 +221,26 @@
       <DTS:VariableValue
         DTS:DataType="8">EXEC msdb.dbo.sp_send_dbmail
 		@profile_name = 'Reporting',
-		@recipients = 'nick.greene@empyreanhospice.com;stephanie.baheth@empyreanhospice.com;melissa@highlightshealthcare.com;mandie.kalista@empyreanhospice.com;elle.baker@empyreanhospice.com;michelle.rowe@empyreanhospice.com',
+		@recipients = 'robin.watts@empyreanhospice.com;nick.greene@empyreanhospice.com;carol.barbee@empyreanhospice.com',
 		@copy_recipients  = '',
 		@blind_copy_recipients= 'ReportingBCC@empyreanhospice.com',
 		@body = '',
-		@subject = 'Hospice Unbilled mm.dd.yy',
+		@subject = 'Military History Checklist mm.dd.yy',
 		@body_format ='HTML',
-		@file_attachments = 'D:\SSRSReports\Hospice Unbilled yyyymmdd.xlsx'</DTS:VariableValue>
+		@file_attachments = 'D:\SSRSReports\Military_History_Checklist_yyyymmdd.xlsx'</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{0C277547-6C45-4D7B-91F7-4BEB8D919083}"
+      DTS:DTSID="{1ACC8800-8BFD-4EA5-8EA2-E39BCCC515E1}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="SSRSReportName">
       <DTS:VariableValue
-        DTS:DataType="8">/EmpyreanAutomated/HospiceUnbilledReport</DTS:VariableValue>
+        DTS:DataType="8">/EmpyreanAutomated/WeHonorVetsProgram</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{678E222A-55C9-4F15-B6AC-1F1EC00FE3A9}"
+      DTS:DTSID="{A11C910F-D7BD-428D-813B-550B01ACF266}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="SSRSUrl">
@@ -249,7 +249,7 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{05E85276-51DF-49E0-8D91-158B32B23521}"
+      DTS:DTSID="{552AFC07-C82D-44F8-8252-7C819939F5AE}"
       DTS:IncludeInDebugDump="6789"
       DTS:Namespace="User"
       DTS:ObjectName="StartDate">
@@ -258,12 +258,12 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
-      DTS:DTSID="{3C2B252D-893E-4DA0-AA3E-22C08D16B888}"
-      DTS:IncludeInDebugDump="6789"
+      DTS:DTSID="{499680B3-8971-43E9-8A4C-693A3EAAEC86}"
+      DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="TaskDescription">
       <DTS:VariableValue
-        DTS:DataType="3">0</DTS:VariableValue>
+        DTS:DataType="8">Military History Checklist</DTS:VariableValue>
     </DTS:Variable>
   </DTS:Variables>
   <DTS:Executables>
@@ -271,7 +271,7 @@
       DTS:refId="Package\Generate SSRS Report"
       DTS:CreationName="Microsoft.ScriptTask"
       DTS:Description="Script Task"
-      DTS:DTSID="{A79ED868-511D-4F60-AD4A-00BB23092BD7}"
+      DTS:DTSID="{F0CFAEA4-D5C8-4A86-9FFE-AF2087FCFE52}"
       DTS:ExecutableType="Microsoft.ScriptTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="Generate SSRS Report"
@@ -304,7 +304,7 @@
     <msb:CodeName>ST_e5f3b936834a4ad891f9339d8cba91a4</msb:CodeName>
     <msb:Language>msBuild</msb:Language>
     <msb:DisplayName>ST_e5f3b936834a4ad891f9339d8cba91a4</msb:DisplayName>
-    <msb:ProjectId>{EE2BC73A-E412-4A69-93D6-114AAFAD9D5A}</msb:ProjectId>
+    <msb:ProjectId>{F4B6AFB8-2780-4ECF-B3BB-E963DE31FA42}</msb:ProjectId>
   </msb:PropertyGroup>
   <msb:ItemGroup>
     <msb:Project Include="ST_e5f3b936834a4ad891f9339d8cba91a4.vbproj" />
@@ -4422,6 +4422,18 @@ Namespace SSRSWebService
     Public Delegate Sub LogoffCompletedEventHandler(ByVal sender As Object, ByVal e As System.ComponentModel.AsyncCompletedEventArgs)
 End Namespace]]></ProjectItem>
           <ProjectItem
+            Name="Web References\SSRSWebService\ExecutionInfo2.datasource"
+            Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This file is automatically generated by Visual Studio .Net. It is 
+    used to store generic object data source configuration information.  
+    Renaming the file extension or editing the content of this file may   
+    cause the file to be unrecognizable by the program.
+-->
+<GenericObjectDataSource DisplayName="ExecutionInfo2" Version="1.0" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+   <TypeInfo>ST_e5f3b936834a4ad891f9339d8cba91a4.SSRSWebService.ExecutionInfo2, Web References.SSRSWebService.Reference.vb.dll, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null</TypeInfo>
+</GenericObjectDataSource>]]></ProjectItem>
+          <ProjectItem
             Name="My Project\Settings.Designer.vb"
             Encoding="UTF8"><![CDATA['------------------------------------------------------------------------------
 ' <auto-generated>
@@ -4907,30 +4919,6 @@ End Class]]></ProjectItem>
 -->
 <GenericObjectDataSource DisplayName="ExecutionInfo3" Version="1.0" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
    <TypeInfo>ST_e5f3b936834a4ad891f9339d8cba91a4.SSRSWebService.ExecutionInfo3, Web References.SSRSWebService.Reference.vb.dll, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null</TypeInfo>
-</GenericObjectDataSource>]]></ProjectItem>
-          <ProjectItem
-            Name="Web References\SSRSWebService\ExecutionInfo2.datasource"
-            Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
-<!--
-    This file is automatically generated by Visual Studio .Net. It is 
-    used to store generic object data source configuration information.  
-    Renaming the file extension or editing the content of this file may   
-    cause the file to be unrecognizable by the program.
--->
-<GenericObjectDataSource DisplayName="ExecutionInfo2" Version="1.0" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
-   <TypeInfo>ST_e5f3b936834a4ad891f9339d8cba91a4.SSRSWebService.ExecutionInfo2, Web References.SSRSWebService.Reference.vb.dll, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null</TypeInfo>
-</GenericObjectDataSource>]]></ProjectItem>
-          <ProjectItem
-            Name="Web References\SSRSWebService\ExecutionInfo.datasource"
-            Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
-<!--
-    This file is automatically generated by Visual Studio .Net. It is 
-    used to store generic object data source configuration information.  
-    Renaming the file extension or editing the content of this file may   
-    cause the file to be unrecognizable by the program.
--->
-<GenericObjectDataSource DisplayName="ExecutionInfo" Version="1.0" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
-   <TypeInfo>ST_e5f3b936834a4ad891f9339d8cba91a4.SSRSWebService.ExecutionInfo, Web References.SSRSWebService.Reference.vb.dll, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null</TypeInfo>
 </GenericObjectDataSource>]]></ProjectItem>
           <ProjectItem
             Name="Web References\SSRSWebService\ReportExecution2005.wsdl"
@@ -7390,6 +7378,18 @@ End Class]]></ProjectItem>
   </wsdl:service>
 </wsdl:definitions>]]></ProjectItem>
           <ProjectItem
+            Name="Web References\SSRSWebService\ExecutionInfo.datasource"
+            Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This file is automatically generated by Visual Studio .Net. It is 
+    used to store generic object data source configuration information.  
+    Renaming the file extension or editing the content of this file may   
+    cause the file to be unrecognizable by the program.
+-->
+<GenericObjectDataSource DisplayName="ExecutionInfo" Version="1.0" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+   <TypeInfo>ST_e5f3b936834a4ad891f9339d8cba91a4.SSRSWebService.ExecutionInfo, Web References.SSRSWebService.Reference.vb.dll, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null</TypeInfo>
+</GenericObjectDataSource>]]></ProjectItem>
+          <ProjectItem
             Name="Web References\SSRSWebService\Reference.map"
             Encoding="UTF8"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <DiscoveryClientResultsFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
@@ -7624,7 +7624,7 @@ Imports System.Runtime.InteropServices
           <BinaryItem
             Name="ST_e5f3b936834a4ad891f9339d8cba91a4.dll">TVqQAAMAAAAEAAAA//8AALgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAgAAAAA4fug4AtAnNIbgBTM0hVGhpcyBwcm9ncmFtIGNhbm5vdCBiZSBydW4gaW4gRE9TIG1v
-ZGUuDQ0KJAAAAAAAAABQRQAATAEDAGpdumUAAAAAAAAAAOAAIiALAVAAAHQBAAAIAAAAAAAAKpMB
+ZGUuDQ0KJAAAAAAAAABQRQAATAEDAJHVt2UAAAAAAAAAAOAAIiALAVAAAHQBAAAIAAAAAAAAKpMB
 AAAgAAAAoAEAAAAAEAAgAAAAAgAABAAAAAAAAAAGAAAAAAAAAADgAQAAAgAAAAAAAAMAYIUAABAA
 ABAAAAAAEAAAEAAAAAAAABAAAAAAAAAAAAAAANiSAQBPAAAAAKABAEgEAAAAAAAAAAAAAAAAAAAA
 AAAAAMABAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -8784,7 +8784,7 @@ AGwAZQBFAHgAdABlAG4AcwBpAG8AbgAAJVUAcwBlAHIAOgA6AEYAdQBsAGwARgBpAGwAZQBQAGEA
 dABoAAAbVQBzAGUAcgA6ADoAUwBTAFIAUwBVAHIAbAAAKVUAcwBlAHIAOgA6AFMAUwBSAFMAUgBl
 AHAAbwByAHQATgBhAG0AZQAAC2UAbgAtAHUAcwABGUYAaQByAGUAIABFAHIAcgBvAHIAOgAgAAAB
 AEdQAHIAbwBwAGUAcgB0AHkAIABjAGEAbgAgAG8AbgBsAHkAIABiAGUAIABzAGUAdAAgAHQAbwAg
-AE4AbwB0AGgAaQBuAGcAAAAAK+e8HOVK5E+TiXADG0hDsAAEIAEBCAMgAAEFIAEBEREEIAEBDgQg
+AE4AbwB0AGgAaQBuAGcAAAAAKdRfztLUMEScNjPKXINR3wAEIAEBCAMgAAEFIAEBEREEIAEBDgQg
 AQECBSACAQ4OBSABARFFByAEAQ4ODg4FIAEBEm0GIAEBEYEFBxUSgbwBEgwHFRKBvAESCAcVEoG8
 ARJlCBUSgbwBEoG4BCAAEwAHAAESbRGBHQUgABKBIQcgAgEOEoEhAyAADgMgAAILBwMSgIwSgIwS
 gIwLAAISgSkSgSkSgSkMEAEDHgAQHgAeAB4ABQoBEoCMCwcDEoCUEoCUEoCUBQoBEoCUCwcDEoCc
@@ -9345,7 +9345,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       DTS:refId="Package\Log Report Send"
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
-      DTS:DTSID="{7D04EDB3-1349-4A6C-8ED1-56F04CB07222}"
+      DTS:DTSID="{E8AE10D4-B44C-4994-A96D-93A01F8F9B27}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="Log Report Send"
@@ -9356,7 +9356,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
         DTS:FilterKind="0" />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{96C5AA2E-98DC-43CD-A70F-1AEFFEFB8FE7}"
+          SQLTask:Connection="{72B2FE89-BF3B-407D-BFE5-0F3993EF1A0F}"
           SQLTask:SqlStatementSource="exec InsertReportSenderExecution&#xA;&#x9;@EtlLoadId=? ,&#xA;&#x9;&#x9;@FileName=? ,&#xA;&#x9;&#x9;@EmailSubject =?,&#xA;&#x9;&#x9;@EmailTo =?,&#xA;&#x9;&#x9;@EmailCC =?,&#xA;&#x9;&#x9;@EmailBCC =?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ParameterBinding
             SQLTask:ParameterName="0"
@@ -9401,7 +9401,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       DTS:refId="Package\PostExecute"
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
-      DTS:DTSID="{464AE4B9-B6D6-40DA-8F50-B9EDEECE1DB4}"
+      DTS:DTSID="{1F73DA85-B710-4DF9-AAD3-6D0507C22300}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="PostExecute"
@@ -9412,7 +9412,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
         DTS:FilterKind="0" />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{96C5AA2E-98DC-43CD-A70F-1AEFFEFB8FE7}"
+          SQLTask:Connection="{72B2FE89-BF3B-407D-BFE5-0F3993EF1A0F}"
           SQLTask:SqlStatementSource="DECLARE @NextEtlLoadId varchar(20)&#xA;EXEC Logging.dbo.SSISPostExecute @EtlLoadId=?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ParameterBinding
             SQLTask:ParameterName="0"
@@ -9428,7 +9428,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:DelayValidation="True"
       DTS:Description="Execute SQL Task"
-      DTS:DTSID="{BBE8FCCE-31F7-4878-80C7-E6007B590835}"
+      DTS:DTSID="{6ACD14AD-B45E-4099-AEED-BCFE6FC431F7}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="PreExecute"
@@ -9439,7 +9439,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
         DTS:FilterKind="0" />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{96C5AA2E-98DC-43CD-A70F-1AEFFEFB8FE7}"
+          SQLTask:Connection="{72B2FE89-BF3B-407D-BFE5-0F3993EF1A0F}"
           SQLTask:SqlStatementSource="DECLARE @NextEtlLoadId INT&#xA;EXEC Logging.dbo.SSISPreExecute @PackageName=?,@Servername=?,@EtlLoadId = @NextEtlLoadId"
           SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ResultBinding
@@ -9464,7 +9464,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       DTS:refId="Package\Send Report"
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
-      DTS:DTSID="{E62A6ED9-3647-42E0-9B19-32441E40D8E0}"
+      DTS:DTSID="{9EF2F0B6-EE66-4899-8E3E-261719663B62}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="Send Report"
@@ -9472,7 +9472,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{96C5AA2E-98DC-43CD-A70F-1AEFFEFB8FE7}"
+          SQLTask:Connection="{72B2FE89-BF3B-407D-BFE5-0F3993EF1A0F}"
           SQLTask:SqlStmtSourceType="Variable"
           SQLTask:SqlStatementSource="User::SQLEmail" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
       </DTS:ObjectData>
@@ -9482,15 +9482,15 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
       DTS:Disabled="True"
-      DTS:DTSID="{321B17FC-9470-44A8-BD4A-2FE1EEA405D6}"
+      DTS:DTSID="{623802AB-FB96-44AD-804B-1884EA570AE8}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="set EndDate"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{16427B1D-234C-4E99-BB6F-814D49417150}"
+          SQLTask:Connection="{881E877E-FEBA-416D-A9A5-39F421D3B0E9}"
           SQLTask:SqlStatementSource="DECLARE @StartDate date,@EndDate date&#xA;&#xA;SET @StartDate =&#xA;(&#xA;&#x9;SELECT TOP 1 date&#xA;&#x9;FROM &#xA;&#x9;&#x9;(&#xA;&#x9;&#x9;SELECT TOP 2 date FROM reference.dbo.dimdate&#xA;&#x9;&#x9;WHERE day='Sunday'&#xA;&#x9;&#x9;and date&lt;=GETDATE()&#xA;&#x9;&#x9;ORDER BY date desc&#xA;&#xA;&#x9;&#x9;) a&#xA;&#x9;ORDER BY date&#xA;)&#xA;&#xA;SET @EndDate= dateadd(dd,6,@StartDate)&#xA;&#xA;SELECT @EndDate"
           SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ResultBinding
@@ -9510,15 +9510,15 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       DTS:CreationName="Microsoft.ExecuteSQLTask"
       DTS:Description="Execute SQL Task"
       DTS:Disabled="True"
-      DTS:DTSID="{A0653DFB-7DAB-49A3-A276-9DED9AD3AB74}"
+      DTS:DTSID="{3CC0330B-7E81-4630-AB73-98EB55C763E6}"
       DTS:ExecutableType="Microsoft.ExecuteSQLTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="Set Start Date"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
-          SQLTask:Connection="{16427B1D-234C-4E99-BB6F-814D49417150}"
+          SQLTask:Connection="{881E877E-FEBA-416D-A9A5-39F421D3B0E9}"
           SQLTask:SqlStatementSource="DECLARE @StartDate date,@EndDate date&#xA;&#xA;SET @StartDate =&#xA;(&#xA;&#x9;SELECT TOP 1 date&#xA;&#x9;FROM &#xA;&#x9;&#x9;(&#xA;&#x9;&#x9;SELECT TOP 2 date FROM reference.dbo.dimdate&#xA;&#x9;&#x9;WHERE day='Sunday'&#xA;&#x9;&#x9;and date&lt;=GETDATE()&#xA;&#x9;&#x9;ORDER BY date desc&#xA;&#xA;&#x9;&#x9;) a&#xA;&#x9;ORDER BY date&#xA;)&#xA;&#xA;SET @EndDate= dateadd(dd,6,@StartDate)&#xA;&#xA;SELECT @StartDate"
           SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
           <SQLTask:ResultBinding
@@ -9537,7 +9537,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
       DTS:refId="Package\Set Variables"
       DTS:CreationName="Microsoft.ScriptTask"
       DTS:Description="Script Task"
-      DTS:DTSID="{F39E410B-3C0B-4203-B2BE-807F8F55B08F}"
+      DTS:DTSID="{2C3A3FF6-FEA4-4E54-BB94-CAAFFF346BA1}"
       DTS:ExecutableType="Microsoft.ScriptTask"
       DTS:LocaleID="-1"
       DTS:ObjectName="Set Variables"
@@ -9766,7 +9766,7 @@ End Class]]></ProjectItem>
     <msb:CodeName>ST_8f2fb709fb354cf282c545e9c8d00bd4</msb:CodeName>
     <msb:Language>msBuild</msb:Language>
     <msb:DisplayName>ST_8f2fb709fb354cf282c545e9c8d00bd4</msb:DisplayName>
-    <msb:ProjectId>{4436252C-9B4F-493A-8D8C-8AE7FCCAB65A}</msb:ProjectId>
+    <msb:ProjectId>{975254A7-E43E-4B0E-BA15-7C4A73F8797E}</msb:ProjectId>
   </msb:PropertyGroup>
   <msb:ItemGroup>
     <msb:Project Include="ST_8f2fb709fb354cf282c545e9c8d00bd4.vbproj" />
@@ -10063,7 +10063,7 @@ End Namespace]]></ProjectItem>
           <BinaryItem
             Name="ST_8f2fb709fb354cf282c545e9c8d00bd4.dll">TVqQAAMAAAAEAAAA//8AALgAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAgAAAAA4fug4AtAnNIbgBTM0hVGhpcyBwcm9ncmFtIGNhbm5vdCBiZSBydW4gaW4gRE9TIG1v
-ZGUuDQ0KJAAAAAAAAABQRQAATAEDAPxc+GUAAAAAAAAAAOAAIiALAVAAAB4AAAAIAAAAAAAAKjwA
+ZGUuDQ0KJAAAAAAAAABQRQAATAEDANhc+GUAAAAAAAAAAOAAIiALAVAAAB4AAAAIAAAAAAAAKjwA
 AAAgAAAAQAAAAAAAEAAgAAAAAgAABAAAAAAAAAAGAAAAAAAAAACAAAAAAgAAAAAAAAMAYIUAABAA
 ABAAAAAAEAAAEAAAAAAAABAAAAAAAAAAAAAAANg7AABPAAAAAEAAAEgEAAAAAAAAAAAAAAAAAAAA
 AAAAAGAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -10175,7 +10175,7 @@ ZQAAEXkAeQB5AHkAbQBtAGQAZAAAEXkAeQB5AHkATQBNAGQAZAAAEW0AbQAuAGQAZAAuAHkAeQAA
 EU0ATQAuAGQAZAAuAHkAeQAAH1UAcwBlAHIAOgA6AEUAbQBhAGkAbABCAG8AZAB5AABnRwByAGUA
 ZQB0AGkAbgBnAHMALAA8AC8AYgByAD4APAAvAGIAcgA+ACAAUABsAGUAYQBzAGUAIABzAGUAZQAg
 AGEAdAB0AGEAYwBoAGUAZAAgAHIAZQBwAG8AcgB0AC4AIAAgACAAABlGAGkAcgBlACAARQByAHIA
-bwByADoAIAAAAQAAAADOxkTKSn89TIXewTvJaKjtAAQgAQEIAyAAAQUgAQEREQQgAQEOBCABAQIF
+bwByADoAIAAAAQAAAABCTB9h8V9CRLBDJOGZt8utAAQgAQEIAyAAAQUgAQEREQQgAQEOBCABAQIF
 IAIBDg4FIAEBEUUHIAQBDg4ODgYVEiQBEgwGFRIkARIIBhUSJAESZQYVEiQBEiAEIAATAAcAARJt
 EYCdBSAAEoChByACAQ4SgKEEAAEcHAQAAQEcCAcEDg4OEoCVBSAAEoCtBSAAEoCxBiABEoC1HAMg
 ABwDIAAOBQAAEYC9BQACDhwOCwAGDg4ODggIEYDFBCABARwFAAIODg4GAAEBEoCVBSAAEoDRCCAF
@@ -10249,7 +10249,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint]"
       DTS:CreationName=""
-      DTS:DTSID="{65570449-99D2-4A4B-BA5A-B43B1FFE7710}"
+      DTS:DTSID="{01AD7F8E-CF2C-4AEC-B3EE-CB58384557FB}"
       DTS:From="Package\PreExecute"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint"
@@ -10257,7 +10257,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
       DTS:CreationName=""
-      DTS:DTSID="{CEED8BBE-58AB-44C8-80E4-B21901654BF4}"
+      DTS:DTSID="{A46DEB63-6E55-4EC0-A9AE-09EF0FC5FDC6}"
       DTS:From="Package\Set Variables"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 1"
@@ -10265,7 +10265,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
       DTS:CreationName=""
-      DTS:DTSID="{E924D87B-454F-4DF4-8F14-ED99FC017C9E}"
+      DTS:DTSID="{0BB427F9-6E89-4578-9B87-66ECF0524A72}"
       DTS:From="Package\Generate SSRS Report"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 2"
@@ -10273,7 +10273,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 3]"
       DTS:CreationName=""
-      DTS:DTSID="{C9F0A1CC-767D-4488-B980-6F1301862A7D}"
+      DTS:DTSID="{A404E5F6-0BB6-4A38-A48D-3D5721A84B3C}"
       DTS:From="Package\Send Report"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 3"
@@ -10281,7 +10281,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 4]"
       DTS:CreationName=""
-      DTS:DTSID="{FAE198B4-BA88-4A20-BE4C-13754E279BF5}"
+      DTS:DTSID="{8980C175-18C9-4C7B-A9B7-BE99B79243B1}"
       DTS:From="Package\Log Report Send"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 4"
@@ -10289,7 +10289,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 5]"
       DTS:CreationName=""
-      DTS:DTSID="{52A344EE-4AD2-4A5A-8C85-5FA04FC1D4A9}"
+      DTS:DTSID="{830287A5-3954-4C47-A4CC-95F3120EFEB6}"
       DTS:From="Package\PreExecute"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 5"
@@ -10297,7 +10297,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 6]"
       DTS:CreationName=""
-      DTS:DTSID="{D1966C93-D690-43B3-82CC-98BE091689CA}"
+      DTS:DTSID="{B28D71E0-973A-4007-B023-5618FB3E7140}"
       DTS:From="Package\Set Start Date"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 6"
@@ -10305,7 +10305,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</BinaryItem>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint 7]"
       DTS:CreationName=""
-      DTS:DTSID="{54B06349-E94C-4727-B092-D22924A41D49}"
+      DTS:DTSID="{B0A4D29B-41E9-45AE-81C0-A6F23FC3BED1}"
       DTS:From="Package\set EndDate"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint 7"
